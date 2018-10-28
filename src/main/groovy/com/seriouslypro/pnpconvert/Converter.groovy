@@ -146,7 +146,7 @@ class Converter {
         //
 
         Element root = svgGenerator.getRoot();
-        root.setAttributeNS(null, "viewBox", "-1000 -1000 2000 2000");
+        root.setAttributeNS(null, "viewBox", "-125 -125 250 250");
 
         boolean useCSS = true; // we want to use CSS style attributes
 
