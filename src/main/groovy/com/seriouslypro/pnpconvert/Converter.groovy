@@ -30,7 +30,7 @@ class Converter {
 
     void convert() {
 
-        String tempFileName = outputPrefix + "-rotation-applied.csv"
+        String tempFileName = outputPrefix + "-converted.csv"
 
 
         Reader inputFileReader = new FileReader(inputFileName)
