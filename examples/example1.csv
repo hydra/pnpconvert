@@ -1,0 +1,11 @@
+RefDes,Pattern,X (mm),Y (mm),Side,Rotate,Value,Name
+J1,JST-SH-4P (SideEntry),11.5,53,Top,0,,JST-SH 4WAY
+J2,JST-SH-4P (SideEntry),23,53.5,Top,270,,JST-SH 4WAY
+J3,JST-SH-4P (SideEntry),21.5,43,Top,0,,JST-SH 4WAY
+J4,JST-SH-4P (SideEntry),12,41.5,Top,90,,JST-SH 4WAY
+J5,JST-SH-4P (SideEntry),47.85,14.08,Top,45,,JST-SH 4WAY
+J6,JST-SH-4P (SideEntry),54.69,22.76,Top,315,,JST-SH 4WAY
+J7,JST-SH-4P (SideEntry),61.99,14.08,Top,45,,JST-SH 4WAY
+J8,JST-SH-4P (SideEntry),56.53,7.24,Top,135,,JST-SH 4WAY
+J9,JST-SH-8P (SideEntry),13.5,13,Top,0,,JST-SH 8WAY
+J10,JST-SH-8P (SideEntry),56.5,52,Top,180,,JST-SH 8WAY

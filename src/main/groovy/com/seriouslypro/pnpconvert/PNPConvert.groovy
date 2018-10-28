@@ -1,5 +1,8 @@
 package com.seriouslypro.pnpconvert
 
+import groovy.cli.commons.CliBuilder
+import groovy.cli.commons.OptionAccessor
+
 class PNPConvert {
 
     public static void main(String [] args) {
@@ -9,6 +12,11 @@ class PNPConvert {
     static def processArgs(String[] args) {
         CliBuilder builder = new CliBuilder(usage: 'pnpconvert')
         builder.v('version')
+        builder.s(args:1, argName: 'source directory', 'scan and import csv files')
+        builder.i(args:1, argName: 'input', 'input csv file')
+        builder.o(args:1, argName: 'output', 'output dpv file')
+        builder.f(args:1, argName: 'feeders', 'feeders csv file')
+        builder.c('convert')
 
         OptionAccessor options = builder.parse(args)
         options.arguments()
@@ -30,12 +38,35 @@ class PNPConvert {
             System.exit(0);
         }
 
+        String inputFileName = "place.csv"
+        String outputFileName = "place.dpv"
+        String feedersFileName = "feeders.csv"
+
+        if (options.i) {
+            inputFileName = options.i
+        }
+
+        if (options.o) {
+            outputFileName = options.o
+        }
+
+        if (options.f) {
+            feedersFileName = options.f
+        }
+
+        if (options.c) {
+            Converter converter = new Converter(inputFileName, feedersFileName, outputFileName)
+            converter.go()
+            System.exit(0);
+        }
+
         about()
 
         System.out.println('invalid parameter combinations')
         builder.usage()
         System.exit(-1);
     }
+
 
     private static void about() {
         System.out.println('PNPConvert (C) 2018 Dominic Clifton')
