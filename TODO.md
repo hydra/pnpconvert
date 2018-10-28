@@ -8,3 +8,10 @@ Workaround: If you have a pattern, component name or component value containing 
 * negative rotations
 
 Workaround: always specify positive rotation values
+
+Would-be-nice
+=============
+
+* Display origin in SVG
+* Make SVG nicer.
+* Set units for SVG display
