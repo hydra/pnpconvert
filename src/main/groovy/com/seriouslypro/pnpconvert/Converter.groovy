@@ -11,10 +11,13 @@ class Converter {
     String outputFileName
     String feedersFileName
 
-    Converter(String inputFileName, String feedersFileName, String outputFileName) {
+    BoardRotation boardRotation = new BoardRotation()
+
+    Converter(String inputFileName, String feedersFileName, String outputFileName, BigDecimal rotationDegrees) {
         this.inputFileName = inputFileName
         this.feedersFileName = feedersFileName
         this.outputFileName = outputFileName
+        boardRotation.degrees = rotationDegrees
     }
 
     void go() {
@@ -43,12 +46,19 @@ class Converter {
 
         verifyRequiredHeadersPresent(headerMappings, headerValues)
 
-
         String[] line
         while ((line = inputCSVReader.readNext()) != null) {
             String refdes = line[headerMappings[DipTraceCSVHeaders.REFDES].index]
+            BigDecimal x = line[headerMappings[DipTraceCSVHeaders.X].index] as BigDecimal
+            BigDecimal y = line[headerMappings[DipTraceCSVHeaders.Y].index] as BigDecimal
 
-            System.out.println(refdes)
+            System.out.println("$refdes,$x,$y")
+
+            Coordinate c = new Coordinate(x: x, y: y)
+
+            Coordinate rotatedCoordinate = boardRotation.applyRotation(c)
+
+            System.out.println(rotatedCoordinate)
         }
 
 /*

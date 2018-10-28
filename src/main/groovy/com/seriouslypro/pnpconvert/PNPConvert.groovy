@@ -16,6 +16,7 @@ class PNPConvert {
         builder.i(args:1, argName: 'input', 'input csv file')
         builder.o(args:1, argName: 'output', 'output dpv file')
         builder.f(args:1, argName: 'feeders', 'feeders csv file')
+        builder.r(args:1, argName: 'rotation', 'rotation degrees (positive is clockwise)')
         builder.c('convert')
 
         OptionAccessor options = builder.parse(args)
@@ -41,6 +42,7 @@ class PNPConvert {
         String inputFileName = "place.csv"
         String outputFileName = "place.dpv"
         String feedersFileName = "feeders.csv"
+        BigDecimal rotationDegrees = 0.0G
 
         if (options.i) {
             inputFileName = options.i
@@ -54,8 +56,12 @@ class PNPConvert {
             feedersFileName = options.f
         }
 
+        if (options.r) {
+            rotationDegrees = options.r as BigDecimal
+        }
+
         if (options.c) {
-            Converter converter = new Converter(inputFileName, feedersFileName, outputFileName)
+            Converter converter = new Converter(inputFileName, feedersFileName, outputFileName, rotationDegrees)
             converter.go()
             System.exit(0);
         }
