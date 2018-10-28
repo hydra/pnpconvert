@@ -2,11 +2,13 @@ package com.seriouslypro.pnpconvert
 
 import au.com.bytecode.opencsv.CSVReader
 import au.com.bytecode.opencsv.CSVWriter
+import org.apache.batik.svggen.SVGGeneratorContext
 import org.w3c.dom.DOMImplementation
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 
 import java.awt.Color
+import java.awt.Font
 import java.awt.Graphics2D
 
 import java.text.ParseException
@@ -40,8 +42,13 @@ class Converter {
     }
 
     void drawPart(Graphics2D svgGenerator, int x, int y, String refdes) {
-        svgGenerator.drawOval(x - 5, -y - 5, 10, 10)
-        svgGenerator.drawString(refdes, x, -y)
+        int pointSize = 2
+        int fontSize = 4
+        svgGenerator.drawOval(x - (pointSize / 2) as int, -y - (pointSize / 2) as int, pointSize, pointSize)
+        Font refdesFont = new Font(Font.MONOSPACED, Font.PLAIN, fontSize)
+        svgGenerator.setFont(refdesFont)
+        int baseline = refdesFont.getBaselineFor(refdes.charAt(0))
+        svgGenerator.drawString(refdes, x + pointSize, -y - baseline + ((fontSize / 2) as int) - ((pointSize / 2) as int))
     }
 
     void convert() {
@@ -53,9 +60,11 @@ class Converter {
                 GenericDOMImplementation.getDOMImplementation();
 
         String svgNS = "http://www.w3.org/2000/svg";
-        Document document = domImpl.createDocument(svgNS, "svg", null);
+        Document document = domImpl.createDocument(svgNS, "svg", null)
 
-        SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
+        SVGGeneratorContext ctx = SVGGeneratorContext.createDefault(document)
+        ctx.setEmbeddedFontsOn(true)
+        SVGGraphics2D svgGenerator = new SVGGraphics2D(ctx, false)
 
         //
         // CSV processing
