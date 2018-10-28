@@ -13,17 +13,19 @@ class Converter {
     String feedersFileName
 
     BoardRotation boardRotation = new BoardRotation()
+    Coordinate offset = new Coordinate()
 
     private BigDecimal lowestX = null
     private BigDecimal lowestY = null
 
     private static final boolean append = false
 
-    Converter(String inputFileName, String feedersFileName, String outputPrefix, BoardRotation boardRotation) {
+    Converter(String inputFileName, String feedersFileName, String outputPrefix, BoardRotation boardRotation, Coordinate offset) {
         this.inputFileName = inputFileName
         this.feedersFileName = feedersFileName
         this.outputPrefix = outputPrefix
         this.boardRotation = boardRotation
+        this.offset = offset
     }
 
     void convert() {
@@ -67,69 +69,14 @@ class Converter {
             String value = line[inputHeaderMappings[DipTraceCSVHeaders.VALUE].index]
             String name = line[inputHeaderMappings[DipTraceCSVHeaders.NAME].index]
 
-            System.out.println("$refdes,$x,$y,$rotation")
+            //System.out.println(line.join(","))
 
             Coordinate c = new Coordinate(x: x, y: y)
 
             Coordinate rotatedCoordinate = boardRotation.applyRotation(c)
             BigDecimal rotatedRotation = (rotation + boardRotation.degrees).remainder(360)
 
-            if (!lowestX) {
-                lowestX = rotatedCoordinate.x
-            } else {
-                lowestX = Math.min(lowestX, rotatedCoordinate.x)
-            }
-
-            if (!lowestY) {
-                lowestY = rotatedCoordinate.y
-            } else {
-                lowestY = Math.min(lowestY, rotatedCoordinate.y)
-            }
-
-
-            System.out.println("$rotatedCoordinate, $rotatedRotation")
-
-            String[] outputRow = [
-                refdes,
-                pattern,
-                rotatedCoordinate.x,
-                rotatedCoordinate.y,
-                side,
-                rotatedRotation,
-                value,
-                name
-            ]
-            tempCSVWriter.writeNext(outputRow)
-        }
-
-
-        inputCSVReader.close()
-        tempCSVWriter.close()
-
-        System.out.println("lowestX: $lowestX, lowestY: $lowestY")
-
-        Coordinate offset = new Coordinate(x: 0 - lowestX, y: 0 - lowestY)
-        System.out.println("offsetX: $offset.x, offsetY: $offset.y")
-
-        Reader tempFileReader = new FileReader(tempFileName)
-        CSVReader tempCSVReader = new CSVReader(tempFileReader, ',' as char)
-
-        String[] tempHeaderValues = tempCSVReader.readNext()
-
-        LinkedHashMap<DipTraceCSVHeaders, CSVHeader> tempHeaderMappings = createHeaderMappings(tempHeaderValues)
-        verifyRequiredHeadersPresent(tempHeaderMappings, tempHeaderValues)
-
-        while ((line = tempCSVReader.readNext()) != null) {
-            String refdes = line[inputHeaderMappings[DipTraceCSVHeaders.REFDES].index]
-            String pattern = line[inputHeaderMappings[DipTraceCSVHeaders.PATTERN].index]
-            BigDecimal x = line[inputHeaderMappings[DipTraceCSVHeaders.X].index] as BigDecimal
-            BigDecimal y = line[inputHeaderMappings[DipTraceCSVHeaders.Y].index] as BigDecimal
-            String side = line[inputHeaderMappings[DipTraceCSVHeaders.SIDE].index]
-            BigDecimal rotation = line[inputHeaderMappings[DipTraceCSVHeaders.ROTATE].index] as BigDecimal
-            String value = line[inputHeaderMappings[DipTraceCSVHeaders.VALUE].index]
-            String name = line[inputHeaderMappings[DipTraceCSVHeaders.NAME].index]
-
-            Coordinate relocatedCoordinate = new Coordinate(x: x + offset.x, y: y + offset.y)
+            Coordinate relocatedCoordinate = rotatedCoordinate + offset
 
             String[] outputRow = [
                 refdes,
@@ -137,26 +84,28 @@ class Converter {
                 relocatedCoordinate.x,
                 relocatedCoordinate.y,
                 side,
-                rotation,
+                rotatedRotation,
                 value,
                 name
             ]
-            System.out.println(outputRow.join(","))
+            tempCSVWriter.writeNext(outputRow)
+            System.out.println(line.join(",").padRight(80) + " -> " + outputRow.join(","))
         }
 
-        tempCSVReader.close()
 
+        inputCSVReader.close()
+        tempCSVWriter.close()
 
+/*
         String outputDPVFileName = outputPrefix + ".dpv"
         Writer fileWriter = new FileWriter(outputDPVFileName, append)
         writeHeader(fileWriter)
 
-/*
         Reader feedersFileReader = new FileReader(inputFileName)
         CSVReader feedersCSVReader = new CSVReader(feedersFileReader, ',' as char)
-*/
 
         fileWriter.close()
+*/
     }
 
     private Map<DipTraceCSVHeaders, CSVHeader> createHeaderMappings(String[] headerValues) {

@@ -6,6 +6,10 @@ import groovy.transform.ToString
 @ToString
 @EqualsAndHashCode
 class Coordinate {
-    BigDecimal x
-    BigDecimal y
+    BigDecimal x = 0.0G
+    BigDecimal y = 0.0G
+
+    Coordinate plus(Coordinate other) {
+        return new Coordinate(x: x + other.x, y: y + other.y)
+    }
 }
