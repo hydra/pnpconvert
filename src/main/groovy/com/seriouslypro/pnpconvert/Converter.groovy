@@ -55,6 +55,8 @@ class Converter {
         Reader feedersFileReader = new FileReader(inputFileName)
         CSVReader feedersCSVReader = new CSVReader(feedersFileReader, ',' as char)
 */
+        inputCSVReader.close()
+        fileWriter.close()
     }
 
     void verifyRequiredHeadersPresent(Map<DipTraceCSVHeaders, CSVHeader> dipTraceCSVHeadersCSVHeaderMap, String[] headerValues) {
