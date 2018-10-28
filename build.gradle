@@ -1,0 +1,46 @@
+apply plugin: 'eclipse'
+apply plugin: 'groovy'
+apply plugin: 'application'
+
+mainClassName = 'com.seriouslypro.pnpconvert.PNPConvert'
+
+version = "1.0.0"
+
+repositories {
+    maven {
+        url "https://oss.sonatype.org/content/repositories/staging"
+    }
+    mavenCentral()
+    mavenLocal()
+}
+
+task createProperties(dependsOn: processResources) {
+    doLast {
+        def resourcesDirectory = "src/main/resources".toString()
+        new File(resourcesDirectory).mkdirs()
+        new File("$resourcesDirectory/version.properties").withWriter { w ->
+            Properties p = new Properties()
+            p['version'] = project.version.toString()
+            p.store w, null
+        }
+    }
+}
+
+classes {
+    dependsOn createProperties
+}
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.5.3'
+    compile 'commons-codec:commons-codec:1.10'
+    testCompile 'org.spockframework:spock-core:1.0-groovy-2.5'
+
+    compile 'net.sf.opencsv:opencsv:2.3'
+
+    compile 'commons-cli:commons-cli:1.3.1'
+
+    compile 'net.glxn.qrgen:javase:2.0'
+    compile 'org.apache.pdfbox:pdfbox:2.0.0-RC3'
+
+    compile 'com.seriouslypro.ilap:ilap:1.1-SNAPSHOT'
+}
