@@ -14,11 +14,16 @@ class PNPConvert {
         builder.v('version')
         builder.s(args:1, argName: 'source directory', 'scan and import csv files')
         builder.i(args:1, argName: 'input', 'input csv file')
-        builder.o(args:1, argName: 'output', 'output dpv file')
+        builder.o(args:1, argName: 'output', 'output prefix')
         builder.f(args:1, argName: 'feeders', 'feeders csv file')
         builder.r(args:1, argName: 'rotation', 'rotation degrees (positive is clockwise)')
-        builder.w(args:1, argName: 'width', 'pcb width')
-        builder.h(args:1, argName: 'height', 'pcb height')
+//        builder.w(args:1, argName: 'width', 'pcb width')
+//        builder.h(args:1, argName: 'height', 'pcb height')
+        builder.rx(args:1, argName: 'rotationX', 'rotation X origin')
+        builder.ry(args:1, argName: 'rotationY', 'rotation Y origin')
+
+//        builder.ox(args:1, argName: 'offsetX', 'X offset, applied after rotation')
+//        builder.oy(args:1, argName: 'offsetY', 'Y offset, applied after rotation')
         builder.c('convert')
 
         OptionAccessor options = builder.parse(args)
@@ -42,7 +47,7 @@ class PNPConvert {
         }
 
         String inputFileName = "place.csv"
-        String outputFileName = "place.dpv"
+        String outputPrefix = "place"
         String feedersFileName = "feeders.csv"
         BoardRotation boardRotation = new BoardRotation()
 
@@ -51,7 +56,7 @@ class PNPConvert {
         }
 
         if (options.o) {
-            outputFileName = options.o
+            outputPrefix = options.o
         }
 
         if (options.f) {
@@ -62,6 +67,7 @@ class PNPConvert {
             boardRotation.degrees = options.r as BigDecimal
         }
 
+        /*
         if ((options.w && !options.h) || (!options.w && options.h)) {
             System.out.println('specify width and height')
             builder.usage()
@@ -72,10 +78,19 @@ class PNPConvert {
             boardRotation.origin.x = (options.w as BigDecimal) / 2
             boardRotation.origin.y = (options.h as BigDecimal) / 2
         }
+        */
+
+        if (options.rx ) {
+            boardRotation.origin.x = (options.rx as BigDecimal)
+        }
+
+        if (options.ry) {
+            boardRotation.origin.y = (options.ry as BigDecimal)
+        }
 
         if (options.c) {
-            Converter converter = new Converter(inputFileName, feedersFileName, outputFileName, boardRotation)
-            converter.go()
+            Converter converter = new Converter(inputFileName, feedersFileName, outputPrefix, boardRotation)
+            converter.convert()
             System.exit(0);
         }
 
