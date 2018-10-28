@@ -2,9 +2,20 @@ package com.seriouslypro.pnpconvert
 
 import au.com.bytecode.opencsv.CSVReader
 import au.com.bytecode.opencsv.CSVWriter
+import org.w3c.dom.DOMImplementation
+import org.w3c.dom.Document
+import org.w3c.dom.Element
+
+import java.awt.Color
+import java.awt.Graphics2D
 
 import java.text.ParseException
 import java.text.SimpleDateFormat
+
+
+import org.apache.batik.svggen.SVGGraphics2D
+import org.apache.batik.dom.GenericDOMImplementation;
+
 
 class Converter {
 
@@ -28,7 +39,27 @@ class Converter {
         this.offset = offset
     }
 
+    void drawPart(Graphics2D svgGenerator, int x, int y, String refdes) {
+        svgGenerator.drawOval(x - 5, -y - 5, 10, 10)
+        svgGenerator.drawString(refdes, x, -y)
+    }
+
     void convert() {
+
+        //
+        // SVG creation
+        //
+        DOMImplementation domImpl =
+                GenericDOMImplementation.getDOMImplementation();
+
+        String svgNS = "http://www.w3.org/2000/svg";
+        Document document = domImpl.createDocument(svgNS, "svg", null);
+
+        SVGGraphics2D svgGenerator = new SVGGraphics2D(document);
+
+        //
+        // CSV processing
+        //
 
         String tempFileName = outputPrefix + "-converted.csv"
 
@@ -69,14 +100,28 @@ class Converter {
             String value = line[inputHeaderMappings[DipTraceCSVHeaders.VALUE].index]
             String name = line[inputHeaderMappings[DipTraceCSVHeaders.NAME].index]
 
-            //System.out.println(line.join(","))
+            svgGenerator.setColor(Color.RED)
+
+            drawPart(svgGenerator, x as int, y as int, refdes)
+
 
             Coordinate c = new Coordinate(x: x, y: y)
 
             Coordinate rotatedCoordinate = boardRotation.applyRotation(c)
             BigDecimal rotatedRotation = (rotation + boardRotation.degrees).remainder(360)
 
-            Coordinate relocatedCoordinate = rotatedCoordinate + offset
+            svgGenerator.setColor(Color.BLUE)
+            drawPart(svgGenerator, rotatedCoordinate.x as int, rotatedCoordinate.y as int, refdes)
+
+            Coordinate relocatedCoordinate = rotatedCoordinate - boardRotation.origin
+
+            svgGenerator.setColor(Color.PINK)
+            drawPart(svgGenerator, relocatedCoordinate.x as int, relocatedCoordinate.y as int, refdes)
+
+            Coordinate relocatedCoordinateWithOffset = relocatedCoordinate + offset
+
+            svgGenerator.setColor(Color.GREEN)
+            drawPart(svgGenerator, relocatedCoordinateWithOffset.x as int, relocatedCoordinateWithOffset.y as int, refdes)
 
             String[] outputRow = [
                 refdes,
@@ -95,6 +140,21 @@ class Converter {
 
         inputCSVReader.close()
         tempCSVWriter.close()
+
+        //
+        // Save SVG file
+        //
+
+        Element root = svgGenerator.getRoot();
+        root.setAttributeNS(null, "viewBox", "-1000 -1000 2000 2000");
+
+        boolean useCSS = true; // we want to use CSS style attributes
+
+        String svgFileName = outputPrefix + ".svg"
+        Writer svgFileWriter = new OutputStreamWriter(new FileOutputStream(svgFileName), "UTF-8");
+
+        svgGenerator.stream(root, svgFileWriter, useCSS, false);
+        svgFileWriter.close()
 
 /*
         String outputDPVFileName = outputPrefix + ".dpv"

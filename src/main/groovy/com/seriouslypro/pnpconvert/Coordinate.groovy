@@ -12,4 +12,8 @@ class Coordinate {
     Coordinate plus(Coordinate other) {
         return new Coordinate(x: x + other.x, y: y + other.y)
     }
+
+    Coordinate minus(Coordinate other) {
+        return new Coordinate(x: x - other.x, y: y - other.y)
+    }
 }
