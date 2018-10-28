@@ -17,6 +17,8 @@ class PNPConvert {
         builder.o(args:1, argName: 'output', 'output dpv file')
         builder.f(args:1, argName: 'feeders', 'feeders csv file')
         builder.r(args:1, argName: 'rotation', 'rotation degrees (positive is clockwise)')
+        builder.w(args:1, argName: 'width', 'pcb width')
+        builder.h(args:1, argName: 'height', 'pcb height')
         builder.c('convert')
 
         OptionAccessor options = builder.parse(args)
@@ -42,7 +44,7 @@ class PNPConvert {
         String inputFileName = "place.csv"
         String outputFileName = "place.dpv"
         String feedersFileName = "feeders.csv"
-        BigDecimal rotationDegrees = 0.0G
+        BoardRotation boardRotation = new BoardRotation()
 
         if (options.i) {
             inputFileName = options.i
@@ -57,11 +59,22 @@ class PNPConvert {
         }
 
         if (options.r) {
-            rotationDegrees = options.r as BigDecimal
+            boardRotation.degrees = options.r as BigDecimal
+        }
+
+        if ((options.w && !options.h) || (!options.w && options.h)) {
+            System.out.println('specify width and height')
+            builder.usage()
+            System.exit(-1);
+        }
+
+        if (options.w && options.h) {
+            boardRotation.origin.x = (options.w as BigDecimal) / 2
+            boardRotation.origin.y = (options.h as BigDecimal) / 2
         }
 
         if (options.c) {
-            Converter converter = new Converter(inputFileName, feedersFileName, outputFileName, rotationDegrees)
+            Converter converter = new Converter(inputFileName, feedersFileName, outputFileName, boardRotation)
             converter.go()
             System.exit(0);
         }
