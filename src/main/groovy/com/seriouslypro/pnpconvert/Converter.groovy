@@ -25,7 +25,7 @@ class Converter {
         Reader inputFileReader = new FileReader(inputFileName)
         CSVReader inputCSVReader = new CSVReader(inputFileReader, ',' as char)
 
-        writeHeader(fileWriter, inputFileName, outputFileName)
+        writeHeader(fileWriter)
 
         String[] headerValues = inputCSVReader.readNext()
 
@@ -57,7 +57,7 @@ class Converter {
 */
     }
 
-    static void verifyRequiredHeadersPresent(Map<DipTraceCSVHeaders, CSVHeader> dipTraceCSVHeadersCSVHeaderMap, String[] headerValues) {
+    void verifyRequiredHeadersPresent(Map<DipTraceCSVHeaders, CSVHeader> dipTraceCSVHeadersCSVHeaderMap, String[] headerValues) {
         def requiredDipTraceCSVHeaders = [
                 DipTraceCSVHeaders.REFDES,
                 DipTraceCSVHeaders.PATTERN,
@@ -82,7 +82,7 @@ class Converter {
         }
     }
 
-    static void writeHeader(FileWriter fileWriter, String inputFileName, String outputFileName) {
+    void writeHeader(FileWriter fileWriter) {
         Date now = new Date()
         String formattedDate = new SimpleDateFormat('yyyy/MM/dd').format(now)
         String formattedTime = new SimpleDateFormat('hh:mm:ss').format(now)
