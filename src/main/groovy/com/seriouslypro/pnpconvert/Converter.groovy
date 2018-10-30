@@ -2,21 +2,10 @@ package com.seriouslypro.pnpconvert
 
 import au.com.bytecode.opencsv.CSVReader
 import au.com.bytecode.opencsv.CSVWriter
-import org.apache.batik.svggen.SVGGeneratorContext
-import org.w3c.dom.DOMImplementation
-import org.w3c.dom.Document
-import org.w3c.dom.Element
 
-import java.awt.Color
-import java.awt.Font
-
+import java.awt.*
 import java.text.ParseException
 import java.text.SimpleDateFormat
-
-
-import org.apache.batik.svggen.SVGGraphics2D
-import org.apache.batik.dom.GenericDOMImplementation;
-
 
 class Converter {
 
