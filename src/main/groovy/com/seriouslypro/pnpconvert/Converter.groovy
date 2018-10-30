@@ -2,9 +2,10 @@ package com.seriouslypro.pnpconvert
 
 import au.com.bytecode.opencsv.CSVReader
 import au.com.bytecode.opencsv.CSVWriter
+import com.seriouslypro.pnpconvert.diptrace.DipTraceCSVHeaders
+import com.seriouslypro.pnpconvert.diptrace.DipTraceCSVInput
 
 import java.awt.*
-import java.text.ParseException
 import java.text.SimpleDateFormat
 
 interface CSVHeaderParser {
@@ -22,84 +23,12 @@ class ComponentPlacement {
     String name
 }
 
-class DipTraceHeaderParser implements CSVHeaderParser {
-    Map<DipTraceCSVHeaders, CSVHeader> headerMappings
-
-    private Map<DipTraceCSVHeaders, CSVHeader> createHeaderMappings(String[] headerValues) {
-        Map<DipTraceCSVHeaders, CSVHeader> headerMappings = [:]
-        headerValues.eachWithIndex { String headerValue, int index ->
-            try {
-                DipTraceCSVHeaders dipTraceCSVHeader = DipTraceCSVHeaders.fromString(headerValue)
-                CSVHeader csvHeader = new CSVHeader()
-                csvHeader.index = index
-                headerMappings[dipTraceCSVHeader] = csvHeader
-            } catch (IllegalArgumentException) {
-                // ignore unknown header
-            }
-        }
-        headerMappings
-    }
-
-    private void verifyRequiredHeadersPresent(Map<DipTraceCSVHeaders, CSVHeader> dipTraceCSVHeadersCSVHeaderMap, String[] headerValues) {
-        def requiredDipTraceCSVHeaders = [
-                DipTraceCSVHeaders.REFDES,
-                DipTraceCSVHeaders.PATTERN,
-                DipTraceCSVHeaders.X,
-                DipTraceCSVHeaders.Y,
-                DipTraceCSVHeaders.SIDE,
-                DipTraceCSVHeaders.ROTATE,
-                DipTraceCSVHeaders.VALUE,
-                DipTraceCSVHeaders.NAME
-        ]
-
-        boolean haveRequiredHeaders = dipTraceCSVHeadersCSVHeaderMap.keySet().containsAll(
-                requiredDipTraceCSVHeaders
-        )
-
-        if (!haveRequiredHeaders) {
-            String requiredHeaders = requiredDipTraceCSVHeaders.collect {
-                it.value
-            }.toArray().join(',')
-
-            throw new ParseException("Input CSV file does not contail all required headers, required: '$requiredHeaders', found: '$headerValues'", 0)
-        }
-    }
-
-    @Override
-    void parse(String[] headerValues) {
-        headerMappings = createHeaderMappings(headerValues)
-
-        verifyRequiredHeadersPresent(headerMappings, headerValues)
-    }
-}
 
 interface CSVLineParser {
     ComponentPlacement parse(Map<Object, CSVHeader> headerMappings, String[] rowValues)
 }
 
-class DipTraceLineParser implements CSVLineParser {
-    @Override
-    ComponentPlacement parse(Map<Object, CSVHeader> headerMappings, String[] rowValues) {
-
-        BigDecimal x = rowValues[headerMappings[DipTraceCSVHeaders.X].index] as BigDecimal
-        BigDecimal y = rowValues[headerMappings[DipTraceCSVHeaders.Y].index] as BigDecimal
-        Coordinate coordinate = new Coordinate(x: x, y: y)
-
-        ComponentPlacement c = new ComponentPlacement(
-            refdes: rowValues[headerMappings[DipTraceCSVHeaders.REFDES].index],
-            coordinate: coordinate,
-            pattern: rowValues[headerMappings[DipTraceCSVHeaders.PATTERN].index],
-            side: rowValues[headerMappings[DipTraceCSVHeaders.SIDE].index],
-            rotation: rowValues[headerMappings[DipTraceCSVHeaders.ROTATE].index] as BigDecimal,
-            value: rowValues[headerMappings[DipTraceCSVHeaders.VALUE].index],
-            name: rowValues[headerMappings[DipTraceCSVHeaders.NAME].index]
-        )
-
-        return c
-    }
-}
-
-class CSVInput {
+class CSVInput<T> {
     Reader reader
     CSVHeaderParser headerParser
     CSVLineParser lineParser
@@ -112,7 +41,6 @@ class CSVInput {
         this.reader = reader
 
         inputCSVReader = new CSVReader(reader, ',' as char)
-
     }
 
     void close() {
@@ -128,16 +56,9 @@ class CSVInput {
         String[] line
 
         while ((line = inputCSVReader.readNext()) != null) {
-            ComponentPlacement componentPlacement = lineParser.parse(headerParser.headerMappings, line)
-            c(componentPlacement, line)
+            T t = lineParser.parse(headerParser.headerMappings, line)
+            c(t, line)
         }
-    }
-}
-
-class DipTraceCSVInput extends CSVInput {
-
-    DipTraceCSVInput(Reader reader) {
-        super(reader, new DipTraceHeaderParser(), new DipTraceLineParser())
     }
 }
 

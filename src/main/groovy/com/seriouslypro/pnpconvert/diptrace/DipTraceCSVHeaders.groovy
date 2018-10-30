@@ -1,4 +1,4 @@
-package com.seriouslypro.pnpconvert
+package com.seriouslypro.pnpconvert.diptrace
 
 enum DipTraceCSVHeaders {
     REFDES("RefDes"),
