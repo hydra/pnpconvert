@@ -16,11 +16,6 @@ class Converter {
     BoardRotation boardRotation = new BoardRotation()
     Coordinate offset = new Coordinate()
 
-    private BigDecimal lowestX = null
-    private BigDecimal lowestY = null
-
-    SVGRenderer renderer
-
     private static final boolean append = false
 
     Converter(String inputFileName, String feedersFileName, String outputPrefix, BoardRotation boardRotation, Coordinate offset) {
