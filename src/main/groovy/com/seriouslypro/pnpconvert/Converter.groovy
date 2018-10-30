@@ -4,9 +4,7 @@ import au.com.bytecode.opencsv.CSVWriter
 import com.seriouslypro.pnpconvert.diptrace.DipTraceCSVHeaders
 import com.seriouslypro.pnpconvert.diptrace.DipTraceCSVInput
 
-import java.awt.*
-import java.text.SimpleDateFormat
-
+import java.awt.Color
 
 class Converter {
 
@@ -57,6 +55,7 @@ class Converter {
         ]
         transformCSVWriter.writeNext(outputHeaderRow)
 
+        List<ComponentPlacement> placements = []
 
         csvInput.parseLines { ComponentPlacement componentPlacement, String[] line ->
 
@@ -74,6 +73,8 @@ class Converter {
             ]
             transformCSVWriter.writeNext(outputRow)
             System.out.println(line.join(",").padRight(80) + " -> " + outputRow.join(","))
+
+            placements << transformedComponentPlacement
         }
 
         csvInput.close()
@@ -83,15 +84,39 @@ class Converter {
         String svgFileName = outputPrefix + ".svg"
         renderer.save(svgFileName)
 
-/*
-        String outputDPVFileName = outputPrefix + ".dpv"
-        Writer fileWriter = new FileWriter(outputDPVFileName, append)
-        writeHeader(fileWriter)
+        //
+        // Generate DPV
+        //
 
+        Components components = new Components()
+        Feeders feeders = new Feeders()
+
+
+        String outputDPVFileName = outputPrefix + ".dpv"
+
+        OutputStream outputStream = new FileOutputStream(outputDPVFileName, append)
+
+                DPVHeader dpvHeader = new DPVHeader(
+                fileName: outputDPVFileName,
+                pcbFileName: inputFileName
+        )
+
+        DPVGenerator generator = new DPVGenerator(
+                dpvHeader: dpvHeader,
+                placements: placements,
+                components: components,
+                feeders: feeders
+        )
+
+        generator.generate(outputStream)
+
+        outputStream.close()
+
+/*
         Reader feedersFileReader = new FileReader(inputFileName)
         CSVReader feedersCSVReader = new CSVReader(feedersFileReader, ',' as char)
 
-        fileWriter.close()
+        feedersCSVReader.close()
 */
     }
 
@@ -127,20 +152,4 @@ class Converter {
     }
 
 
-    void writeHeader(FileWriter fileWriter) {
-
-        Date now = new Date()
-        String formattedDate = new SimpleDateFormat('yyyy/MM/dd').format(now)
-        String formattedTime = new SimpleDateFormat('hh:mm:ss').format(now)
-
-
-        String header = "separated\n" +
-            DPVFileHeaders.FILE + ",$outputPrefix\n" +
-            DPVFileHeaders.PCBFILE + ",$inputFileName\n" +
-            DPVFileHeaders.DATE + ",$formattedDate\n" +
-            DPVFileHeaders.TIME + ",$formattedTime\n" +
-            DPVFileHeaders.PANELTYPE + ",0"
-
-        fileWriter.append(header)
-    }
 }

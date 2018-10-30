@@ -80,5 +80,4 @@ class SVGRenderer {
         svgGenerator.stream(root, svgFileWriter, useCSS, false);
         svgFileWriter.close()
     }
-
 }
