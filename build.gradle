@@ -34,6 +34,8 @@ dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.5.3'
     compile 'commons-codec:commons-codec:1.10'
     testCompile 'org.spockframework:spock-core:1.2-groovy-2.5'
+    testCompile group: 'cglib', name: 'cglib-nodep', version: '2.2'
+    testCompile group: 'org.objenesis', name: 'objenesis', version: '3.0.1'
 
     compile 'net.sf.opencsv:opencsv:2.3'
 
