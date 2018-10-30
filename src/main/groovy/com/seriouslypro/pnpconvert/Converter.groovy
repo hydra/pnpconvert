@@ -9,7 +9,6 @@ import org.w3c.dom.Element
 
 import java.awt.Color
 import java.awt.Font
-import java.awt.Graphics2D
 
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -18,6 +17,54 @@ import java.text.SimpleDateFormat
 import org.apache.batik.svggen.SVGGraphics2D
 import org.apache.batik.dom.GenericDOMImplementation;
 
+class SVGRenderer {
+
+    SVGGraphics2D svgGenerator
+
+    int refdesFontSize = 4
+    Font refdesFont
+
+    SVGRenderer() {
+
+        DOMImplementation domImpl =
+                GenericDOMImplementation.getDOMImplementation();
+
+        String svgNS = "http://www.w3.org/2000/svg";
+        Document document = domImpl.createDocument(svgNS, "svg", null)
+
+        SVGGeneratorContext ctx = SVGGeneratorContext.createDefault(document)
+        ctx.setEmbeddedFontsOn(true)
+
+        svgGenerator = new SVGGraphics2D(ctx, false)
+        refdesFont = new Font(Font.MONOSPACED, Font.PLAIN, refdesFontSize)
+    }
+
+    void drawPart(Color color, Coordinate coordinate, String refdes) {
+        int pointSize = 2
+        int x = coordinate.x
+        int y = coordinate.y
+
+        svgGenerator.setColor(color)
+        svgGenerator.drawOval(x - (pointSize / 2) as int, -y - (pointSize / 2) as int, pointSize, pointSize)
+        svgGenerator.setFont(refdesFont)
+        int baseline = refdesFont.getBaselineFor(refdes.charAt(0))
+        svgGenerator.drawString(refdes, x + pointSize, -y - baseline + ((refdesFontSize / 2) as int) - ((pointSize / 2) as int))
+    }
+
+
+    void save(String svgFileName) {
+        Element root = svgGenerator.getRoot();
+        root.setAttributeNS(null, "viewBox", "-125 -125 250 250");
+
+        boolean useCSS = true; // we want to use CSS style attributes
+
+        Writer svgFileWriter = new OutputStreamWriter(new FileOutputStream(svgFileName), "UTF-8");
+
+        svgGenerator.stream(root, svgFileWriter, useCSS, false);
+        svgFileWriter.close()
+    }
+
+}
 
 class Converter {
 
@@ -31,6 +78,8 @@ class Converter {
     private BigDecimal lowestX = null
     private BigDecimal lowestY = null
 
+    SVGRenderer renderer
+
     private static final boolean append = false
 
     Converter(String inputFileName, String feedersFileName, String outputPrefix, BoardRotation boardRotation, Coordinate offset) {
@@ -41,30 +90,9 @@ class Converter {
         this.offset = offset
     }
 
-    void drawPart(Graphics2D svgGenerator, int x, int y, String refdes) {
-        int pointSize = 2
-        int fontSize = 4
-        svgGenerator.drawOval(x - (pointSize / 2) as int, -y - (pointSize / 2) as int, pointSize, pointSize)
-        Font refdesFont = new Font(Font.MONOSPACED, Font.PLAIN, fontSize)
-        svgGenerator.setFont(refdesFont)
-        int baseline = refdesFont.getBaselineFor(refdes.charAt(0))
-        svgGenerator.drawString(refdes, x + pointSize, -y - baseline + ((fontSize / 2) as int) - ((pointSize / 2) as int))
-    }
-
     void convert() {
 
-        //
-        // SVG creation
-        //
-        DOMImplementation domImpl =
-                GenericDOMImplementation.getDOMImplementation();
-
-        String svgNS = "http://www.w3.org/2000/svg";
-        Document document = domImpl.createDocument(svgNS, "svg", null)
-
-        SVGGeneratorContext ctx = SVGGeneratorContext.createDefault(document)
-        ctx.setEmbeddedFontsOn(true)
-        SVGGraphics2D svgGenerator = new SVGGraphics2D(ctx, false)
+        SVGRenderer renderer = new SVGRenderer()
 
         //
         // CSV processing
@@ -109,28 +137,23 @@ class Converter {
             String value = line[inputHeaderMappings[DipTraceCSVHeaders.VALUE].index]
             String name = line[inputHeaderMappings[DipTraceCSVHeaders.NAME].index]
 
-            svgGenerator.setColor(Color.RED)
-
-            drawPart(svgGenerator, x as int, y as int, refdes)
-
 
             Coordinate c = new Coordinate(x: x, y: y)
+
+            renderer.drawPart(Color.RED, c, refdes)
 
             Coordinate rotatedCoordinate = boardRotation.applyRotation(c)
             BigDecimal rotatedRotation = (rotation + boardRotation.degrees).remainder(360)
 
-            svgGenerator.setColor(Color.BLUE)
-            drawPart(svgGenerator, rotatedCoordinate.x as int, rotatedCoordinate.y as int, refdes)
+            renderer.drawPart(Color.BLUE, rotatedCoordinate, refdes)
 
             Coordinate relocatedCoordinate = rotatedCoordinate - boardRotation.origin
 
-            svgGenerator.setColor(Color.PINK)
-            drawPart(svgGenerator, relocatedCoordinate.x as int, relocatedCoordinate.y as int, refdes)
+            renderer.drawPart(Color.PINK, relocatedCoordinate, refdes)
 
             Coordinate relocatedCoordinateWithOffset = relocatedCoordinate + offset
 
-            svgGenerator.setColor(Color.GREEN)
-            drawPart(svgGenerator, relocatedCoordinateWithOffset.x as int, relocatedCoordinateWithOffset.y as int, refdes)
+            renderer.drawPart(Color.GREEN, relocatedCoordinateWithOffset, refdes)
 
             String[] outputRow = [
                 refdes,
@@ -150,20 +173,8 @@ class Converter {
         inputCSVReader.close()
         tempCSVWriter.close()
 
-        //
-        // Save SVG file
-        //
-
-        Element root = svgGenerator.getRoot();
-        root.setAttributeNS(null, "viewBox", "-125 -125 250 250");
-
-        boolean useCSS = true; // we want to use CSS style attributes
-
         String svgFileName = outputPrefix + ".svg"
-        Writer svgFileWriter = new OutputStreamWriter(new FileOutputStream(svgFileName), "UTF-8");
-
-        svgGenerator.stream(root, svgFileWriter, useCSS, false);
-        svgFileWriter.close()
+        renderer.save(svgFileName)
 
 /*
         String outputDPVFileName = outputPrefix + ".dpv"
@@ -176,6 +187,8 @@ class Converter {
         fileWriter.close()
 */
     }
+
+
 
     private Map<DipTraceCSVHeaders, CSVHeader> createHeaderMappings(String[] headerValues) {
         Map<DipTraceCSVHeaders, CSVHeader> headerMappings = [:]
