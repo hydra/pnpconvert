@@ -34,14 +34,14 @@ class Converter {
         // CSV processing
         //
 
-        String tempFileName = outputPrefix + "-converted.csv"
+        String transformFileName = outputPrefix + "-transformed.csv"
 
 
         Reader inputFileReader = new FileReader(inputFileName)
         CSVReader inputCSVReader = new CSVReader(inputFileReader, ',' as char)
 
-        Writer tempFileWriter = new FileWriter(tempFileName, append)
-        CSVWriter tempCSVWriter = new CSVWriter(tempFileWriter, ',' as char)
+        Writer transformFileWriter = new FileWriter(transformFileName, append)
+        CSVWriter transformCSVWriter = new CSVWriter(transformFileWriter, ',' as char)
 
         String[] inputHeaderValues = inputCSVReader.readNext()
 
@@ -59,7 +59,7 @@ class Converter {
             DipTraceCSVHeaders.VALUE.value,
             DipTraceCSVHeaders.NAME.value,
         ]
-        tempCSVWriter.writeNext(outputHeaderRow)
+        transformCSVWriter.writeNext(outputHeaderRow)
 
 
         String[] line
@@ -101,13 +101,13 @@ class Converter {
                 value,
                 name
             ]
-            tempCSVWriter.writeNext(outputRow)
+            transformCSVWriter.writeNext(outputRow)
             System.out.println(line.join(",").padRight(80) + " -> " + outputRow.join(","))
         }
 
 
         inputCSVReader.close()
-        tempCSVWriter.close()
+        transformCSVWriter.close()
 
         String svgFileName = outputPrefix + ".svg"
         renderer.save(svgFileName)
@@ -167,16 +167,18 @@ class Converter {
     }
 
     void writeHeader(FileWriter fileWriter) {
+
         Date now = new Date()
         String formattedDate = new SimpleDateFormat('yyyy/MM/dd').format(now)
         String formattedTime = new SimpleDateFormat('hh:mm:ss').format(now)
 
+
         String header = "separated\n" +
-                "FILE,$outputPrefix\n" +
-                "PCBFILE,$inputFileName\n" +
-                "DATE,$formattedDate\n" +
-                "TIME,$formattedTime\n" +
-                "PANELYPE,0"
+            DPVFileHeaders.FILE + ",$outputPrefix\n" +
+            DPVFileHeaders.PCBFILE + ",$inputFileName\n" +
+            DPVFileHeaders.DATE + ",$formattedDate\n" +
+            DPVFileHeaders.TIME + ",$formattedTime\n" +
+            DPVFileHeaders.PANELTYPE + ",0"
 
         fileWriter.append(header)
     }
