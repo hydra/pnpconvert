@@ -5,11 +5,6 @@ import spock.lang.Specification
 
 class DPVGeneratorSpec extends Specification {
 
-    def 'instance'() {
-        expect:
-            new DPVGenerator()
-    }
-
     def 'generate'() {
         given:
             DPVHeader dpvHeader = new DPVHeader(
