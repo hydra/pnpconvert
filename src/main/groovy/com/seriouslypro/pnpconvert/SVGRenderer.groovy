@@ -32,16 +32,40 @@ class SVGRenderer {
         refdesFont = new Font(Font.MONOSPACED, Font.PLAIN, refdesFontSize)
     }
 
-    void drawPart(Color color, Coordinate coordinate, String refdes) {
+    void drawPart(Color color, Coordinate coordinate, String refdes, BigDecimal rotation) {
         int pointSize = 2
         int x = coordinate.x
-        int y = coordinate.y
+        int y = -coordinate.y
 
+        //
+        // origin
+        //
         svgGenerator.setColor(color)
-        svgGenerator.drawOval(x - (pointSize / 2) as int, -y - (pointSize / 2) as int, pointSize, pointSize)
+        svgGenerator.drawOval(x - (pointSize / 2) as int, y - (pointSize / 2) as int, pointSize, pointSize)
+
+        //
+        // rotation indicator
+        //
+        Float radians = Math.toRadians(rotation as Double)
+        Float radius1 = pointSize - 1;
+        Float radius2 = pointSize;
+
+        int x1 = x + (radius1 * Math.cos(radians).round())
+        int y1 = y + (radius1 * Math.sin(radians).round())
+
+        int x2 = x + (radius2 * Math.cos(radians).round())
+        int y2 = y + (radius2 * Math.sin(radians).round())
+
+
+        svgGenerator.drawLine(x1, y1, x2, y2)
+
+        //
+        // refdes
+        //
         svgGenerator.setFont(refdesFont)
         int baseline = refdesFont.getBaselineFor(refdes.charAt(0))
-        svgGenerator.drawString(refdes, x + pointSize, -y - baseline + ((refdesFontSize / 2) as int) - ((pointSize / 2) as int))
+        svgGenerator.drawString(refdes, x + pointSize, y - baseline + ((refdesFontSize / 2) as int) - ((pointSize / 2) as int))
+
     }
 
 

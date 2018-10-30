@@ -1,6 +1,5 @@
 package com.seriouslypro.pnpconvert
 
-import au.com.bytecode.opencsv.CSVReader
 import au.com.bytecode.opencsv.CSVWriter
 import com.seriouslypro.pnpconvert.diptrace.DipTraceCSVHeaders
 import com.seriouslypro.pnpconvert.diptrace.DipTraceCSVInput
@@ -8,59 +7,6 @@ import com.seriouslypro.pnpconvert.diptrace.DipTraceCSVInput
 import java.awt.*
 import java.text.SimpleDateFormat
 
-interface CSVHeaderParser {
-    void parse(String[] headerValues)
-    Map<Object, CSVHeader> getHeaderMappings()
-}
-
-class ComponentPlacement {
-    String refdes
-    String pattern
-    Coordinate coordinate
-    String side
-    BigDecimal rotation
-    String value
-    String name
-}
-
-
-interface CSVLineParser {
-    ComponentPlacement parse(Map<Object, CSVHeader> headerMappings, String[] rowValues)
-}
-
-class CSVInput<T> {
-    Reader reader
-    CSVHeaderParser headerParser
-    CSVLineParser lineParser
-
-    CSVReader inputCSVReader
-
-    CSVInput(Reader reader, CSVHeaderParser headerParser, CSVLineParser lineParser) {
-        this.headerParser = headerParser
-        this.lineParser = lineParser
-        this.reader = reader
-
-        inputCSVReader = new CSVReader(reader, ',' as char)
-    }
-
-    void close() {
-        inputCSVReader.close()
-    }
-
-    void parseHeader() {
-        String[] inputHeaderValues = inputCSVReader.readNext()
-        headerParser.parse(inputHeaderValues)
-    }
-
-    void parseLines(Closure c) {
-        String[] line
-
-        while ((line = inputCSVReader.readNext()) != null) {
-            T t = lineParser.parse(headerParser.headerMappings, line)
-            c(t, line)
-        }
-    }
-}
 
 class Converter {
 
@@ -114,30 +60,17 @@ class Converter {
 
         csvInput.parseLines { ComponentPlacement componentPlacement, String[] line ->
 
-            renderer.drawPart(Color.RED, componentPlacement.coordinate, componentPlacement.refdes)
-
-            Coordinate rotatedCoordinate = boardRotation.applyRotation(componentPlacement.coordinate)
-            BigDecimal rotatedRotation = (componentPlacement.rotation + boardRotation.degrees).remainder(360)
-
-            renderer.drawPart(Color.BLUE, rotatedCoordinate, componentPlacement.refdes)
-
-            Coordinate relocatedCoordinate = rotatedCoordinate - boardRotation.origin
-
-            renderer.drawPart(Color.PINK, relocatedCoordinate, componentPlacement.refdes)
-
-            Coordinate relocatedCoordinateWithOffset = relocatedCoordinate + offset
-
-            renderer.drawPart(Color.GREEN, relocatedCoordinateWithOffset, componentPlacement.refdes)
+            ComponentPlacement transformedComponentPlacement = transformAndRender(renderer, componentPlacement)
 
             String[] outputRow = [
-                componentPlacement.refdes,
-                componentPlacement.pattern,
-                relocatedCoordinate.x,
-                relocatedCoordinate.y,
-                componentPlacement.side,
-                rotatedRotation,
-                componentPlacement.value,
-                componentPlacement.name
+                transformedComponentPlacement.refdes,
+                transformedComponentPlacement.pattern,
+                transformedComponentPlacement.coordinate.x,
+                transformedComponentPlacement.coordinate.y,
+                transformedComponentPlacement.side,
+                transformedComponentPlacement.rotation,
+                transformedComponentPlacement.value,
+                transformedComponentPlacement.name
             ]
             transformCSVWriter.writeNext(outputRow)
             System.out.println(line.join(",").padRight(80) + " -> " + outputRow.join(","))
@@ -160,6 +93,37 @@ class Converter {
 
         fileWriter.close()
 */
+    }
+
+    private ComponentPlacement transformAndRender(SVGRenderer renderer, ComponentPlacement componentPlacement) {
+
+        // render original position
+        renderer.drawPart(Color.RED, componentPlacement.coordinate, componentPlacement.refdes, componentPlacement.rotation)
+
+        // apply board rotation
+        Coordinate rotatedCoordinate = boardRotation.applyRotation(componentPlacement.coordinate)
+        BigDecimal rotatedRotation = (componentPlacement.rotation + boardRotation.degrees).remainder(360)
+        renderer.drawPart(Color.BLUE, rotatedCoordinate, componentPlacement.refdes, rotatedRotation)
+
+        // apply board origin
+        Coordinate relocatedCoordinate = rotatedCoordinate - boardRotation.origin
+        renderer.drawPart(Color.PINK, relocatedCoordinate, componentPlacement.refdes, rotatedRotation)
+
+        // apply offset
+        Coordinate relocatedCoordinateWithOffset = relocatedCoordinate + offset
+        renderer.drawPart(Color.GREEN, relocatedCoordinateWithOffset, componentPlacement.refdes, rotatedRotation)
+
+        ComponentPlacement transformedComponentPlacement = new ComponentPlacement(
+                refdes: componentPlacement.refdes,
+                pattern: componentPlacement.pattern,
+                coordinate: rotatedCoordinate,
+                side: componentPlacement.side,
+                rotation: rotatedRotation,
+                value: componentPlacement.value,
+                name: componentPlacement.name
+        )
+
+        transformedComponentPlacement
     }
 
 
