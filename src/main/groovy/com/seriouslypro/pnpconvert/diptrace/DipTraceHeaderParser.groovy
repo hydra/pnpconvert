@@ -10,7 +10,7 @@ class DipTraceHeaderParser implements CSVHeaderParser {
 
     private Map<DipTraceCSVHeaders, CSVHeader> createHeaderMappings(String[] headerValues) {
         Map<DipTraceCSVHeaders, CSVHeader> headerMappings = [:]
-        headerValues.eachWithIndex { String headerValue, int index ->
+        headerValues.eachWithIndex { String headerValue, Integer index ->
             try {
                 DipTraceCSVHeaders dipTraceCSVHeader = DipTraceCSVHeaders.fromString(headerValue)
                 CSVHeader csvHeader = new CSVHeader()

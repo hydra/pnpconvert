@@ -14,6 +14,8 @@ class SVGRenderer {
 
     SVGGraphics2D svgGenerator
 
+    int scale = 2
+
     int refdesFontSize = 4
     Font refdesFont
 
@@ -34,8 +36,8 @@ class SVGRenderer {
 
     void drawPart(Color color, Coordinate coordinate, String refdes, BigDecimal rotation) {
         int pointSize = 2
-        int x = coordinate.x
-        int y = -coordinate.y
+        int x = (coordinate.x * scale)
+        int y = - (coordinate.y * scale)
 
         //
         // origin
@@ -71,7 +73,10 @@ class SVGRenderer {
 
     void save(String svgFileName) {
         Element root = svgGenerator.getRoot();
-        root.setAttributeNS(null, "viewBox", "-125 -125 250 250");
+        List<Integer> viewBox = [-100,-100,200,200]
+        viewBox = viewBox.collect { it * scale }
+
+        root.setAttributeNS(null, "viewBox", viewBox.join(' '));
 
         boolean useCSS = true; // we want to use CSS style attributes
 

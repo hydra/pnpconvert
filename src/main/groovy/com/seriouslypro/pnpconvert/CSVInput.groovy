@@ -5,11 +5,11 @@ import au.com.bytecode.opencsv.CSVReader
 class CSVInput<T> {
     Reader reader
     CSVHeaderParser headerParser
-    CSVLineParser lineParser
+    CSVLineParser<T> lineParser
 
     CSVReader inputCSVReader
 
-    CSVInput(Reader reader, CSVHeaderParser headerParser, CSVLineParser lineParser) {
+    CSVInput(Reader reader, CSVHeaderParser headerParser, CSVLineParser<T> lineParser) {
         this.headerParser = headerParser
         this.lineParser = lineParser
         this.reader = reader

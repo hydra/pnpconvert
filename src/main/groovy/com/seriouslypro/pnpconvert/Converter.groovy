@@ -66,12 +66,13 @@ class Converter {
                 transformedComponentPlacement.pattern,
                 transformedComponentPlacement.coordinate.x,
                 transformedComponentPlacement.coordinate.y,
-                transformedComponentPlacement.side,
+                pcbSideToDipTraceSide(transformedComponentPlacement.side),
                 transformedComponentPlacement.rotation,
                 transformedComponentPlacement.value,
                 transformedComponentPlacement.name
             ]
             transformCSVWriter.writeNext(outputRow)
+
             System.out.println(line.join(",").padRight(80) + " -> " + outputRow.join(","))
 
             placements << transformedComponentPlacement
@@ -85,12 +86,29 @@ class Converter {
         renderer.save(svgFileName)
 
         //
-        // Generate DPV
+        // Load Components
         //
 
-        Components components = new Components()
-        Feeders feeders = new Feeders()
+        Components components = loadComponents()
 
+        System.out.println("known components:")
+        components.components.each { Component component ->
+            System.out.println(component)
+        }
+
+        //
+        // Load Feeders
+        //
+
+        Feeders feeders = loadFeeders()
+
+        InputStream inputStream = new FileInputStream("components.csv")
+        InputStreamReader inputStreamReader = new InputStreamReader(inputStream)
+
+
+        //
+        // Generate DPV
+        //
 
         String outputDPVFileName = outputPrefix + ".dpv"
 
@@ -120,6 +138,29 @@ class Converter {
 */
     }
 
+    Feeders loadFeeders() {
+        Feeders feeders = new Feeders()
+        InputStream inputStream = new FileInputStream("feeders.csv")
+        InputStreamReader inputStreamReader = new InputStreamReader(inputStream)
+
+        feeders.loadFromCSV(inputStreamReader)
+        feeders
+    }
+
+    private Components loadComponents() {
+        Components components = new Components()
+        InputStream inputStream = new FileInputStream("components.csv")
+        InputStreamReader inputStreamReader = new InputStreamReader(inputStream)
+
+        components.loadFromCSV(inputStreamReader)
+
+        components
+    }
+
+    private String pcbSideToDipTraceSide(PCBSide side) {
+        side == PCBSide.TOP ? "Top" : "Bottom"
+    }
+
     private ComponentPlacement transformAndRender(SVGRenderer renderer, ComponentPlacement componentPlacement) {
 
         // render original position
@@ -141,7 +182,7 @@ class Converter {
         ComponentPlacement transformedComponentPlacement = new ComponentPlacement(
                 refdes: componentPlacement.refdes,
                 pattern: componentPlacement.pattern,
-                coordinate: rotatedCoordinate,
+                coordinate: relocatedCoordinateWithOffset,
                 side: componentPlacement.side,
                 rotation: rotatedRotation,
                 value: componentPlacement.value,
