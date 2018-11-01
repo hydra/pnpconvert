@@ -1,9 +1,15 @@
 Known issues
 ============
 
-* diptrace does not quote strings allow user to specify diptrace CSV separator
+* diptrace does not quote strings
 
 Workaround: If you have a pattern, component name or component value containing a ',' the program will not work.  Remove commas as appropriate.
+Future: allow user to specify diptrace CSV separator
+
+* commas in component names, notes etc.
+
+Workaround: remove them
+Future: discard/replace when found on input files and warn user.
 
 * negative rotations
 
