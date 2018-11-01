@@ -60,7 +60,7 @@ class Feeders {
                 PickSettings pickSettings = new PickSettings()
                 FeederProperties feederProperties = new FeederProperties()
 
-                Integer id = rowValues[headerMappings[FeederCSVColumn.TAPE_WIDTH].index] as Integer
+                Integer id = rowValues[headerMappings[FeederCSVColumn.ID].index] as Integer
 
                 loadReel(id, new ReelFeeder(
                     componentName: rowValues[headerMappings[FeederCSVColumn.COMPONENT_NAME].index],
