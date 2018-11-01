@@ -18,7 +18,7 @@ class ComponentsSpec extends Specification {
 
         and:
             List<Component> expectedComponentList = [
-                new Component(name: "10K 0402 1%")
+                new Component(name: "10K 0402 1%/RES_0402", width: 0.5, length: 1.0, height: 0.5)
             ]
 
         when:
