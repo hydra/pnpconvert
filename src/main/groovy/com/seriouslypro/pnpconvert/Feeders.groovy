@@ -5,7 +5,44 @@ class FeederMapping {
     Feeder feeder
 }
 
+abstract class Machine {
+    protected FeederProperties defaultFeederProperties = new FeederProperties()
+
+    abstract FeederProperties feederProperties(Integer id)
+}
+
+class DefaultMachine extends Machine {
+    @Override
+    FeederProperties feederProperties(Integer id) {
+        return defaultFeederProperties
+    }
+}
+
+class CHMT48VB extends Machine {
+    FeederProperties leftFeederProperties = new FeederProperties(
+        feederAngle: 270
+    )
+    FeederProperties rightFeederProperties = new FeederProperties(
+        feederAngle: 90
+    )
+
+    @Override
+    FeederProperties feederProperties(Integer id)
+    {
+        if (id >= 1 && id <= 35) {
+            return leftFeederProperties
+        }
+        if (id >= 36 && id <= 70) {
+            return rightFeederProperties
+        }
+
+        return defaultFeederProperties
+    }
+}
+
 class Feeders {
+
+    Machine machine = new DefaultMachine()
 
     Map<Integer, Feeder> feederMap = [:]
 
@@ -38,8 +75,8 @@ class Feeders {
         COMPONENT_NAME,
         NOTE,
         HEAD,
-        XOFFSET,
-        YOFFSET,
+        X_OFFSET,
+        Y_OFFSET,
         PLACE_SPEED,
         PLACE_DELAY,
 
@@ -54,20 +91,27 @@ class Feeders {
     void loadFromCSV(InputStreamReader inputStreamReader) {
 
         CSVLineParser<FeederMapping> lineParser = new CSVLineParser<FeederMapping>() {
+
             @Override
             FeederMapping parse(Map<Object, CSVHeader> headerMappings, String[] rowValues) {
 
                 PickSettings pickSettings = new PickSettings()
 
+                pickSettings.xOffset = rowValues[headerMappings[FeederCSVColumn.X_OFFSET].index] as BigDecimal
+                pickSettings.yOffset = rowValues[headerMappings[FeederCSVColumn.Y_OFFSET].index] as BigDecimal
+                pickSettings.head = rowValues[headerMappings[FeederCSVColumn.HEAD].index] as Integer
+                pickSettings.packageAngle = rowValues[headerMappings[FeederCSVColumn.PACKAGE_ANGLE].index] as BigDecimal
+
                 if (headerMappings[FeederCSVColumn.TAPE_SPACING]) {
                     pickSettings.tapeSpacing = rowValues[headerMappings[FeederCSVColumn.TAPE_SPACING].index] as Integer
                 }
 
-                FeederProperties feederProperties = new FeederProperties()
-
                 Integer id = rowValues[headerMappings[FeederCSVColumn.ID].index] as Integer
 
+                FeederProperties feederProperties = machine.feederProperties(id)
+
                 loadReel(id, new ReelFeeder(
+                    enabled: rowValues[headerMappings[FeederCSVColumn.ENABLED].index].toBoolean(),
                     componentName: rowValues[headerMappings[FeederCSVColumn.COMPONENT_NAME].index],
                     note: rowValues[headerMappings[FeederCSVColumn.NOTE].index],
                     tapeWidth: rowValues[headerMappings[FeederCSVColumn.TAPE_WIDTH].index] as Integer,

@@ -139,7 +139,9 @@ class Converter {
     }
 
     Feeders loadFeeders() {
-        Feeders feeders = new Feeders()
+        Feeders feeders = new Feeders(
+            machine: new CHMT48VB()
+        )
         InputStream inputStream = new FileInputStream("feeders.csv")
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream)
 

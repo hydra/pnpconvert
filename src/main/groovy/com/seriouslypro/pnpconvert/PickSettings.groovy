@@ -12,7 +12,7 @@ class PickSettings {
     int placeDelay = 0              // ??
     int takeHeight = 0              // ??
 
-    int packageAngle = 0            // degrees, >= 0 < 360 - CLOCKWISE
+    int packageAngle = 0            // degrees, >= 0 < 360 - CLOCKWISE, relative to feeder angle
 
     // tape settings
     int tapeSpacing = 4             // mm
