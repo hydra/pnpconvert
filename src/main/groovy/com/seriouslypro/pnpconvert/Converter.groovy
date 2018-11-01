@@ -12,15 +12,17 @@ class Converter {
     String inputFileName
     String outputPrefix
     String feedersFileName
+    String componentsFileName
 
     BoardRotation boardRotation = new BoardRotation()
     Coordinate offset = new Coordinate()
 
     private static final boolean append = false
 
-    Converter(String inputFileName, String feedersFileName, String outputPrefix, BoardRotation boardRotation, Coordinate offset) {
+    Converter(String inputFileName, String feedersFileName, String componentsFileName, String outputPrefix, BoardRotation boardRotation, Coordinate offset) {
         this.inputFileName = inputFileName
         this.feedersFileName = feedersFileName
+        this.componentsFileName = componentsFileName
         this.outputPrefix = outputPrefix
         this.boardRotation = boardRotation
         this.offset = offset
@@ -130,20 +132,13 @@ class Converter {
         generator.generate(outputStream)
 
         outputStream.close()
-
-/*
-        Reader feedersFileReader = new FileReader(inputFileName)
-        CSVReader feedersCSVReader = new CSVReader(feedersFileReader, ',' as char)
-
-        feedersCSVReader.close()
-*/
     }
 
     Feeders loadFeeders() {
         Feeders feeders = new Feeders(
             machine: new CHMT48VB()
         )
-        InputStream inputStream = new FileInputStream("feeders.csv")
+        InputStream inputStream = new FileInputStream(feedersFileName)
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream)
 
         feeders.loadFromCSV(inputStreamReader)
@@ -152,7 +147,7 @@ class Converter {
 
     private Components loadComponents() {
         Components components = new Components()
-        InputStream inputStream = new FileInputStream("components.csv")
+        InputStream inputStream = new FileInputStream(componentsFileName)
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream)
 
         components.loadFromCSV(inputStreamReader)
