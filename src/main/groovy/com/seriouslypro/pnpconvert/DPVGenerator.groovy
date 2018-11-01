@@ -180,7 +180,7 @@ class DPVGenerator {
                 twoDigitDecimalFormat.format(pickSettings.xOffset),
                 twoDigitDecimalFormat.format(pickSettings.yOffset),
                 pickSettings.tapeSpacing,
-                feeder.note,
+                buildMaterialNote(component, feeder),
                 twoDigitDecimalFormat.format(component.height),
                 buildPlaceSpeed(pickSettings.placeSpeedPercentage),
                 statusFlags & 0xFF,
@@ -192,6 +192,14 @@ class DPVGenerator {
         ]
 
         return material
+    }
+
+    private String buildMaterialNote(Component component, Feeder feeder) {
+        String materialNote = component.name
+        if (feeder.note) {
+            materialNote += " - " + feeder.note
+        }
+        materialNote
     }
 
     private int buildStatus(boolean enabled, PickSettings pickSettings) {

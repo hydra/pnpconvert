@@ -52,6 +52,7 @@ class Feeders {
 
                 Feeder feeder = new ReelFeeder(
                     componentName: rowValues[headerMappings[FeederCSVColumn.COMPONENT_NAME].index],
+                    note: rowValues[headerMappings[FeederCSVColumn.NOTE].index],
                     tapeWidth: rowValues[headerMappings[FeederCSVColumn.TAPE_WIDTH].index] as Integer,
                     pickSettings: pickSettings,
                     properties: feederProperties

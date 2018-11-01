@@ -2,7 +2,7 @@ package com.seriouslypro.pnpconvert
 
 class Feeder {
     boolean enabled = true
-    String note
+    String note = ""
     String componentName
     PickSettings pickSettings
     FeederProperties properties
