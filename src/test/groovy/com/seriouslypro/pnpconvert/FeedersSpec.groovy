@@ -4,6 +4,8 @@ import spock.lang.Specification
 
 class FeedersSpec extends Specification {
 
+    private static final String TEST_COMPONENT_NAME = "TEST-COMPONENT"
+
     Feeders feeders
 
     void setup() {
@@ -17,14 +19,14 @@ class FeedersSpec extends Specification {
 
     def 'find by component - matching component'() {
         given:
-            Component mockComponent = Mock()
+            Component component = new Component(name: TEST_COMPONENT_NAME)
             PickSettings mockPickSettings = Mock()
             FeederProperties mockFeederProperties = Mock()
 
-            feeders.loadReel(1, 8, mockComponent, mockPickSettings, "TEST-NOTE", mockFeederProperties)
+            feeders.loadReel(1, 8, TEST_COMPONENT_NAME, mockPickSettings, "TEST-NOTE", mockFeederProperties)
 
         when:
-            FeederMapping result = feeders.findByComponent(mockComponent)
+            FeederMapping result = feeders.findByComponent(component)
 
         then:
             result.id == 1
