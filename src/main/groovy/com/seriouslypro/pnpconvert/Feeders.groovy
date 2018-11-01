@@ -58,6 +58,11 @@ class Feeders {
             FeederMapping parse(Map<Object, CSVHeader> headerMappings, String[] rowValues) {
 
                 PickSettings pickSettings = new PickSettings()
+
+                if (headerMappings[FeederCSVColumn.TAPE_SPACING]) {
+                    pickSettings.tapeSpacing = rowValues[headerMappings[FeederCSVColumn.TAPE_SPACING].index] as Integer
+                }
+
                 FeederProperties feederProperties = new FeederProperties()
 
                 Integer id = rowValues[headerMappings[FeederCSVColumn.ID].index] as Integer
