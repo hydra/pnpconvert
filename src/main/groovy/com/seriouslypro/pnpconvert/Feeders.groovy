@@ -9,8 +9,18 @@ class Feeders {
 
     Map<Integer, Feeder> feederMap = [:]
 
-    void loadReel(int id, int tapeWidth, Component component, PickSettings pickSettings, String note, FeederProperties feederProperties) {
-        feederMap[id] = new ReelFeeder(tapeWidth: tapeWidth, component: component, pickSettings: pickSettings, note: note, properties: feederProperties)
+    void loadReel(int id, int tapeWidth, String componentName, PickSettings pickSettings, String note, FeederProperties feederProperties) {
+        loadReel(id, new ReelFeeder(
+            tapeWidth: tapeWidth,
+            componentName: componentName,
+            pickSettings: pickSettings,
+            note: note,
+            properties: feederProperties
+        ))
+    }
+
+    void loadReel(int id, ReelFeeder reelFeeder) {
+        feederMap[id] = reelFeeder
     }
 
     FeederMapping findByComponent(Component component) {
@@ -50,16 +60,17 @@ class Feeders {
                 PickSettings pickSettings = new PickSettings()
                 FeederProperties feederProperties = new FeederProperties()
 
-                Feeder feeder = new ReelFeeder(
+                Integer id = rowValues[headerMappings[FeederCSVColumn.TAPE_WIDTH].index] as Integer
+
+                loadReel(id, new ReelFeeder(
                     componentName: rowValues[headerMappings[FeederCSVColumn.COMPONENT_NAME].index],
                     note: rowValues[headerMappings[FeederCSVColumn.NOTE].index],
                     tapeWidth: rowValues[headerMappings[FeederCSVColumn.TAPE_WIDTH].index] as Integer,
                     pickSettings: pickSettings,
                     properties: feederProperties
-                )
+                ))
 
-                Integer id = rowValues[headerMappings[FeederCSVColumn.TAPE_WIDTH].index] as Integer
-                return new FeederMapping(id: id, feeder: feeder)
+                return new FeederMapping(id: id, feeder: feederMap[id])
             }
         }
         CSVHeaderParser componentHeaderParser = new CSVHeaderParser() {
