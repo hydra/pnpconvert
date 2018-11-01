@@ -61,14 +61,23 @@ class DPVGenerator {
             }
             def (Integer feederId, Feeder feeder) = [findResult.id, findResult.feeder]
 
-            MaterialSelection materialSelection = new MaterialSelection(
-                component: component,
-                feederId: feederId,
-                feeder: feeder,
-                material:  buildMaterial(feederId, feeder, component)
-            )
+            MaterialSelection existingMaterialSelection = materialSelections.values().find { MaterialSelection candidate ->
+                candidate.feederId == feederId
+            }
 
-            materialSelections[placement] = materialSelection
+            if (existingMaterialSelection) {
+                materialSelections[placement] = existingMaterialSelection
+            } else {
+
+                MaterialSelection materialSelection = new MaterialSelection(
+                        component: component,
+                        feederId: feederId,
+                        feeder: feeder,
+                        material: buildMaterial(feederId, feeder, component)
+                )
+
+                materialSelections[placement] = materialSelection
+            }
         }
 
         return materialSelections
@@ -155,7 +164,11 @@ class DPVGenerator {
                 "Table,No.,ID,DeltX,DeltY,FeedRates,Note,Height,Speed,Status,SizeX,SizeY,HeightTake,DelayTake,nPullStripSpeed"
         stream.println(sectionHeader)
 
-        materials.values().each { materialSelection ->
+        materials.values().toSorted { a, b ->
+            a.feederId <=> b.feederId
+        }.toUnique { a ->
+            a.feederId
+        }.each { materialSelection ->
             stream.println(materialSelection.material.join(","))
         }
         stream.println()
@@ -213,8 +226,6 @@ class DPVGenerator {
         //0: 1 = Skip placement
         //0: 0 = Place this component
         //Example: 3 (decimal) (0b00000011) = Skip placement, Use vacuum detection, No vision
-
-        statusFlags |= (1 << 7)
 
         if (!enabled) {
             statusFlags |= (1 << 0)

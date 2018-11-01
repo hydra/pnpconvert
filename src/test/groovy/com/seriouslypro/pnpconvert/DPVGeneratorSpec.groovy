@@ -66,8 +66,8 @@ class DPVGeneratorSpec extends Specification {
                 feederAngle: 270
             )
 
-            feeders.loadReel(1, 8, component1, pickSettings, "Cheap " + component1.name, leftHandSideReel)
-            feeders.loadReel(36, 8, component2, pickSettings, "Expensive " + component2.name, rightHandSideReel)
+            feeders.loadReel(1, 8, component1.name, pickSettings, "Cheap", leftHandSideReel)
+            feeders.loadReel(36, 8, component2.name, pickSettings, "Expensive", rightHandSideReel)
 
         and:
             componentPlacements = [
@@ -77,6 +77,15 @@ class DPVGeneratorSpec extends Specification {
                     coordinate: new Coordinate(x: 14.44, y: 13.9),
                     side: PCBSide.TOP,
                     rotation: 90,
+                    value: "10K 0402 1%",
+                    name: "RES_0402"
+                ),
+                new ComponentPlacement(
+                    refdes: "R2",
+                    pattern: "RES_0402_HIGH_DENSITY",
+                    coordinate: new Coordinate(x: 15.72, y: 25.2),
+                    side: PCBSide.TOP,
+                    rotation: 180,
                     value: "10K 0402 1%",
                     name: "RES_0402"
                 ),
@@ -91,19 +100,26 @@ class DPVGeneratorSpec extends Specification {
                 )
             ]
 
+            boolean haveTwoIdenticalComponents = (
+                componentPlacements[0].value == componentPlacements[1].value &&
+                componentPlacements[0].name == componentPlacements[1].name
+            )
+            assert haveTwoIdenticalComponents // two identical components should result in a single material.
+
         and:
             DPVGenerator generator = buildGenerator()
 
         and:
             List<List<String>> expectedMaterials = [
-                ["Station","0","1","0","0","4","Cheap 10K 0402 1%/RES_0402","0.5","0","6","0","0","0","0","0"],
-                ["Station","1","36","0","0","4","Expensive 100nF 6.3V 0402/CAP_0402","0.5","0","6","0","0","0","0","0"]
+                ["Station","0","1","0","0","4","10K 0402 1%/RES_0402 - Cheap","0.5","0","6","0","0","0","0","0"],
+                ["Station","1","36","0","0","4","100nF 6.3V 0402/CAP_0402 - Expensive","0.5","0","6","0","0","0","0","0"]
             ]
 
         and:
             List<List<String>> expectedComponents = [
                 ["EComponent","0","1","1","1","14.44","13.9","180","0.5","6","0","R1","10K 0402 1%/RES_0402","0"],
-                ["EComponent","1","2","1","36","24.89","21.64","135","0.5","6","0","C1","100nF 6.3V 0402/CAP_0402","0"]
+                ["EComponent","1","2","1","1","15.72","25.2","-90","0.5","6","0","R2","10K 0402 1%/RES_0402","0"],
+                ["EComponent","2","3","1","36","24.89","21.64","135","0.5","6","0","C1","100nF 6.3V 0402/CAP_0402","0"]
             ]
 
         when:
