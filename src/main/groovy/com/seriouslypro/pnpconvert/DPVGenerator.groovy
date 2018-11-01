@@ -35,6 +35,7 @@ class DPVGenerator {
         writeHeader(dpvHeader)
         writeMaterials(materialSelections)
         writePlacements(placements)
+        writePanel()
     }
 
     class MaterialSelection {
@@ -249,6 +250,12 @@ class DPVGenerator {
         placements.each { placement ->
             stream.println(placement.join(","))
         }
+        stream.println()
+    }
+
+    void writePanel() {
+        stream.println("Table,No.,ID,DeltX,DeltY")
+        stream.println("Panel_Coord,0,1,0,0")
         stream.println()
     }
 

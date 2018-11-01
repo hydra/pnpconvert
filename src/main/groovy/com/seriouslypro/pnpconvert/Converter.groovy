@@ -3,6 +3,7 @@ package com.seriouslypro.pnpconvert
 import au.com.bytecode.opencsv.CSVWriter
 import com.seriouslypro.pnpconvert.diptrace.DipTraceCSVHeaders
 import com.seriouslypro.pnpconvert.diptrace.DipTraceCSVInput
+import com.seriouslypro.pnpconvert.machine.CHMT48VB
 
 import java.awt.Color
 

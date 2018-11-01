@@ -1,44 +1,13 @@
 package com.seriouslypro.pnpconvert
 
+import com.seriouslypro.pnpconvert.machine.DefaultMachine
+import com.seriouslypro.pnpconvert.machine.Machine
+
 class FeederMapping {
     Integer id
     Feeder feeder
 }
 
-abstract class Machine {
-    protected FeederProperties defaultFeederProperties = new FeederProperties()
-
-    abstract FeederProperties feederProperties(Integer id)
-}
-
-class DefaultMachine extends Machine {
-    @Override
-    FeederProperties feederProperties(Integer id) {
-        return defaultFeederProperties
-    }
-}
-
-class CHMT48VB extends Machine {
-    FeederProperties leftFeederProperties = new FeederProperties(
-        feederAngle: 270
-    )
-    FeederProperties rightFeederProperties = new FeederProperties(
-        feederAngle: 90
-    )
-
-    @Override
-    FeederProperties feederProperties(Integer id)
-    {
-        if (id >= 1 && id <= 35) {
-            return leftFeederProperties
-        }
-        if (id >= 36 && id <= 70) {
-            return rightFeederProperties
-        }
-
-        return defaultFeederProperties
-    }
-}
 
 class Feeders {
 
