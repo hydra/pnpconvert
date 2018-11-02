@@ -47,3 +47,8 @@ dependencies {
     compile group: 'org.apache.xmlgraphics', name: 'batik-svggen', version: '1.10'
     compile group: 'org.apache.xmlgraphics', name: 'batik-dom', version: '1.10'
 }
+
+buildScan {
+    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+    termsOfServiceAgree = 'yes'
+}
