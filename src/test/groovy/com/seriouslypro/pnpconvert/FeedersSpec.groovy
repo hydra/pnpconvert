@@ -47,6 +47,8 @@ class FeedersSpec extends Specification {
                 yOffset: 0.35G,
                 packageAngle: 0,
                 head: 1,
+                useVision: true,
+                checkVacuum: false,
             )
 
             FeederProperties feeder1Properties = feeders.machine.feederProperties(feeder1Id)
@@ -63,22 +65,24 @@ class FeedersSpec extends Specification {
             Integer feeder2Id = 27
 
             PickSettings feeder2PickSettings = new PickSettings(
-                    tapeSpacing: 12,
-                    xOffset: 0G,
-                    yOffset: 0G,
-                    packageAngle: 270,
-                    head: 2,
+                tapeSpacing: 12,
+                xOffset: 0G,
+                yOffset: 0G,
+                packageAngle: 270,
+                head: 2,
+                useVision: false,
+                checkVacuum: true,
             )
 
             FeederProperties feeder2Properties = feeders.machine.feederProperties(feeder2Id)
 
             Feeder feeder2 = new ReelFeeder(
-                    enabled: true,
-                    componentName: "MicroUSB/001-01-0x06x",
-                    note: "LH",
-                    pickSettings: feeder2PickSettings,
-                    tapeWidth: 16,
-                    properties: feeder2Properties,
+                enabled: true,
+                componentName: "MicroUSB/001-01-0x06x",
+                note: "LH",
+                pickSettings: feeder2PickSettings,
+                tapeWidth: 16,
+                properties: feeder2Properties,
             )
         and:
 

@@ -69,6 +69,8 @@ class Feeders {
                 pickSettings.xOffset = rowValues[headerMappings[FeederCSVColumn.X_OFFSET].index] as BigDecimal
                 pickSettings.yOffset = rowValues[headerMappings[FeederCSVColumn.Y_OFFSET].index] as BigDecimal
                 pickSettings.head = rowValues[headerMappings[FeederCSVColumn.HEAD].index] as Integer
+                pickSettings.checkVacuum = rowValues[headerMappings[FeederCSVColumn.CHECK_VACUUM].index].toBoolean()
+                pickSettings.useVision = rowValues[headerMappings[FeederCSVColumn.USE_VISION].index].toBoolean()
                 pickSettings.packageAngle = rowValues[headerMappings[FeederCSVColumn.PACKAGE_ANGLE].index] as BigDecimal
 
                 if (headerMappings[FeederCSVColumn.TAPE_SPACING]) {
