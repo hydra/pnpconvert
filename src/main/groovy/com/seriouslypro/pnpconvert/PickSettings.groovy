@@ -1,5 +1,10 @@
 package com.seriouslypro.pnpconvert
 
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
+
+@ToString(includeNames = true, includePackage = false)
+@EqualsAndHashCode
 class PickSettings {
     BigDecimal xOffset = 0          // mm
     BigDecimal yOffset = 0          // mm
