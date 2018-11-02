@@ -44,8 +44,6 @@ dependencies {
     compile 'net.glxn.qrgen:javase:2.0'
     compile 'org.apache.pdfbox:pdfbox:2.0.0-RC3'
 
-    compile 'com.seriouslypro.ilap:ilap:1.1-SNAPSHOT'
-
     compile group: 'org.apache.xmlgraphics', name: 'batik-svggen', version: '1.10'
     compile group: 'org.apache.xmlgraphics', name: 'batik-dom', version: '1.10'
 }
