@@ -72,9 +72,16 @@ class Feeders {
                 pickSettings.checkVacuum = rowValues[headerMappings[FeederCSVColumn.CHECK_VACUUM].index].toBoolean()
                 pickSettings.useVision = rowValues[headerMappings[FeederCSVColumn.USE_VISION].index].toBoolean()
                 pickSettings.packageAngle = rowValues[headerMappings[FeederCSVColumn.PACKAGE_ANGLE].index] as BigDecimal
+                pickSettings.placeSpeedPercentage = rowValues[headerMappings[FeederCSVColumn.PLACE_SPEED].index] as BigDecimal
+                pickSettings.placeDelay = rowValues[headerMappings[FeederCSVColumn.PLACE_DELAY].index] as Integer
+                pickSettings.takeHeight = rowValues[headerMappings[FeederCSVColumn.TAKE_HEIGHT].index] as Integer
+
 
                 if (headerMappings[FeederCSVColumn.TAPE_SPACING]) {
                     pickSettings.tapeSpacing = rowValues[headerMappings[FeederCSVColumn.TAPE_SPACING].index] as Integer
+                }
+                if (headerMappings[FeederCSVColumn.TAPE_PULL_SPEED]) {
+                    pickSettings.pullSpeed = rowValues[headerMappings[FeederCSVColumn.TAPE_PULL_SPEED].index] as Integer
                 }
 
                 Integer id = rowValues[headerMappings[FeederCSVColumn.ID].index] as Integer

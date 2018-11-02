@@ -49,6 +49,10 @@ class FeedersSpec extends Specification {
                 head: 1,
                 useVision: true,
                 checkVacuum: false,
+                placeSpeedPercentage: 100,
+                placeDelay: 50,
+                takeHeight: 1,
+                pullSpeed: 50,
             )
 
             FeederProperties feeder1Properties = feeders.machine.feederProperties(feeder1Id)
@@ -72,6 +76,10 @@ class FeedersSpec extends Specification {
                 head: 2,
                 useVision: false,
                 checkVacuum: true,
+                placeSpeedPercentage: 50,
+                placeDelay: 25,
+                takeHeight: 2.5,
+                pullSpeed: 25,
             )
 
             FeederProperties feeder2Properties = feeders.machine.feederProperties(feeder2Id)
@@ -91,10 +99,22 @@ class FeedersSpec extends Specification {
                 (feeder2Id): feeder2,
             ]
 
+        and:
+            allPropertiesDifferent(PickSettings, feeder1PickSettings, feeder2PickSettings)
+            allPropertiesDifferent(ReelFeeder, feeder1, feeder2)
+
         when:
             feeders.loadFromCSV(inputStreamReader)
 
         then:
             feeders.feederMap.sort() == expectedFeederMap.sort()
+    }
+
+    void allPropertiesDifferent(Class aClass, Object a, Object b) {
+        aClass.getDeclaredFields().findAll{ field ->
+            !field.name.contains('$') && field.name != "metaClass" // filter out all the groovy magic
+        }.each { field ->
+            assert a.getProperty(field.name) != b.getProperty(field.name)
+        }
     }
 }

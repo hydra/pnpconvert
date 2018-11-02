@@ -1,3 +1,3 @@
-"ID","Enabled","Component Name","Tape Width","Note","Tape Spacing","X Offset","Y Offset","Head","Package Angle","Use Vision","Check Vacuum"
-36,N,"10K 0402 1%/RES_0402",8,"RH",2,-0.07,0.35,1,0,Y,N
-27,Y,"MicroUSB/001-01-0x06x",16,"LH",12,0,0,2,270,N,Y
+"ID","Enabled","Component Name","Tape Width","Note","Tape Spacing","X Offset","Y Offset","Head","Package Angle","Use Vision","Check Vacuum", "Place Speed","Place Delay","Take Height","Tape Pull Speed"
+36,N,"10K 0402 1%/RES_0402",8,"RH",2,-0.07,0.35,1,0,Y,N,100,50,1,50
+27,Y,"MicroUSB/001-01-0x06x",16,"LH",12,0,0,2,270,N,Y,50,25,2,25
