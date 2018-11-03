@@ -7,6 +7,8 @@ import spock.lang.Unroll
 
 class DPVGeneratorSpec extends Specification {
 
+    private static final LF = System.getProperty("line.separator")
+
     DPVHeader dpvHeader = new DPVHeader(
             fileName: "TEST-FILE",
             pcbFileName: "TEST-PCB-FILE"
@@ -44,6 +46,12 @@ class DPVGeneratorSpec extends Specification {
 
         and:
             content.contains("Table,No.,ID,PHead,STNo.,DeltX,DeltY,Angle,Height,Skip,Speed,Explain,Note,Delay")
+
+        and:
+            content.contains(
+                "Table,No.,ID,DeltX,DeltY" + LF +
+                "Panel_Coord,0,1,0,0"
+            )
     }
 
     def 'generate for components in feeders'() {
