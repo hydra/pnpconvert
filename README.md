@@ -23,6 +23,7 @@ Written by Dominic Clifton
 invalid parameter combinations
 usage: pnpconvert
  -c                      convert
+ -co <components>        components csv file
  -f <feeders>            feeders csv file
  -i <input>              input csv file
  -o <output>             output prefix
@@ -32,6 +33,7 @@ usage: pnpconvert
  -rx <rotationX>         rotation X origin
  -ry <rotationY>         rotation Y origin
  -s <source directory>   scan and import csv files
+ -t <trays>              trays csv file
  -v                      version
 ```
 
@@ -61,23 +63,24 @@ Note: PCB width and height has to be added to offsets to avoid negative componen
 DPV Generation process
 ======================
 
-3 input files are required to generate a DPV file for your design.
+4 input files are required to generate a DPV file for your design.
 
 Generate the DipTrace Pick and Place file
 Use "File/Export/Pick and Place...".  Ensure the fields as per the example files in the `examples` folder.
 The order of the CSV fields does not matter, the column headers are used to find the data.
 
-1. Reads a DipTrace Pick and Place file
+1. A DipTrace Pick and Place file is read.
 2. Any rotation and offset transformations are applied.
 3. An updated Pick and Place file, with transformed coordinates and rotation angles is generated.
-3. An SVG file is generated.
-4. A feeders csv file which contains the list of feeders and pick settings.
-5. A components csv file which contains component definitions.
+4. A SVG file is generated.
+5. A trays CSV file containing tray definitions is read.
+6. A feeders CSV file containing feeder and pick settings is read.
+7. A components CSV file which contains component definitions is read.
 
 The process starts by reading the pick-and-place file cross-referencing each component name and value against
- entries in the components file, then it looks for feeders that have the component.  When things match up the materials and components tables in the DPV file are generated.
+ entries in the components file, then it looks for feeders (reels or trays) that have the component.  When things match up the materials and components tables in the DPV file are generated.
 
-When things don't match up a list of unknown componets and unloaded feeders is presented which should then be added to the appropriate input files.
+When things don't match up a list of unknown components and unloaded feeders is presented which should then be added to the appropriate input files.
 
 SVG file
 ========
