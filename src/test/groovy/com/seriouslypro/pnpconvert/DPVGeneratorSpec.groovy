@@ -222,4 +222,17 @@ class DPVGeneratorSpec extends Specification {
         }
     }
 
+    @Ignore
+    def 'generate panel'() {
+        //https://github.com/sparkfunX/Desktop-PickAndPlace-CHMT36VA/blob/master/Eagle-Conversion/ConvertToCharm.ulp#L469-L498
+        expect:
+            false
+    }
+
+    def 'generate array'() {
+        //https://github.com/sparkfunX/Desktop-PickAndPlace-CHMT36VA/blob/master/Eagle-Conversion/ConvertToCharm.ulp#L469-L498
+        expect:
+            false
+    }
+
 }
