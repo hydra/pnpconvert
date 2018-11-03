@@ -6,6 +6,8 @@ jdk:
 
 script:
   - ./gradlew build --scan -s
+  - ./gradlew installDist
+  - ./build-examples.sh
 
 
 before_cache:
