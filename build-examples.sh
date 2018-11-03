@@ -1,4 +1,4 @@
-#!/bin/env sh
+#!/bin/sh
 
 PNPCONVERT=./build/install/pnpconvert/bin/pnpconvert
 
