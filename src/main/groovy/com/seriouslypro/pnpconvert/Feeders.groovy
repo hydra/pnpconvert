@@ -36,6 +36,16 @@ class Feeders {
         }
     }
 
+    void loadTray(int id, Tray tray, String componentName, PickSettings pickSettings, String note, FeederProperties feederProperties) {
+        feederMap[id] = new TrayFeeder(
+            tray: tray,
+            componentName: componentName,
+            pickSettings: pickSettings,
+            note: note,
+            properties: feederProperties
+        )
+    }
+
     static enum FeederCSVColumn {
         ID,
         ENABLED,

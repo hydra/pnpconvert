@@ -30,11 +30,14 @@ class DPVGenerator {
 
         List<String[]> placements = buildPlacements(materialSelections)
 
+        List<String[]> trays = buildTrays(materialSelections)
+
         stream = new PrintStream(outputStream, false, StandardCharsets.UTF_8.toString())
 
         writeHeader(dpvHeader)
         writeMaterials(materialSelections)
         writePlacements(placements)
+        writeTrays(trays)
         writePanel()
     }
 
@@ -98,7 +101,6 @@ class DPVGenerator {
 
         materialSelections.each { ComponentPlacement componentPlacement, MaterialSelection materialSelection ->
 
-
             PickSettings pickSettings = materialSelection.feeder.pickSettings
 
             BigDecimal counterClockwiseMachineAngle = calculateMachineAngle(
@@ -141,6 +143,41 @@ class DPVGenerator {
         if (machineAngle > 180) machineAngle -= 360
 
         return machineAngle
+    }
+
+    List<String[]> buildTrays(Map<ComponentPlacement, MaterialSelection> materialSelections) {
+        Map<Integer, String[]> trays = [:]
+
+        NumberSequence trayNumberSequence = new NumberSequence(0)
+
+        materialSelections.each { ComponentPlacement placement, MaterialSelection materialSelection ->
+            Feeder candidate = materialSelection.feeder
+
+            boolean feederUsesTray = candidate instanceof TrayFeeder
+            boolean alreadyProcessed = trays.containsKey(materialSelection.feederId)
+            if (!feederUsesTray || alreadyProcessed) {
+                return
+            }
+
+            Tray tray = ((TrayFeeder)candidate).tray
+
+            String[] trayRow = [
+                "ICTray",
+                trayNumberSequence.next(),
+                materialSelection.feederId,
+                tray.firstComponentX,
+                tray.firstComponentY,
+                tray.lastComponentX,
+                tray.lastComponentY,
+                tray.columns,
+                tray.rows,
+                tray.firstComponentIndex,
+            ]
+
+            trays[materialSelection.feederId] = trayRow
+        }
+
+        trays.values() as List<String[]>
     }
 
     void writeHeader(DPVHeader dpvHeader) {
@@ -250,6 +287,18 @@ class DPVGenerator {
         placements.each { placement ->
             stream.println(placement.join(","))
         }
+        stream.println()
+    }
+
+    void writeTrays(List<String[]> trays) {
+        String sectionHeader = "Table,No.,ID,CenterX,CenterY,IntervalX,IntervalY,NumX,NumY,Start"
+
+        stream.println(sectionHeader)
+
+        trays.each { tray ->
+            stream.println(tray.join(","))
+        }
+
         stream.println()
     }
 

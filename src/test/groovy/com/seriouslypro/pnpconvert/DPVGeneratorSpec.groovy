@@ -42,10 +42,13 @@ class DPVGeneratorSpec extends Specification {
             content.startsWith("separated")
 
         and:
-            content.contains("Table,No.,ID,DeltX,DeltY,FeedRates,Note,Height,Speed,Status,SizeX,SizeY,HeightTake,DelayTake,nPullStripSpeed")
+            materialsPresent(content, [])
 
         and:
-            content.contains("Table,No.,ID,PHead,STNo.,DeltX,DeltY,Angle,Height,Skip,Speed,Explain,Note,Delay")
+            componentsPresent(content, [])
+
+        and:
+            traysPresent(content, [])
 
         and:
             content.contains(
@@ -62,11 +65,21 @@ class DPVGeneratorSpec extends Specification {
             Component component2 = new Component(
                 name: "100nF 6.3V 0402/CAP_0402"
             )
+            Component component3 = new Component(
+                name: "MAX14851"
+            )
+            Component component4 = new Component(
+                name: "CAT24C32WI-GT3"
+            )
             components.add(component1)
             components.add(component2)
+            components.add(component3)
+            components.add(component4)
 
+        and:
             PickSettings pickSettings = new PickSettings()
 
+        and:
             FeederProperties leftHandSideReel = new FeederProperties(
                 feederAngle: 90
             )
@@ -76,6 +89,32 @@ class DPVGeneratorSpec extends Specification {
 
             feeders.loadReel(1, 8, component1.name, pickSettings, "Cheap", leftHandSideReel)
             feeders.loadReel(36, 8, component2.name, pickSettings, "Expensive", rightHandSideReel)
+
+        and:
+            Tray tray1 = new Tray(
+                name: "BL-1-4",
+                firstComponentX: 205.07G, firstComponentY: 61.05G,
+                lastComponentX: 277.1G, lastComponentY: 61.11G,
+                columns: 4,
+                rows: 1,
+                firstComponentIndex: 0
+            )
+
+            Tray tray2 = new Tray(
+                name: "BL-6-7",
+                firstComponentX: 327.5G, firstComponentY: 58.57G,
+                lastComponentX: 351.51G, lastComponentY: 58.57G,
+                columns: 2,
+                rows: 1,
+                firstComponentIndex: 0
+            )
+
+            FeederProperties trayFeederProperties = new FeederProperties(
+                feederAngle: 0
+            )
+
+            feeders.loadTray(91, tray1, component3.name, pickSettings, "Back Top-Left 1-4", trayFeederProperties)
+            feeders.loadTray(92, tray2, component4.name, pickSettings,"Back Top-Left 6-7", trayFeederProperties)
 
         and:
             componentPlacements = [
@@ -105,6 +144,33 @@ class DPVGeneratorSpec extends Specification {
                     rotation: 225,
                     value: "100nF 6.3V 0402",
                     name: "CAP_0402"
+                ),
+                new ComponentPlacement(
+                    refdes: "U1",
+                    pattern: "QSOP-16",
+                    coordinate: new Coordinate(x: 21.3, y: 35.07),
+                    side: PCBSide.TOP,
+                    rotation: 90,
+                    value: "",
+                    name: "MAX14851"
+                ),
+                new ComponentPlacement(
+                    refdes: "U2",
+                    pattern: "QSOP-16",
+                    coordinate: new Coordinate(x: 21.3, y: 19.92),
+                    side: PCBSide.TOP,
+                    rotation: 90,
+                    value: "",
+                    name: "MAX14851"
+                ),
+                new ComponentPlacement(
+                    refdes: "U3",
+                    pattern: "SOIC-8/150mil",
+                    coordinate: new Coordinate(x: 16.8, y: 45.45),
+                    side: PCBSide.TOP,
+                    rotation: 90,
+                    value: "",
+                    name: "CAT24C32WI-GT3"
                 )
             ]
 
@@ -120,14 +186,25 @@ class DPVGeneratorSpec extends Specification {
         and:
             List<List<String>> expectedMaterials = [
                 ["Station","0","1","0","0","4","10K 0402 1%/RES_0402 - Cheap","0.5","0","6","0","0","0","0","0"],
-                ["Station","1","36","0","0","4","100nF 6.3V 0402/CAP_0402 - Expensive","0.5","0","6","0","0","0","0","0"]
+                ["Station","1","36","0","0","4","100nF 6.3V 0402/CAP_0402 - Expensive","0.5","0","6","0","0","0","0","0"],
+                ["Station","2","91","0","0","4","MAX14851 - Back Top-Left 1-4","0.5","0","6","0","0","0","0","0"],
+                ["Station","3","92","0","0","4","CAT24C32WI-GT3 - Back Top-Left 6-7","0.5","0","6","0","0","0","0","0"],
             ]
 
         and:
             List<List<String>> expectedComponents = [
                 ["EComponent","0","1","1","1","14.44","13.9","180","0.5","6","0","R1","10K 0402 1%/RES_0402","0"],
                 ["EComponent","1","2","1","1","15.72","25.2","-90","0.5","6","0","R2","10K 0402 1%/RES_0402","0"],
-                ["EComponent","2","3","1","36","24.89","21.64","135","0.5","6","0","C1","100nF 6.3V 0402/CAP_0402","0"]
+                ["EComponent","2","3","1","36","24.89","21.64","135","0.5","6","0","C1","100nF 6.3V 0402/CAP_0402","0"],
+                ["EComponent","3","4","1","91","21.3","35.07","90","0.5","6","0","U1","/MAX14851","0"],
+                ["EComponent","4","5","1","91","21.3","19.92","90","0.5","6","0","U2","/MAX14851","0"],
+                ["EComponent","5","6","1","92","16.8","45.45","90","0.5","6","0","U3","/CAT24C32WI-GT3","0"],
+            ]
+
+        and:
+            List<List<String>> expectedTrays = [
+                ["ICTray","0","91","205.07","61.05","277.1","61.11","4","1","0"],
+                ["ICTray","1","92","327.5","58.57","351.51","58.57","2","1","0"],
             ]
 
         when:
@@ -137,6 +214,7 @@ class DPVGeneratorSpec extends Specification {
             String content = outputStream.toString()
             materialsPresent(content, expectedMaterials)
             componentsPresent(content, expectedComponents)
+            traysPresent(content, expectedTrays)
     }
 
     @Ignore
@@ -205,8 +283,11 @@ class DPVGeneratorSpec extends Specification {
 
     static final int MATERIAL_COLUMN_COUNT = 15
     static final int COMPONENT_COLUMN_COUNT = 14
+    static final int TRAY_COLUMN_COUNT = 10
 
     void materialsPresent(String content, List<List<String>> materialRows) {
+        assert content.contains("Table,No.,ID,DeltX,DeltY,FeedRates,Note,Height,Speed,Status,SizeX,SizeY,HeightTake,DelayTake,nPullStripSpeed")
+
         materialRows.each { List<String> materialRow ->
             assert(materialRow.size() == MATERIAL_COLUMN_COUNT)
             String row = materialRow.join(",")
@@ -215,9 +296,20 @@ class DPVGeneratorSpec extends Specification {
     }
 
     void componentsPresent(String content, List<List<String>> componentRows) {
-        componentRows.each { componentRow ->
+        assert content.contains("Table,No.,ID,PHead,STNo.,DeltX,DeltY,Angle,Height,Skip,Speed,Explain,Note,Delay")
+
+        componentRows.each { List<String> componentRow ->
             assert(componentRow.size() == COMPONENT_COLUMN_COUNT)
             String row = componentRow.join(",")
+            assert content.contains(row)
+        }
+    }
+
+    void traysPresent(String content, ArrayList<List<String>> trayRows) {
+        assert content.contains("Table,No.,ID,CenterX,CenterY,IntervalX,IntervalY,NumX,NumY,Start")
+        trayRows.each { List<String> trayRow ->
+            assert (trayRow.size() == TRAY_COLUMN_COUNT)
+            String row = trayRow.join(",")
             assert content.contains(row)
         }
     }

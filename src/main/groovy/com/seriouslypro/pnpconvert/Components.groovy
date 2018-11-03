@@ -7,7 +7,7 @@ interface MatchingStrategy {
 
 class DiptraceMatchingStrategy implements MatchingStrategy {
 
-    DiptraceComponentNameBuilder diptraceComponentNameBuilder = new DiptraceComponentNameBuilder()
+    DipTraceComponentNameBuilder diptraceComponentNameBuilder = new DipTraceComponentNameBuilder()
 
     @Override
     boolean matches(Component candidate, ComponentPlacement componentPlacement) {
@@ -27,7 +27,7 @@ class NameOnlyMatchingStrategy implements MatchingStrategy {
 
 class DiptraceAliasMatchingStrategy implements MatchingStrategy {
 
-    DiptraceComponentNameBuilder diptraceComponentNameBuilder = new DiptraceComponentNameBuilder()
+    DipTraceComponentNameBuilder diptraceComponentNameBuilder = new DipTraceComponentNameBuilder()
 
     @Override
     boolean matches(Component candidate, ComponentPlacement componentPlacement) {
