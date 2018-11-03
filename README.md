@@ -3,6 +3,8 @@ PNPConvert
 
 by Dominic Clifton. (C) 2018
 
+[![Build Status](https://travis-ci.com/hydra/pnpconvert.svg?branch=master)](https://travis-ci.com/hydra/pnpconvert)
+
 Utility to process DipTrace "Pick and Place" export files.
 
 Basic Features
