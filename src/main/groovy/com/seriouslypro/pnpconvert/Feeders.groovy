@@ -12,6 +12,7 @@ class FeederMapping {
 class Feeders {
 
     Machine machine = new DefaultMachine()
+    List<Tray> trays = defaultTrays // temporary, until loading tray definitions from CSV is implemented.
 
     Map<Integer, Feeder> feederMap = [:]
 
@@ -36,14 +37,18 @@ class Feeders {
         }
     }
 
+    void loadTray(int id, TrayFeeder trayFeeder) {
+        feederMap[id] = trayFeeder
+    }
+
     void loadTray(int id, Tray tray, String componentName, PickSettings pickSettings, String note, FeederProperties feederProperties) {
-        feederMap[id] = new TrayFeeder(
+        loadTray(id, new TrayFeeder(
             tray: tray,
             componentName: componentName,
             pickSettings: pickSettings,
             note: note,
             properties: feederProperties
-        )
+        ))
     }
 
     static enum FeederCSVColumn {
@@ -62,9 +67,13 @@ class Feeders {
         TAKE_HEIGHT,
         PACKAGE_ANGLE,
 
+        // Tape Specific Columns
         TAPE_WIDTH,
         TAPE_SPACING,
         TAPE_PULL_SPEED,
+
+        // Tray Specific Columns
+        TRAY_NAME,
     }
 
     void loadFromCSV(InputStreamReader inputStreamReader) {
@@ -76,6 +85,8 @@ class Feeders {
 
                 PickSettings pickSettings = new PickSettings()
 
+                Integer id = rowValues[headerMappings[FeederCSVColumn.ID].index] as Integer
+
                 pickSettings.xOffset = rowValues[headerMappings[FeederCSVColumn.X_OFFSET].index] as BigDecimal
                 pickSettings.yOffset = rowValues[headerMappings[FeederCSVColumn.Y_OFFSET].index] as BigDecimal
                 pickSettings.head = rowValues[headerMappings[FeederCSVColumn.HEAD].index] as Integer
@@ -84,29 +95,50 @@ class Feeders {
                 pickSettings.packageAngle = rowValues[headerMappings[FeederCSVColumn.PACKAGE_ANGLE].index] as BigDecimal
                 pickSettings.placeSpeedPercentage = rowValues[headerMappings[FeederCSVColumn.PLACE_SPEED].index] as BigDecimal
                 pickSettings.placeDelay = rowValues[headerMappings[FeederCSVColumn.PLACE_DELAY].index] as Integer
-                pickSettings.takeHeight = rowValues[headerMappings[FeederCSVColumn.TAKE_HEIGHT].index] as Integer
-
-
-                if (headerMappings[FeederCSVColumn.TAPE_SPACING]) {
-                    pickSettings.tapeSpacing = rowValues[headerMappings[FeederCSVColumn.TAPE_SPACING].index] as Integer
-                }
-                if (headerMappings[FeederCSVColumn.TAPE_PULL_SPEED]) {
-                    pickSettings.pullSpeed = rowValues[headerMappings[FeederCSVColumn.TAPE_PULL_SPEED].index] as Integer
-                }
-
-                Integer id = rowValues[headerMappings[FeederCSVColumn.ID].index] as Integer
+                pickSettings.takeHeight = rowValues[headerMappings[FeederCSVColumn.TAKE_HEIGHT].index] as BigDecimal
 
                 FeederProperties feederProperties = machine.feederProperties(id)
 
-                loadReel(id, new ReelFeeder(
-                    enabled: rowValues[headerMappings[FeederCSVColumn.ENABLED].index].toBoolean(),
-                    componentName: rowValues[headerMappings[FeederCSVColumn.COMPONENT_NAME].index],
-                    note: rowValues[headerMappings[FeederCSVColumn.NOTE].index],
-                    tapeWidth: rowValues[headerMappings[FeederCSVColumn.TAPE_WIDTH].index] as Integer,
-                    pickSettings: pickSettings,
-                    properties: feederProperties
-                ))
+                String trayName
 
+                if (headerMappings[FeederCSVColumn.TRAY_NAME]) {
+                    trayName = rowValues[headerMappings[FeederCSVColumn.TRAY_NAME].index].trim()
+                }
+
+                if (trayName) {
+                    Tray tray = trays.find { it.name == trayName }
+
+                    if (!tray) {
+                        throw new IllegalArgumentException("unknown tray. name: '$trayName'")
+                    }
+
+                    loadTray(id, new TrayFeeder(
+                        enabled: rowValues[headerMappings[FeederCSVColumn.ENABLED].index].toBoolean(),
+                        tray: tray,
+                        componentName: rowValues[headerMappings[FeederCSVColumn.COMPONENT_NAME].index],
+                        note: rowValues[headerMappings[FeederCSVColumn.NOTE].index],
+                        pickSettings: pickSettings,
+                        properties: feederProperties
+                    ))
+                } else {
+
+
+                    if (headerMappings[FeederCSVColumn.TAPE_SPACING]) {
+                        pickSettings.tapeSpacing = rowValues[headerMappings[FeederCSVColumn.TAPE_SPACING].index] as Integer
+                    }
+                    if (headerMappings[FeederCSVColumn.TAPE_PULL_SPEED]) {
+                        pickSettings.pullSpeed = rowValues[headerMappings[FeederCSVColumn.TAPE_PULL_SPEED].index] as Integer
+                    }
+
+                    loadReel(id, new ReelFeeder(
+                        enabled: rowValues[headerMappings[FeederCSVColumn.ENABLED].index].toBoolean(),
+                        componentName: rowValues[headerMappings[FeederCSVColumn.COMPONENT_NAME].index],
+                        note: rowValues[headerMappings[FeederCSVColumn.NOTE].index],
+                        tapeWidth: rowValues[headerMappings[FeederCSVColumn.TAPE_WIDTH].index] as Integer,
+                        pickSettings: pickSettings,
+                        properties: feederProperties
+                    ))
+                }
                 return new FeederMapping(id: id, feeder: feederMap[id])
             }
         }
@@ -138,4 +170,23 @@ class Feeders {
 
         csvInput.close()
     }
+
+    private static List<Tray> defaultTrays = [
+        new Tray(
+            name: "B-1-4-TL",
+            firstComponentX: 205.07G, firstComponentY: 61.05G,
+            lastComponentX: 277.1G, lastComponentY: 61.11G,
+            columns: 4,
+            rows: 1,
+            firstComponentIndex: 0
+        ),
+        new Tray(
+            name: "B-6-7-TL",
+            firstComponentX: 327.5G, firstComponentY: 58.57G,
+            lastComponentX: 351.51G, lastComponentY: 58.57G,
+            columns: 2,
+            rows: 1,
+            firstComponentIndex: 0
+        )
+    ]
 }

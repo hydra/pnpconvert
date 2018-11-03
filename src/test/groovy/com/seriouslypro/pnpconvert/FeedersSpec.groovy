@@ -78,7 +78,7 @@ class FeedersSpec extends Specification {
                 checkVacuum: true,
                 placeSpeedPercentage: 50,
                 placeDelay: 25,
-                takeHeight: 2.5,
+                takeHeight: 2.5G,
                 pullSpeed: 25,
             )
 
@@ -92,11 +92,46 @@ class FeedersSpec extends Specification {
                 tapeWidth: 16,
                 properties: feeder2Properties,
             )
+
         and:
+            Integer feeder3Id = 91
+
+            PickSettings feeder3PickSettings = new PickSettings(
+                xOffset: 0G,
+                yOffset: 0G,
+                packageAngle: 0,
+                head: 2,
+                useVision: true,
+                checkVacuum: true,
+                placeSpeedPercentage: 33,
+                placeDelay: 66,
+                takeHeight: 3,
+            )
+
+            FeederProperties feeder3Properties = feeders.machine.feederProperties(feeder3Id)
+
+            Feeder feeder3 = new TrayFeeder(
+                enabled: true,
+                tray: new Tray(
+                    name: "B-1-4-TL",
+                    firstComponentX: 205.07G,
+                    firstComponentY: 61.05G,
+                    lastComponentX: 277.1G,
+                    lastComponentY: 61.11G,
+                    rows:1,
+                    columns:4,
+                    firstComponentIndex:0
+                ),
+                componentName: "MAX14851",
+                note: "Back 1-4 Top-Left",
+                pickSettings: feeder3PickSettings,
+                properties: feeder3Properties
+            )
 
             Map<Integer, Feeder> expectedFeederMap = [
                 (feeder1Id): feeder1,
                 (feeder2Id): feeder2,
+                (feeder3Id): feeder3,
             ]
 
         and:

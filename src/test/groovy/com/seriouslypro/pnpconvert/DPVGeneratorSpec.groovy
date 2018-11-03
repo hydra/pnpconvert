@@ -92,7 +92,7 @@ class DPVGeneratorSpec extends Specification {
 
         and:
             Tray tray1 = new Tray(
-                name: "BL-1-4",
+                name: "B-1-4-TL",
                 firstComponentX: 205.07G, firstComponentY: 61.05G,
                 lastComponentX: 277.1G, lastComponentY: 61.11G,
                 columns: 4,
@@ -101,7 +101,7 @@ class DPVGeneratorSpec extends Specification {
             )
 
             Tray tray2 = new Tray(
-                name: "BL-6-7",
+                name: "B-6-7-TL",
                 firstComponentX: 327.5G, firstComponentY: 58.57G,
                 lastComponentX: 351.51G, lastComponentY: 58.57G,
                 columns: 2,
@@ -113,8 +113,8 @@ class DPVGeneratorSpec extends Specification {
                 feederAngle: 0
             )
 
-            feeders.loadTray(91, tray1, component3.name, pickSettings, "Back Top-Left 1-4", trayFeederProperties)
-            feeders.loadTray(92, tray2, component4.name, pickSettings,"Back Top-Left 6-7", trayFeederProperties)
+            feeders.loadTray(91, tray1, component3.name, pickSettings, "Back 1-4 Top-Left", trayFeederProperties)
+            feeders.loadTray(92, tray2, component4.name, pickSettings,"Back 6-7 Top-Left", trayFeederProperties)
 
         and:
             componentPlacements = [
@@ -187,8 +187,8 @@ class DPVGeneratorSpec extends Specification {
             List<List<String>> expectedMaterials = [
                 ["Station","0","1","0","0","4","10K 0402 1%/RES_0402 - Cheap","0.5","0","6","0","0","0","0","0"],
                 ["Station","1","36","0","0","4","100nF 6.3V 0402/CAP_0402 - Expensive","0.5","0","6","0","0","0","0","0"],
-                ["Station","2","91","0","0","4","MAX14851 - Back Top-Left 1-4","0.5","0","6","0","0","0","0","0"],
-                ["Station","3","92","0","0","4","CAT24C32WI-GT3 - Back Top-Left 6-7","0.5","0","6","0","0","0","0","0"],
+                ["Station","2","91","0","0","4","MAX14851 - Back 1-4 Top-Left","0.5","0","6","0","0","0","0","0"],
+                ["Station","3","92","0","0","4","CAT24C32WI-GT3 - Back 6-7 Top-Left","0.5","0","6","0","0","0","0","0"],
             ]
 
         and:

@@ -1,5 +1,10 @@
 package com.seriouslypro.pnpconvert
 
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
+
+@EqualsAndHashCode
+@ToString(includeNames = true, includePackage = false)
 class Tray {
     String name
     BigDecimal firstComponentX
