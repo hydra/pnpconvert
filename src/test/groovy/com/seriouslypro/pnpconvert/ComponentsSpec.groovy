@@ -5,6 +5,9 @@ import spock.lang.Specification
 
 class ComponentsSpec extends Specification {
 
+    private static final String TEST_COMPONENT_NAME = "10K 0402 1%"
+    private static final String TEST_COMPONENT_ALIAS = "10K0 1% 0402"
+
     Components components
 
     void setup() {
@@ -18,7 +21,7 @@ class ComponentsSpec extends Specification {
 
         and:
             List<Component> expectedComponentList = [
-                new Component(name: "10K 0402 1%/RES_0402", width: 0.5, length: 1.0, height: 0.5)
+                new Component(name: "10K 0402 1%/RES_0402", width: 0.5, length: 1.0, height: 0.5, aliases: ["10K 1% 0402/RES_0402",TEST_COMPONENT_ALIAS])
             ]
 
         when:
@@ -41,10 +44,24 @@ class ComponentsSpec extends Specification {
 
     def 'find by placement'() {
         given:
-            Component component = new Component(name: "10K 0402 1%")
+            Component component = new Component(name: TEST_COMPONENT_NAME)
             components.add(component)
 
-            ComponentPlacement componentPlacement = new ComponentPlacement(name: "10K 0402 1%")
+            ComponentPlacement componentPlacement = new ComponentPlacement(name: TEST_COMPONENT_NAME)
+
+        when:
+            Component result = components.findByPlacement(componentPlacement)
+
+        then:
+            result
+    }
+
+    def 'find by placement - matched against alias'() {
+        given:
+            Component component = new Component(name: TEST_COMPONENT_NAME,aliases: [TEST_COMPONENT_ALIAS])
+            components.add(component)
+
+            ComponentPlacement componentPlacement = new ComponentPlacement(name: TEST_COMPONENT_ALIAS)
 
         when:
             Component result = components.findByPlacement(componentPlacement)

@@ -10,4 +10,5 @@ class Component {
     BigDecimal width = 0            // mm
     BigDecimal length = 0           // mm
     BigDecimal height = 0.5G        // mm
+    ArrayList<String> aliases = []
 }
