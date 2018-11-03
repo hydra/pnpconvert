@@ -8,8 +8,21 @@ class FeedersSpec extends Specification {
 
     Feeders feeders
 
+
+    private static Tray testTray = new Tray(
+        name: "B-1-4-TL",
+        firstComponentX: 205.07G, firstComponentY: 61.05G,
+        lastComponentX: 277.1G, lastComponentY: 61.11G,
+        columns: 4,
+        rows: 1,
+        firstComponentIndex: 0
+    )
+
+    Trays mockTrays
+
     void setup() {
-        feeders = new Feeders()
+        mockTrays = Mock()
+        feeders = new Feeders(trays: mockTrays)
     }
 
     def 'find by component - no components'() {
@@ -142,6 +155,10 @@ class FeedersSpec extends Specification {
             feeders.loadFromCSV(inputStreamReader)
 
         then:
+            1 * mockTrays.findByName("B-1-4-TL") >> testTray
+            0 * _
+
+        and:
             feeders.feederMap.sort() == expectedFeederMap.sort()
     }
 

@@ -10,17 +10,19 @@ import java.awt.Color
 class Converter {
 
     String inputFileName
-    String outputPrefix
+    String traysFileName
     String feedersFileName
     String componentsFileName
+    String outputPrefix
 
     BoardRotation boardRotation = new BoardRotation()
     Coordinate offset = new Coordinate()
 
     private static final boolean append = false
 
-    Converter(String inputFileName, String feedersFileName, String componentsFileName, String outputPrefix, BoardRotation boardRotation, Coordinate offset) {
+    Converter(String inputFileName, String traysFileName, String feedersFileName, String componentsFileName, String outputPrefix, BoardRotation boardRotation, Coordinate offset) {
         this.inputFileName = inputFileName
+        this.traysFileName = traysFileName
         this.feedersFileName = feedersFileName
         this.componentsFileName = componentsFileName
         this.outputPrefix = outputPrefix
@@ -99,15 +101,18 @@ class Converter {
             System.out.println(component)
         }
 
+
+        //
+        // Load Trays
+        //
+
+        Trays trays = loadTrays()
+
         //
         // Load Feeders
         //
 
-        Feeders feeders = loadFeeders()
-
-        InputStream inputStream = new FileInputStream("components.csv")
-        InputStreamReader inputStreamReader = new InputStreamReader(inputStream)
-
+        Feeders feeders = loadFeeders(trays)
 
         //
         // Generate DPV
@@ -134,9 +139,20 @@ class Converter {
         outputStream.close()
     }
 
-    Feeders loadFeeders() {
+    Trays loadTrays() {
+        InputStream inputStream = new FileInputStream(traysFileName)
+        InputStreamReader inputStreamReader = new InputStreamReader(inputStream)
+
+        Trays trays = new Trays()
+        trays.loadFromCSV(inputStreamReader)
+
+        trays
+    }
+
+    Feeders loadFeeders(Trays trays) {
         Feeders feeders = new Feeders(
-            machine: new CHMT48VB()
+            machine: new CHMT48VB(),
+            trays: trays
         )
         InputStream inputStream = new FileInputStream(feedersFileName)
         InputStreamReader inputStreamReader = new InputStreamReader(inputStream)

@@ -1,19 +1,16 @@
 package com.seriouslypro.pnpconvert.diptrace
 
-import com.seriouslypro.pnpconvert.CSVHeader
-import com.seriouslypro.pnpconvert.CSVLineParser
+import com.seriouslypro.pnpconvert.CSVLineParserBase
 import com.seriouslypro.pnpconvert.ComponentPlacement
 import com.seriouslypro.pnpconvert.Coordinate
 import com.seriouslypro.pnpconvert.PCBSide
 
-import java.text.ParseException
-
-class DipTraceLineParser implements CSVLineParser {
+class DipTraceLineParser extends CSVLineParserBase<ComponentPlacement, DipTraceCSVHeaders> {
     @Override
-    ComponentPlacement parse(Map<Object, CSVHeader> headerMappings, String[] rowValues) {
+    ComponentPlacement parse(String[] rowValues) {
 
-        BigDecimal x = rowValues[headerMappings[DipTraceCSVHeaders.X].index] as BigDecimal
-        BigDecimal y = rowValues[headerMappings[DipTraceCSVHeaders.Y].index] as BigDecimal
+        BigDecimal x = rowValues[columnIndex(DipTraceCSVHeaders.X)] as BigDecimal
+        BigDecimal y = rowValues[columnIndex(DipTraceCSVHeaders.Y)] as BigDecimal
         Coordinate coordinate = new Coordinate(x: x, y: y)
 
         PCBSide side
@@ -25,13 +22,13 @@ class DipTraceLineParser implements CSVLineParser {
         }
 
         ComponentPlacement c = new ComponentPlacement(
-            refdes: rowValues[headerMappings[DipTraceCSVHeaders.REFDES].index],
+            refdes: rowValues[columnIndex(DipTraceCSVHeaders.REFDES)],
             coordinate: coordinate,
-            pattern: rowValues[headerMappings[DipTraceCSVHeaders.PATTERN].index],
+            pattern: rowValues[columnIndex(DipTraceCSVHeaders.PATTERN)],
             side: side,
-            rotation: rowValues[headerMappings[DipTraceCSVHeaders.ROTATE].index] as BigDecimal,
-            value: rowValues[headerMappings[DipTraceCSVHeaders.VALUE].index],
-            name: rowValues[headerMappings[DipTraceCSVHeaders.NAME].index]
+            rotation: rowValues[columnIndex(DipTraceCSVHeaders.ROTATE)] as BigDecimal,
+            value: rowValues[columnIndex(DipTraceCSVHeaders.VALUE)],
+            name: rowValues[columnIndex(DipTraceCSVHeaders.NAME)]
         )
 
         return c

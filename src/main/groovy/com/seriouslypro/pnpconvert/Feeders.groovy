@@ -12,7 +12,7 @@ class FeederMapping {
 class Feeders {
 
     Machine machine = new DefaultMachine()
-    List<Tray> trays = defaultTrays // temporary, until loading tray definitions from CSV is implemented.
+    Trays trays
 
     Map<Integer, Feeder> feederMap = [:]
 
@@ -78,35 +78,35 @@ class Feeders {
 
     void loadFromCSV(InputStreamReader inputStreamReader) {
 
-        CSVLineParser<FeederMapping> lineParser = new CSVLineParser<FeederMapping>() {
+        CSVLineParser<FeederMapping, FeederCSVColumn> lineParser = new CSVLineParserBase<FeederMapping, FeederCSVColumn>() {
 
             @Override
-            FeederMapping parse(Map<Object, CSVHeader> headerMappings, String[] rowValues) {
+            FeederMapping parse(String[] rowValues) {
 
                 PickSettings pickSettings = new PickSettings()
 
                 Integer id = rowValues[headerMappings[FeederCSVColumn.ID].index] as Integer
 
-                pickSettings.xOffset = rowValues[headerMappings[FeederCSVColumn.X_OFFSET].index] as BigDecimal
-                pickSettings.yOffset = rowValues[headerMappings[FeederCSVColumn.Y_OFFSET].index] as BigDecimal
-                pickSettings.head = rowValues[headerMappings[FeederCSVColumn.HEAD].index] as Integer
-                pickSettings.checkVacuum = rowValues[headerMappings[FeederCSVColumn.CHECK_VACUUM].index].toBoolean()
-                pickSettings.useVision = rowValues[headerMappings[FeederCSVColumn.USE_VISION].index].toBoolean()
-                pickSettings.packageAngle = rowValues[headerMappings[FeederCSVColumn.PACKAGE_ANGLE].index] as BigDecimal
-                pickSettings.placeSpeedPercentage = rowValues[headerMappings[FeederCSVColumn.PLACE_SPEED].index] as BigDecimal
-                pickSettings.placeDelay = rowValues[headerMappings[FeederCSVColumn.PLACE_DELAY].index] as Integer
-                pickSettings.takeHeight = rowValues[headerMappings[FeederCSVColumn.TAKE_HEIGHT].index] as BigDecimal
+                pickSettings.xOffset = rowValues[columnIndex(FeederCSVColumn.X_OFFSET)] as BigDecimal
+                pickSettings.yOffset = rowValues[columnIndex(FeederCSVColumn.Y_OFFSET)] as BigDecimal
+                pickSettings.head = rowValues[columnIndex(FeederCSVColumn.HEAD)] as Integer
+                pickSettings.checkVacuum = rowValues[columnIndex(FeederCSVColumn.CHECK_VACUUM)].toBoolean()
+                pickSettings.useVision = rowValues[columnIndex(FeederCSVColumn.USE_VISION)].toBoolean()
+                pickSettings.packageAngle = rowValues[columnIndex(FeederCSVColumn.PACKAGE_ANGLE)] as BigDecimal
+                pickSettings.placeSpeedPercentage = rowValues[columnIndex(FeederCSVColumn.PLACE_SPEED)] as Integer
+                pickSettings.placeDelay = rowValues[columnIndex(FeederCSVColumn.PLACE_DELAY)] as Integer
+                pickSettings.takeHeight = rowValues[columnIndex(FeederCSVColumn.TAKE_HEIGHT)] as BigDecimal
 
                 FeederProperties feederProperties = machine.feederProperties(id)
 
                 String trayName
 
-                if (headerMappings[FeederCSVColumn.TRAY_NAME]) {
+                if (hasColumn(FeederCSVColumn.TRAY_NAME)) {
                     trayName = rowValues[headerMappings[FeederCSVColumn.TRAY_NAME].index].trim()
                 }
 
                 if (trayName) {
-                    Tray tray = trays.find { it.name == trayName }
+                    Tray tray = trays.findByName(trayName)
 
                     if (!tray) {
                         throw new IllegalArgumentException("unknown tray. name: '$trayName'")
@@ -123,10 +123,10 @@ class Feeders {
                 } else {
 
 
-                    if (headerMappings[FeederCSVColumn.TAPE_SPACING]) {
+                    if (hasColumn(FeederCSVColumn.TAPE_SPACING)) {
                         pickSettings.tapeSpacing = rowValues[headerMappings[FeederCSVColumn.TAPE_SPACING].index] as Integer
                     }
-                    if (headerMappings[FeederCSVColumn.TAPE_PULL_SPEED]) {
+                    if (hasColumn(FeederCSVColumn.TAPE_PULL_SPEED)) {
                         pickSettings.pullSpeed = rowValues[headerMappings[FeederCSVColumn.TAPE_PULL_SPEED].index] as Integer
                     }
 
@@ -142,26 +142,15 @@ class Feeders {
                 return new FeederMapping(id: id, feeder: feederMap[id])
             }
         }
-        CSVHeaderParser componentHeaderParser = new CSVHeaderParser() {
 
-            Map<FeederCSVColumn, CSVHeader> headerMappings = [:]
-
+        CSVHeaderParser<FeederCSVColumn> componentHeaderParser = new CSVHeaderParserBase<FeederCSVColumn>() {
             @Override
-            void parse(String[] headerValues) {
-                headerValues.eachWithIndex { String headerValue, Integer index ->
-                    FeederCSVColumn componentCSVColumn = headerValue.toUpperCase().replaceAll('[^A-Za-z0-9]', "_") as FeederCSVColumn
-                    CSVHeader csvHeader = new CSVHeader(index: index)
-                    headerMappings[componentCSVColumn] = csvHeader
-                }
-            }
-
-            @Override
-            Map<Object, CSVHeader> getHeaderMappings() {
-                return headerMappings
+            FeederCSVColumn parseHeader(String headerValue) {
+                headerValue.toUpperCase().replaceAll('[^A-Za-z0-9]', "_") as FeederCSVColumn
             }
         }
 
-        CSVInput<FeederMapping> csvInput = new CSVInput<FeederMapping>(inputStreamReader, componentHeaderParser, lineParser)
+        CSVInput<FeederMapping, FeederCSVColumn> csvInput = new CSVInput<FeederMapping, FeederCSVColumn>(inputStreamReader, componentHeaderParser, lineParser)
         csvInput.parseHeader()
 
         csvInput.parseLines { FeederMapping feederMapping, String[] line ->
@@ -170,23 +159,4 @@ class Feeders {
 
         csvInput.close()
     }
-
-    private static List<Tray> defaultTrays = [
-        new Tray(
-            name: "B-1-4-TL",
-            firstComponentX: 205.07G, firstComponentY: 61.05G,
-            lastComponentX: 277.1G, lastComponentY: 61.11G,
-            columns: 4,
-            rows: 1,
-            firstComponentIndex: 0
-        ),
-        new Tray(
-            name: "B-6-7-TL",
-            firstComponentX: 327.5G, firstComponentY: 58.57G,
-            lastComponentX: 351.51G, lastComponentY: 58.57G,
-            columns: 2,
-            rows: 1,
-            firstComponentIndex: 0
-        )
-    ]
 }

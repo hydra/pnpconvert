@@ -76,38 +76,28 @@ class Components {
 
     void loadFromCSV(InputStreamReader inputStreamReader) {
 
-        CSVLineParser<Component> componentLineParser = new CSVLineParser<Component>() {
+        CSVLineParser<Component, ComponentCSVColumn> componentLineParser = new CSVLineParserBase<Component, ComponentCSVColumn>() {
+
             @Override
-            Component parse(Map<Object, CSVHeader> headerMappings, String[] rowValues) {
+            Component parse(String[] rowValues) {
                 return new Component(
-                    name: rowValues[headerMappings[ComponentCSVColumn.NAME].index].trim(),
-                    width: rowValues[headerMappings[ComponentCSVColumn.WIDTH].index] as BigDecimal,
-                    length: rowValues[headerMappings[ComponentCSVColumn.LENGTH].index] as BigDecimal,
-                    height: rowValues[headerMappings[ComponentCSVColumn.HEIGHT].index] as BigDecimal,
-                    aliases: rowValues[headerMappings[ComponentCSVColumn.ALIASES].index].split(",").collect { it.trim() }
+                    name: rowValues[columnIndex(ComponentCSVColumn.NAME)].trim(),
+                    width: rowValues[columnIndex(ComponentCSVColumn.WIDTH)] as BigDecimal,
+                    length: rowValues[columnIndex(ComponentCSVColumn.LENGTH)] as BigDecimal,
+                    height: rowValues[columnIndex(ComponentCSVColumn.HEIGHT)] as BigDecimal,
+                    aliases: rowValues[columnIndex(ComponentCSVColumn.ALIASES)].split(",").collect { it.trim() }
                 )
             }
         }
-        CSVHeaderParser componentHeaderParser = new CSVHeaderParser() {
 
-            Map<ComponentCSVColumn, CSVHeader> headerMappings = [:]
-
+        CSVHeaderParser<ComponentCSVColumn> componentHeaderParser = new CSVHeaderParserBase<ComponentCSVColumn>() {
             @Override
-            void parse(String[] headerValues) {
-                headerValues.eachWithIndex { String headerValue, Integer index ->
-                    ComponentCSVColumn componentCSVColumn = headerValue.toUpperCase() as ComponentCSVColumn
-                    CSVHeader csvHeader = new CSVHeader(index: index)
-                    headerMappings[componentCSVColumn] = csvHeader
-                }
-            }
-
-            @Override
-            Map<Object, CSVHeader> getHeaderMappings() {
-                return headerMappings
+            ComponentCSVColumn parseHeader(String headerValue) {
+                headerValue.toUpperCase().replaceAll('[^A-Za-z0-9]', "_") as ComponentCSVColumn
             }
         }
 
-        CSVInput<Component> csvInput = new CSVInput<Component>(inputStreamReader, componentHeaderParser, componentLineParser)
+        CSVInput<Component, ComponentCSVColumn> csvInput = new CSVInput<Component, ComponentCSVColumn>(inputStreamReader, componentHeaderParser, componentLineParser)
         csvInput.parseHeader()
 
         csvInput.parseLines { Component component, String[] line ->

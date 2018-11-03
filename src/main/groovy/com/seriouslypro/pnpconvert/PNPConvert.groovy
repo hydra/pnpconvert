@@ -15,6 +15,7 @@ class PNPConvert {
         builder.s(args:1, argName: 'source directory', 'scan and import csv files')
         builder.i(args:1, argName: 'input', 'input csv file')
         builder.o(args:1, argName: 'output', 'output prefix')
+        builder.t(args:1, argName: 'trays', 'trays csv file')
         builder.f(args:1, argName: 'feeders', 'feeders csv file')
         builder.co(args:1, argName: 'components', 'components csv file')
         builder.r(args:1, argName: 'rotation', 'rotation degrees (positive is clockwise)')
@@ -48,6 +49,7 @@ class PNPConvert {
 
         String inputFileName = "place.csv"
         String outputPrefix = "place"
+        String traysFileName = "trays.csv"
         String feedersFileName = "feeders.csv"
         String componentsFileName = "components.csv"
         BoardRotation boardRotation = new BoardRotation()
@@ -59,6 +61,10 @@ class PNPConvert {
 
         if (options.o) {
             outputPrefix = options.o
+        }
+
+        if (options.t) {
+            traysFileName = options.t
         }
 
         if (options.f) {
@@ -90,7 +96,7 @@ class PNPConvert {
         }
 
         if (options.c) {
-            Converter converter = new Converter(inputFileName, feedersFileName, componentsFileName, outputPrefix, boardRotation, offset)
+            Converter converter = new Converter(inputFileName, traysFileName, feedersFileName, componentsFileName, outputPrefix, boardRotation, offset)
             converter.convert()
             System.exit(0);
         }

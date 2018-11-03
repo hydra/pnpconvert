@@ -5,14 +5,13 @@ import com.seriouslypro.pnpconvert.CSVHeaderParser
 
 import java.text.ParseException
 
-class DipTraceHeaderParser implements CSVHeaderParser {
-    Map<DipTraceCSVHeaders, CSVHeader> headerMappings
+class DipTraceHeaderParser implements CSVHeaderParser<DipTraceCSVHeaders> {
 
     private Map<DipTraceCSVHeaders, CSVHeader> createHeaderMappings(String[] headerValues) {
         Map<DipTraceCSVHeaders, CSVHeader> headerMappings = [:]
         headerValues.eachWithIndex { String headerValue, Integer index ->
             try {
-                DipTraceCSVHeaders dipTraceCSVHeader = DipTraceCSVHeaders.fromString(headerValue)
+                DipTraceCSVHeaders dipTraceCSVHeader = parseHeader(headerValue)
                 CSVHeader csvHeader = new CSVHeader()
                 csvHeader.index = index
                 headerMappings[dipTraceCSVHeader] = csvHeader
@@ -21,6 +20,11 @@ class DipTraceHeaderParser implements CSVHeaderParser {
             }
         }
         headerMappings
+    }
+
+    DipTraceCSVHeaders parseHeader(String headerValue) {
+        DipTraceCSVHeaders dipTraceCSVHeader = DipTraceCSVHeaders.fromString(headerValue)
+        dipTraceCSVHeader
     }
 
     private void verifyRequiredHeadersPresent(Map<DipTraceCSVHeaders, CSVHeader> dipTraceCSVHeadersCSVHeaderMap, String[] headerValues) {
@@ -49,9 +53,11 @@ class DipTraceHeaderParser implements CSVHeaderParser {
     }
 
     @Override
-    void parse(String[] headerValues) {
-        headerMappings = createHeaderMappings(headerValues)
+    Map<DipTraceCSVHeaders, CSVHeader> parseHeaders(String[] headerValues) {
+        Map<DipTraceCSVHeaders, CSVHeader> headerMappings = createHeaderMappings(headerValues)
 
         verifyRequiredHeadersPresent(headerMappings, headerValues)
+
+        headerMappings
     }
 }
