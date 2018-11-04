@@ -27,8 +27,11 @@ class DPVGenerator {
         materialNumberSequence = new NumberSequence(0)
         Map<ComponentPlacement, MaterialSelection> materialSelections = selectMaterials()
 
+        System.out.println()
         System.out.println("placementsWithUnknownComponents:\n" + placementsWithUnknownComponents.join('\n'))
+        System.out.println()
         System.out.println("unloadedComponents:\n" + unloadedComponents.join('\n'))
+        System.out.println()
         System.out.println("feedersMatchedByAlias:\n" + feedersMatchedByAlias.collect { Feeder feeder, Component component ->
             "feederComponent: $feeder.componentName, component: $component"
         }.join('\n'))

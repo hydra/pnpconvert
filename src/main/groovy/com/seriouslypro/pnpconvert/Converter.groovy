@@ -97,11 +97,11 @@ class Converter {
 
         Components components = loadComponents()
 
-        System.out.println("known components:")
+        System.out.println()
+        System.out.println("defined components:")
         components.components.each { Component component ->
             System.out.println(component)
         }
-
 
         //
         // Load Trays
@@ -109,11 +109,23 @@ class Converter {
 
         Trays trays = loadTrays()
 
+        System.out.println()
+        System.out.println("defined trays:")
+        trays.trays.each { Tray tray ->
+            System.out.println(tray)
+        }
+
         //
         // Load Feeders
         //
 
         Feeders feeders = loadFeeders(trays)
+
+        System.out.println()
+        System.out.println("defined feeders:")
+        feeders.feederMap.each { Integer id, Feeder feeder ->
+            System.out.println("id: $id, feeder: $feeder")
+        }
 
         //
         // Generate DPV
