@@ -5,6 +5,7 @@ import spock.lang.Specification
 class FeedersSpec extends Specification {
 
     private static final String TEST_COMPONENT_NAME = "TEST-COMPONENT"
+    public static final String TEST_FEEDERS_RESOURCE = "/feeders1.csv"
 
     Feeders feeders
 
@@ -48,7 +49,7 @@ class FeedersSpec extends Specification {
 
     def 'load'() {
         given:
-            InputStream inputStream = this.getClass().getResourceAsStream("/feeders1.csv")
+            InputStream inputStream = this.getClass().getResourceAsStream(TEST_FEEDERS_RESOURCE)
             InputStreamReader inputStreamReader = new InputStreamReader(inputStream)
 
         and:
@@ -152,7 +153,7 @@ class FeedersSpec extends Specification {
             allPropertiesDifferent(ReelFeeder, feeder1, feeder2)
 
         when:
-            feeders.loadFromCSV(inputStreamReader)
+            feeders.loadFromCSV(TEST_FEEDERS_RESOURCE, inputStreamReader)
 
         then:
             1 * mockTrays.findByName("B-1-4-TL") >> testTray

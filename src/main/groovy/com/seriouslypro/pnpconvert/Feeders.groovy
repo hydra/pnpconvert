@@ -76,26 +76,26 @@ class Feeders {
         TRAY_NAME,
     }
 
-    void loadFromCSV(Reader reader) {
+    void loadFromCSV(String reference, Reader reader) {
 
         CSVLineParser<FeederMapping, FeederCSVColumn> lineParser = new CSVLineParserBase<FeederMapping, FeederCSVColumn>() {
 
             @Override
-            FeederMapping parse(String[] rowValues) {
+            FeederMapping parse(CSVInputContext context, String[] rowValues) {
 
                 PickSettings pickSettings = new PickSettings()
 
                 Integer id = rowValues[headerMappings[FeederCSVColumn.ID].index] as Integer
 
-                pickSettings.xOffset = rowValues[columnIndex(FeederCSVColumn.X_OFFSET)] as BigDecimal
-                pickSettings.yOffset = rowValues[columnIndex(FeederCSVColumn.Y_OFFSET)] as BigDecimal
-                pickSettings.head = rowValues[columnIndex(FeederCSVColumn.HEAD)] as Integer
-                pickSettings.checkVacuum = rowValues[columnIndex(FeederCSVColumn.CHECK_VACUUM)].toBoolean()
-                pickSettings.useVision = rowValues[columnIndex(FeederCSVColumn.USE_VISION)].toBoolean()
-                pickSettings.packageAngle = rowValues[columnIndex(FeederCSVColumn.PACKAGE_ANGLE)] as BigDecimal
-                pickSettings.placeSpeedPercentage = rowValues[columnIndex(FeederCSVColumn.PLACE_SPEED)] as Integer
-                pickSettings.placeDelay = rowValues[columnIndex(FeederCSVColumn.PLACE_DELAY)] as Integer
-                pickSettings.takeHeight = rowValues[columnIndex(FeederCSVColumn.TAKE_HEIGHT)] as BigDecimal
+                pickSettings.xOffset = rowValues[columnIndex(context, FeederCSVColumn.X_OFFSET)] as BigDecimal
+                pickSettings.yOffset = rowValues[columnIndex(context, FeederCSVColumn.Y_OFFSET)] as BigDecimal
+                pickSettings.head = rowValues[columnIndex(context, FeederCSVColumn.HEAD)] as Integer
+                pickSettings.checkVacuum = rowValues[columnIndex(context, FeederCSVColumn.CHECK_VACUUM)].toBoolean()
+                pickSettings.useVision = rowValues[columnIndex(context, FeederCSVColumn.USE_VISION)].toBoolean()
+                pickSettings.packageAngle = rowValues[columnIndex(context, FeederCSVColumn.PACKAGE_ANGLE)] as BigDecimal
+                pickSettings.placeSpeedPercentage = rowValues[columnIndex(context, FeederCSVColumn.PLACE_SPEED)] as Integer
+                pickSettings.placeDelay = rowValues[columnIndex(context, FeederCSVColumn.PLACE_DELAY)] as Integer
+                pickSettings.takeHeight = rowValues[columnIndex(context, FeederCSVColumn.TAKE_HEIGHT)] as BigDecimal
 
                 FeederProperties feederProperties = machine.feederProperties(id)
 
@@ -109,14 +109,14 @@ class Feeders {
                     Tray tray = trays.findByName(trayName)
 
                     if (!tray) {
-                        throw new IllegalArgumentException("unknown tray. name: '$trayName'")
+                        throw new IllegalArgumentException("unknown tray. name: '$trayName', reference: $context.reference, line: $context.lineIndex")
                     }
 
                     loadTray(id, new TrayFeeder(
-                        enabled: rowValues[headerMappings[FeederCSVColumn.ENABLED].index].toBoolean(),
+                        enabled: rowValues[columnIndex(context, FeederCSVColumn.ENABLED)].toBoolean(),
                         tray: tray,
-                        componentName: rowValues[headerMappings[FeederCSVColumn.COMPONENT_NAME].index],
-                        note: rowValues[headerMappings[FeederCSVColumn.NOTE].index],
+                        componentName: rowValues[columnIndex(context, FeederCSVColumn.COMPONENT_NAME)],
+                        note: rowValues[columnIndex(context, FeederCSVColumn.NOTE)],
                         pickSettings: pickSettings,
                         properties: feederProperties
                     ))
@@ -124,17 +124,17 @@ class Feeders {
 
 
                     if (hasColumn(FeederCSVColumn.TAPE_SPACING)) {
-                        pickSettings.tapeSpacing = rowValues[headerMappings[FeederCSVColumn.TAPE_SPACING].index] as Integer
+                        pickSettings.tapeSpacing = rowValues[columnIndex(context, FeederCSVColumn.TAPE_SPACING)] as Integer
                     }
                     if (hasColumn(FeederCSVColumn.TAPE_PULL_SPEED)) {
-                        pickSettings.pullSpeed = rowValues[headerMappings[FeederCSVColumn.TAPE_PULL_SPEED].index] as Integer
+                        pickSettings.pullSpeed = rowValues[columnIndex(context, FeederCSVColumn.TAPE_PULL_SPEED)] as Integer
                     }
 
                     loadReel(id, new ReelFeeder(
-                        enabled: rowValues[headerMappings[FeederCSVColumn.ENABLED].index].toBoolean(),
-                        componentName: rowValues[headerMappings[FeederCSVColumn.COMPONENT_NAME].index],
-                        note: rowValues[headerMappings[FeederCSVColumn.NOTE].index],
-                        tapeWidth: rowValues[headerMappings[FeederCSVColumn.TAPE_WIDTH].index] as Integer,
+                        enabled: rowValues[columnIndex(context, FeederCSVColumn.ENABLED)].toBoolean(),
+                        componentName: rowValues[columnIndex(context, FeederCSVColumn.COMPONENT_NAME)],
+                        note: rowValues[columnIndex(context, FeederCSVColumn.NOTE)],
+                        tapeWidth: rowValues[columnIndex(context, FeederCSVColumn.TAPE_WIDTH)] as Integer,
                         pickSettings: pickSettings,
                         properties: feederProperties
                     ))
@@ -145,15 +145,15 @@ class Feeders {
 
         CSVHeaderParser<FeederCSVColumn> componentHeaderParser = new CSVHeaderParserBase<FeederCSVColumn>() {
             @Override
-            FeederCSVColumn parseHeader(String headerValue) {
+            FeederCSVColumn parseHeader(CSVInputContext context, String headerValue) {
                 headerValue.toUpperCase().replaceAll('[^A-Za-z0-9]', "_") as FeederCSVColumn
             }
         }
 
-        CSVInput<FeederMapping, FeederCSVColumn> csvInput = new CSVInput<FeederMapping, FeederCSVColumn>(reader, componentHeaderParser, lineParser)
+        CSVInput<FeederMapping, FeederCSVColumn> csvInput = new CSVInput<FeederMapping, FeederCSVColumn>(reference, reader, componentHeaderParser, lineParser)
         csvInput.parseHeader()
 
-        csvInput.parseLines { FeederMapping feederMapping, String[] line ->
+        csvInput.parseLines { CSVInputContext context, FeederMapping feederMapping, String[] line ->
             feederMap[feederMapping.id] = feederMapping.feeder
         }
 

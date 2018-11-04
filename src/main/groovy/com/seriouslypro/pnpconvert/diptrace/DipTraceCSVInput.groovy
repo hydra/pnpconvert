@@ -5,7 +5,7 @@ import com.seriouslypro.pnpconvert.ComponentPlacement
 
 class DipTraceCSVInput extends CSVInput<ComponentPlacement, DipTraceCSVHeaders> {
 
-    DipTraceCSVInput(Reader reader) {
-        super(reader, new DipTraceHeaderParser(), new DipTraceLineParser())
+    DipTraceCSVInput(String reference, Reader reader) {
+        super(reference, reader, new DipTraceHeaderParser(), new DipTraceLineParser())
     }
 }

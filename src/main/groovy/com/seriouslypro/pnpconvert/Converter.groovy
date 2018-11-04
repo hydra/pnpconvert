@@ -42,7 +42,7 @@ class Converter {
         String transformFileName = outputPrefix + "-transformed.csv"
 
         Reader reader = openFileOrUrl(inputFileName)
-        CSVInput csvInput = new DipTraceCSVInput(reader)
+        CSVInput csvInput = new DipTraceCSVInput(inputFileName, reader)
 
         Writer transformFileWriter = new FileWriter(transformFileName, append)
         CSVWriter transformCSVWriter = new CSVWriter(transformFileWriter, ',' as char)
@@ -63,7 +63,7 @@ class Converter {
 
         List<ComponentPlacement> placements = []
 
-        csvInput.parseLines { ComponentPlacement componentPlacement, String[] line ->
+        csvInput.parseLines { CSVInputContext context, ComponentPlacement componentPlacement, String[] line ->
 
             ComponentPlacement transformedComponentPlacement = transformAndRender(renderer, componentPlacement)
 
@@ -140,13 +140,11 @@ class Converter {
         outputStream.close()
     }
 
-
-
     Trays loadTrays() {
         Reader reader = openFileOrUrl(traysFileName)
 
         Trays trays = new Trays()
-        trays.loadFromCSV(reader)
+        trays.loadFromCSV(traysFileName, reader)
 
         trays
     }
@@ -159,7 +157,7 @@ class Converter {
             trays: trays
         )
 
-        feeders.loadFromCSV(reader)
+        feeders.loadFromCSV(feedersFileName, reader)
         feeders
     }
 
@@ -167,7 +165,7 @@ class Converter {
         Reader reader = openFileOrUrl(componentsFileName)
 
         Components components = new Components()
-        components.loadFromCSV(reader)
+        components.loadFromCSV(componentsFileName, reader)
 
         components
     }

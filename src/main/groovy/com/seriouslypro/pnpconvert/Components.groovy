@@ -74,33 +74,33 @@ class Components {
         ALIASES
     }
 
-    void loadFromCSV(Reader reader) {
+    void loadFromCSV(String reference, Reader reader) {
 
         CSVLineParser<Component, ComponentCSVColumn> componentLineParser = new CSVLineParserBase<Component, ComponentCSVColumn>() {
 
             @Override
-            Component parse(String[] rowValues) {
+            Component parse(CSVInputContext context, String[] rowValues) {
                 return new Component(
-                    name: rowValues[columnIndex(ComponentCSVColumn.NAME)].trim(),
-                    width: rowValues[columnIndex(ComponentCSVColumn.WIDTH)] as BigDecimal,
-                    length: rowValues[columnIndex(ComponentCSVColumn.LENGTH)] as BigDecimal,
-                    height: rowValues[columnIndex(ComponentCSVColumn.HEIGHT)] as BigDecimal,
-                    aliases: rowValues[columnIndex(ComponentCSVColumn.ALIASES)].split(",").collect { it.trim() }
+                    name: rowValues[columnIndex(context, ComponentCSVColumn.NAME)].trim(),
+                    width: rowValues[columnIndex(context, ComponentCSVColumn.WIDTH)] as BigDecimal,
+                    length: rowValues[columnIndex(context, ComponentCSVColumn.LENGTH)] as BigDecimal,
+                    height: rowValues[columnIndex(context, ComponentCSVColumn.HEIGHT)] as BigDecimal,
+                    aliases: rowValues[columnIndex(context, ComponentCSVColumn.ALIASES)].split(",").collect { it.trim() }
                 )
             }
         }
 
         CSVHeaderParser<ComponentCSVColumn> componentHeaderParser = new CSVHeaderParserBase<ComponentCSVColumn>() {
             @Override
-            ComponentCSVColumn parseHeader(String headerValue) {
+            ComponentCSVColumn parseHeader(CSVInputContext context, String headerValue) {
                 headerValue.toUpperCase().replaceAll('[^A-Za-z0-9]', "_") as ComponentCSVColumn
             }
         }
 
-        CSVInput<Component, ComponentCSVColumn> csvInput = new CSVInput<Component, ComponentCSVColumn>(reader, componentHeaderParser, componentLineParser)
+        CSVInput<Component, ComponentCSVColumn> csvInput = new CSVInput<Component, ComponentCSVColumn>(reference, reader, componentHeaderParser, componentLineParser)
         csvInput.parseHeader()
 
-        csvInput.parseLines { Component component, String[] line ->
+        csvInput.parseLines { CSVInputContext context, Component component, String[] line ->
             components.add(component)
         }
 

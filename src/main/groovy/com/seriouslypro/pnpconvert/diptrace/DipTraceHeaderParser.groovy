@@ -2,16 +2,18 @@ package com.seriouslypro.pnpconvert.diptrace
 
 import com.seriouslypro.pnpconvert.CSVHeader
 import com.seriouslypro.pnpconvert.CSVHeaderParser
+import com.seriouslypro.pnpconvert.CSVInput
+import com.seriouslypro.pnpconvert.CSVInputContext
 
 import java.text.ParseException
 
 class DipTraceHeaderParser implements CSVHeaderParser<DipTraceCSVHeaders> {
 
-    private Map<DipTraceCSVHeaders, CSVHeader> createHeaderMappings(String[] headerValues) {
+    private Map<DipTraceCSVHeaders, CSVHeader> createHeaderMappings(CSVInputContext context, String[] headerValues) {
         Map<DipTraceCSVHeaders, CSVHeader> headerMappings = [:]
         headerValues.eachWithIndex { String headerValue, Integer index ->
             try {
-                DipTraceCSVHeaders dipTraceCSVHeader = parseHeader(headerValue)
+                DipTraceCSVHeaders dipTraceCSVHeader = parseHeader(context, headerValue)
                 CSVHeader csvHeader = new CSVHeader()
                 csvHeader.index = index
                 headerMappings[dipTraceCSVHeader] = csvHeader
@@ -22,7 +24,8 @@ class DipTraceHeaderParser implements CSVHeaderParser<DipTraceCSVHeaders> {
         headerMappings
     }
 
-    DipTraceCSVHeaders parseHeader(String headerValue) {
+    @Override
+    DipTraceCSVHeaders parseHeader(CSVInputContext context, String headerValue) {
         DipTraceCSVHeaders dipTraceCSVHeader = DipTraceCSVHeaders.fromString(headerValue)
         dipTraceCSVHeader
     }
@@ -48,13 +51,13 @@ class DipTraceHeaderParser implements CSVHeaderParser<DipTraceCSVHeaders> {
                 it.value
             }.toArray().join(',')
 
-            throw new ParseException("Input CSV file does not contail all required headers, required: '$requiredHeaders', found: '$headerValues'", 0)
+            throw new CSVInput.CSVParseException("Input CSV file does not contain all required headers, required: '$requiredHeaders', found: '$headerValues'")
         }
     }
 
     @Override
-    Map<DipTraceCSVHeaders, CSVHeader> parseHeaders(String[] headerValues) {
-        Map<DipTraceCSVHeaders, CSVHeader> headerMappings = createHeaderMappings(headerValues)
+    Map<DipTraceCSVHeaders, CSVHeader> parseHeaders(CSVInputContext context, String[] headerValues) {
+        Map<DipTraceCSVHeaders, CSVHeader> headerMappings = createHeaderMappings(context, headerValues)
 
         verifyRequiredHeadersPresent(headerMappings, headerValues)
 

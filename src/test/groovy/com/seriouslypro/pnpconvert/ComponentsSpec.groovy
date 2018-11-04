@@ -7,6 +7,7 @@ class ComponentsSpec extends Specification {
 
     private static final String TEST_COMPONENT_NAME = "10K 0402 1%"
     private static final String TEST_COMPONENT_ALIAS = "10K0 1% 0402"
+    public static final String TEST_COMPONENTS_RESOURCE = "/components1.csv"
 
     Components components
 
@@ -16,7 +17,7 @@ class ComponentsSpec extends Specification {
 
     def 'load'() {
         given:
-            InputStream inputStream = this.getClass().getResourceAsStream("/components1.csv")
+            InputStream inputStream = this.getClass().getResourceAsStream(TEST_COMPONENTS_RESOURCE)
             InputStreamReader inputStreamReader = new InputStreamReader(inputStream)
 
         and:
@@ -25,7 +26,7 @@ class ComponentsSpec extends Specification {
             ]
 
         when:
-            components.loadFromCSV(inputStreamReader)
+            components.loadFromCSV(TEST_COMPONENTS_RESOURCE, inputStreamReader)
 
         then:
             components.components == expectedComponentList
