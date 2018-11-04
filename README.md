@@ -23,6 +23,7 @@ Written by Dominic Clifton
 invalid parameter combinations
 usage: pnpconvert
  -c                      convert
+ -cfg <config>           configuration file (in "key=value" format)
  -co <components>        components csv file
  -f <feeders>            feeders csv file
  -i <input>              input csv file
@@ -35,6 +36,15 @@ usage: pnpconvert
  -s <source directory>   scan and import csv files
  -t <trays>              trays csv file
  -v                      version
+```
+
+Configuration values for the input,output,feeders,components and trays can be loaded from a config file in `key=value` format, e.g.
+
+Example config file
+```
+feeders=https://docs.google.com/spreadsheet/ccc?key=1-bZiPxQy2budCd0ny81PV6aGKu4q8ckkRBx3FWsMj-M&gid=0&output=csv
+components=https://docs.google.com/spreadsheet/ccc?key=1-bZiPxQy2budCd0ny81PV6aGKu4q8ckkRBx3FWsMj-M&gid=783842964&output=csv
+trays=https://docs.google.com/spreadsheet/ccc?key=1-bZiPxQy2budCd0ny81PV6aGKu4q8ckkRBx3FWsMj-M&gid=433487055&output=csv
 ```
 
 Examples
@@ -59,6 +69,10 @@ U1 is at the PCB origin but in the CSV file it's coordinates are relative to the
 `pnpconvert -i examples/example1.csv -o example1-270-with-rails -r 270 -rx 70 -ry 0 -ox 105 -oy 75 -c`
 
 Note: PCB width and height has to be added to offsets to avoid negative component origins.
+
+* As above but load settings from config file.
+
+`-i examples/example1.csv -o example1-270-with-rails -cfg examples/example1-google-sheets.properties -r 270 -rx 70 -ry 0 -ox 105 -oy 75 -c`
 
 DPV Generation process
 ======================
@@ -96,6 +110,10 @@ CSV files
 
 The order of the CSV fields does not matter in input files, the column headers are used to find the data.  This allows you to choose you preferred column order in your CSV editing tools/spreadsheets.
 Column headers are case-insensitive, non-alphanumeric characters are converted to underscores before attempting a column header match.
+
+Example Google Sheets spreadsheet with tabs for feeders, trays and components, can be found at the follow public URL:
+
+https://docs.google.com/spreadsheets/d/1-bZiPxQy2budCd0ny81PV6aGKu4q8ckkRBx3FWsMj-M/edit?usp=sharing
 
 Why
 ===

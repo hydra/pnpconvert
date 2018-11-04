@@ -25,6 +25,9 @@ class PNPConvert {
 
         builder.ox(args:1, argName: 'offsetX', 'X offset, applied after rotation')
         builder.oy(args:1, argName: 'offsetY', 'Y offset, applied after rotation')
+
+        builder.cfg(args: 1, argName: 'config', 'configuration file (in "key=value" format)')
+
         builder.c('convert')
 
         OptionAccessor options = builder.parse(args)
@@ -47,11 +50,19 @@ class PNPConvert {
             System.exit(0);
         }
 
-        String inputFileName = "place.csv"
-        String outputPrefix = "place"
-        String traysFileName = "trays.csv"
-        String feedersFileName = "feeders.csv"
-        String componentsFileName = "components.csv"
+        Properties config = new Properties()
+        if (options.cfg) {
+            String configFileName = options.cfg
+            InputStream inputStream = new FileInputStream(configFileName)
+            config.load(inputStream)
+        }
+
+        String inputFileName = config.getOrDefault("input", "place.csv")
+        String outputPrefix = config.getOrDefault("output", "place")
+        String traysFileName = config.getOrDefault("trays","trays.csv")
+        String feedersFileName = config.getOrDefault("feeders","feeders.csv")
+        String componentsFileName = config.getOrDefault("components","components.csv")
+
         BoardRotation boardRotation = new BoardRotation()
         Coordinate offset = new Coordinate()
 
