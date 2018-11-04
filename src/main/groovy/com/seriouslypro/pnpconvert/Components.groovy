@@ -74,7 +74,7 @@ class Components {
         ALIASES
     }
 
-    void loadFromCSV(InputStreamReader inputStreamReader) {
+    void loadFromCSV(Reader reader) {
 
         CSVLineParser<Component, ComponentCSVColumn> componentLineParser = new CSVLineParserBase<Component, ComponentCSVColumn>() {
 
@@ -97,7 +97,7 @@ class Components {
             }
         }
 
-        CSVInput<Component, ComponentCSVColumn> csvInput = new CSVInput<Component, ComponentCSVColumn>(inputStreamReader, componentHeaderParser, componentLineParser)
+        CSVInput<Component, ComponentCSVColumn> csvInput = new CSVInput<Component, ComponentCSVColumn>(reader, componentHeaderParser, componentLineParser)
         csvInput.parseHeader()
 
         csvInput.parseLines { Component component, String[] line ->

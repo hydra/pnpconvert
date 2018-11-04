@@ -76,7 +76,7 @@ class Feeders {
         TRAY_NAME,
     }
 
-    void loadFromCSV(InputStreamReader inputStreamReader) {
+    void loadFromCSV(Reader reader) {
 
         CSVLineParser<FeederMapping, FeederCSVColumn> lineParser = new CSVLineParserBase<FeederMapping, FeederCSVColumn>() {
 
@@ -150,7 +150,7 @@ class Feeders {
             }
         }
 
-        CSVInput<FeederMapping, FeederCSVColumn> csvInput = new CSVInput<FeederMapping, FeederCSVColumn>(inputStreamReader, componentHeaderParser, lineParser)
+        CSVInput<FeederMapping, FeederCSVColumn> csvInput = new CSVInput<FeederMapping, FeederCSVColumn>(reader, componentHeaderParser, lineParser)
         csvInput.parseHeader()
 
         csvInput.parseLines { FeederMapping feederMapping, String[] line ->

@@ -4,6 +4,7 @@ import au.com.bytecode.opencsv.CSVWriter
 import com.seriouslypro.pnpconvert.diptrace.DipTraceCSVHeaders
 import com.seriouslypro.pnpconvert.diptrace.DipTraceCSVInput
 import com.seriouslypro.pnpconvert.machine.CHMT48VB
+import sun.reflect.annotation.ExceptionProxy
 
 import java.awt.Color
 
@@ -40,8 +41,8 @@ class Converter {
 
         String transformFileName = outputPrefix + "-transformed.csv"
 
-        Reader inputFileReader = new FileReader(inputFileName)
-        CSVInput csvInput = new DipTraceCSVInput(inputFileReader)
+        Reader reader = openFileOrUrl(inputFileName)
+        CSVInput csvInput = new DipTraceCSVInput(reader)
 
         Writer transformFileWriter = new FileWriter(transformFileName, append)
         CSVWriter transformCSVWriter = new CSVWriter(transformFileWriter, ',' as char)
@@ -139,36 +140,56 @@ class Converter {
         outputStream.close()
     }
 
+
+
     Trays loadTrays() {
-        InputStream inputStream = new FileInputStream(traysFileName)
-        InputStreamReader inputStreamReader = new InputStreamReader(inputStream)
+        Reader reader = openFileOrUrl(traysFileName)
 
         Trays trays = new Trays()
-        trays.loadFromCSV(inputStreamReader)
+        trays.loadFromCSV(reader)
 
         trays
     }
 
     Feeders loadFeeders(Trays trays) {
+        Reader reader = openFileOrUrl(feedersFileName)
+
         Feeders feeders = new Feeders(
             machine: new CHMT48VB(),
             trays: trays
         )
-        InputStream inputStream = new FileInputStream(feedersFileName)
-        InputStreamReader inputStreamReader = new InputStreamReader(inputStream)
 
-        feeders.loadFromCSV(inputStreamReader)
+        feeders.loadFromCSV(reader)
         feeders
     }
 
     private Components loadComponents() {
-        Components components = new Components()
-        InputStream inputStream = new FileInputStream(componentsFileName)
-        InputStreamReader inputStreamReader = new InputStreamReader(inputStream)
+        Reader reader = openFileOrUrl(componentsFileName)
 
-        components.loadFromCSV(inputStreamReader)
+        Components components = new Components()
+        components.loadFromCSV(reader)
 
         components
+    }
+
+    boolean isUrl(String fileName) {
+        try {
+            new URL(fileName)
+            return true
+        } catch (Exception e) {
+            return false
+        }
+    }
+
+    private Reader openFileOrUrl(String fileName) {
+        if (isUrl(fileName)) {
+            URL url = new URL(fileName)
+            return new StringReader(url.text)
+        }
+
+        InputStream inputStream = new FileInputStream(fileName)
+        InputStreamReader inputStreamReader = new InputStreamReader(inputStream)
+        inputStreamReader
     }
 
     private String pcbSideToDipTraceSide(PCBSide side) {

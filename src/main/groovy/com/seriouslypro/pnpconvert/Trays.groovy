@@ -18,7 +18,7 @@ class Trays {
         FIRST_COMPONENT_INDEX
     }
 
-    void loadFromCSV(InputStreamReader inputStreamReader) {
+    void loadFromCSV(Reader reader) {
 
         CSVLineParser<Tray, TrayCSVColumn> trayLineParser = new CSVLineParserBase<Tray, TrayCSVColumn>() {
 
@@ -44,7 +44,7 @@ class Trays {
             }
         }
 
-        CSVInput<Tray, TrayCSVColumn> csvInput = new CSVInput<Tray, TrayCSVColumn>(inputStreamReader, trayHeaderParser, trayLineParser)
+        CSVInput<Tray, TrayCSVColumn> csvInput = new CSVInput<Tray, TrayCSVColumn>(reader, trayHeaderParser, trayLineParser)
         csvInput.parseHeader()
 
         csvInput.parseLines { Tray tray, String[] line ->
