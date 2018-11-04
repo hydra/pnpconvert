@@ -10,15 +10,18 @@ class CSVHeaderParserBase<TColumn> implements CSVHeaderParser<TColumn> {
     @Override
     Map<TColumn, CSVHeader> parseHeaders(CSVInputContext context, String[] headerValues) {
         int index = 0
-        Map<TColumn, CSVHeader> headerMappings = headerValues.collectEntries { String headerValue ->
-
-            TColumn column = parseHeader(context, headerValue)
-            CSVHeader csvHeader = new CSVHeader(index: index)
+        Map<TColumn, CSVHeader> headerMappings = headerValues.findResults { String headerValue ->
 
             index++
-
-            new MapEntry(column, csvHeader)
-        }
+            try {
+                TColumn column = parseHeader(context, headerValue)
+                CSVHeader csvHeader = new CSVHeader(index: index - 1)
+                new MapEntry(column, csvHeader)
+            } catch (IllegalArgumentException e) {
+                // ignore unknown headers
+                return null
+            }
+        }.collectEntries()
 
         return headerMappings
     }
