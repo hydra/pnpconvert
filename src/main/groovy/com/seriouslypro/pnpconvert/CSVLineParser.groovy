@@ -15,6 +15,7 @@ abstract class CSVLineParserBase<TResult, TColumn> implements CSVLineParser<TRes
     }
 
     int columnIndex(CSVInputContext context, TColumn column) {
+        context.columnName = column.toString()
         if (!hasColumn(column)) {
             throw new CSVInput.CSVParseException("missing column, reference: $context.reference, line: $context.lineIndex, column: $column")
         }

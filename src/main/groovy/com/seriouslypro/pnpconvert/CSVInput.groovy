@@ -6,6 +6,8 @@ import groovy.transform.InheritConstructors
 class CSVInputContext {
     int lineIndex = 0
     String reference // filename/url/etc.
+
+    String columnName
 }
 
 class CSVInput<TResult, TColumn> {
@@ -42,12 +44,13 @@ class CSVInput<TResult, TColumn> {
 
         while ((line = inputCSVReader.readNext()) != null) {
             context.lineIndex++
+            context.columnName = null
 
             TResult t
             try {
                 t = lineParser.parse(context, line)
             } catch(Exception cause) {
-                System.out.println("Parse error, reference: $context.reference, lineNumber: $context.lineIndex, lineValues: $line, cause: $cause")
+                System.out.println("Parse error, reference: $context.reference, lineNumber: $context.lineIndex, column: $context.columnName, lineValues: $line, cause: $cause")
                 continue
             }
             c(context, t, line)

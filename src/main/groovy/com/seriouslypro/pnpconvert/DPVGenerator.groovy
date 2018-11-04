@@ -14,6 +14,7 @@ class DPVGenerator {
 
     List<ComponentPlacement> placementsWithUnknownComponents
     Set<Component> unloadedComponents
+    Map<Feeder, Component> feedersMatchedByAlias
 
     private PrintStream stream
 
@@ -21,12 +22,16 @@ class DPVGenerator {
 
         placementsWithUnknownComponents = []
         unloadedComponents = []
+        feedersMatchedByAlias = [:]
 
         materialNumberSequence = new NumberSequence(0)
         Map<ComponentPlacement, MaterialSelection> materialSelections = selectMaterials()
 
         System.out.println("placementsWithUnknownComponents:\n" + placementsWithUnknownComponents.join('\n'))
         System.out.println("unloadedComponents:\n" + unloadedComponents.join('\n'))
+        System.out.println("feedersMatchedByAlias:\n" + feedersMatchedByAlias.collect { Feeder feeder, Component component ->
+            "feederComponent: $feeder.componentName, component: $component"
+        }.join('\n'))
 
         List<String[]> placements = buildPlacements(materialSelections)
 
@@ -58,10 +63,20 @@ class DPVGenerator {
                 return
             }
 
-            FeederMapping findResult = feeders.findByComponent(component)
+            FeederMapping findResult = feeders.findByComponent(component.name)
             if (!findResult) {
-                unloadedComponents << component
-                return
+
+                findResult = component.aliases.findResult { alias ->
+                    feeders.findByComponent(alias)
+                }
+
+                if (!findResult) {
+                    unloadedComponents << component
+                    return
+                }
+
+                feedersMatchedByAlias[findResult.feeder] = component
+
             }
             def (Integer feederId, Feeder feeder) = [findResult.id, findResult.feeder]
 

@@ -28,19 +28,18 @@ class FeedersSpec extends Specification {
 
     def 'find by component - no components'() {
         expect:
-            feeders.findByComponent(Mock(Component)) == null
+            feeders.findByComponent(TEST_COMPONENT_NAME) == null
     }
 
     def 'find by component - matching component'() {
         given:
-            Component component = new Component(name: TEST_COMPONENT_NAME)
             PickSettings mockPickSettings = Mock()
             FeederProperties mockFeederProperties = Mock()
 
             feeders.loadReel(1, 8, TEST_COMPONENT_NAME, mockPickSettings, "TEST-NOTE", mockFeederProperties)
 
         when:
-            FeederMapping result = feeders.findByComponent(component)
+            FeederMapping result = feeders.findByComponent(TEST_COMPONENT_NAME)
 
         then:
             result.id == 1
