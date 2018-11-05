@@ -66,16 +66,35 @@ class DPVGenerator {
                 return
             }
 
+            //
+            // feeder with component?
+            //
             FeederMapping findResult = feeders.findByComponent(component.name)
             if (!findResult) {
 
+                //
+                // feeder with alias?
+                //
                 findResult = component.aliases.findResult { alias ->
                     feeders.findByComponent(alias)
                 }
 
                 if (!findResult) {
-                    unloadedComponents << component
-                    return
+                    //
+                    // alias component in feeder?
+                    //
+                    Component aliasComponent = components.components.find { otherComponent -> otherComponent.aliases.contains(component.name) }
+
+                    if (aliasComponent) {
+                        findResult = component.aliases.findResult { alias ->
+                            feeders.findByComponent(aliasComponent.name)
+                        }
+                    }
+
+                    if (!findResult) {
+                        unloadedComponents << component
+                        return
+                    }
                 }
 
                 feedersMatchedByAlias[findResult.feeder] = component

@@ -229,6 +229,18 @@ class DPVGeneratorSpec extends Specification {
             false
     }
 
+    @Ignore
+    def 'feeder match using a component alias'() {
+        expect:
+            false
+    }
+
+    @Ignore
+    def 'feeder match using component that is an alias of component'() {
+        expect:
+            false
+    }
+
     @Unroll
     def 'placement angle - #designAngle, #pickAngle, #feederAngle'(BigDecimal designAngle, BigDecimal pickAngle, BigDecimal feederAngle, BigDecimal expectedMachineAngle) {
 
