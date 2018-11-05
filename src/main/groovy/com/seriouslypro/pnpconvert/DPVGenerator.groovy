@@ -221,7 +221,7 @@ class DPVGenerator {
 
         Date now = new Date()
         String formattedDate = new SimpleDateFormat('yyyy/MM/dd').format(now)
-        String formattedTime = new SimpleDateFormat('hh:mm:ss').format(now)
+        String formattedTime = new SimpleDateFormat('HH:mm:ss').format(now)
 
         String header = "separated\n" +
                 DPVFileHeaders.FILE + ",$dpvHeader.fileName\n" +
