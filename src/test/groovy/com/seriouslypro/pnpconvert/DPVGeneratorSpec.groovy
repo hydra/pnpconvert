@@ -71,10 +71,10 @@ class DPVGeneratorSpec extends Specification {
             Component component4 = new Component(
                 name: "CAT24C32WI-GT3"
             )
-            components.add(component1)
-            components.add(component2)
-            components.add(component3)
             components.add(component4)
+            components.add(component3)
+            components.add(component2)
+            components.add(component1)
 
         and:
             PickSettings pickSettings = new PickSettings()
@@ -219,6 +219,12 @@ class DPVGeneratorSpec extends Specification {
 
     @Ignore
     def 'placement with unknown component'() {
+        expect:
+            false
+    }
+
+    @Ignore
+    def 'materials should be sorted by feederId before assigning ids'() {
         expect:
             false
     }

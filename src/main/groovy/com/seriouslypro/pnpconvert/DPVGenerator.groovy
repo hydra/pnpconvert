@@ -239,12 +239,17 @@ class DPVGenerator {
                 "Table,No.,ID,DeltX,DeltY,FeedRates,Note,Height,Speed,Status,SizeX,SizeY,HeightTake,DelayTake,nPullStripSpeed"
         stream.println(sectionHeader)
 
-        materials.values().toSorted { a, b ->
-            a.feederId <=> b.feederId
-        }.toUnique { a ->
+
+        materials.values().toUnique { a ->
             a.feederId
+        }.toSorted { a, b ->
+            a.feederId <=> b.feederId
         }.each { materialSelection ->
-            stream.println(materialSelection.material.join(","))
+            String[] managedColumns = [
+                "Station",
+                materialNumberSequence.next()
+            ]
+            stream.println((managedColumns + materialSelection.material).join(","))
         }
         stream.println()
     }
@@ -256,14 +261,16 @@ class DPVGenerator {
         Station,0,29,4.17,0,12,??,3.75,0,6,0,0,0,0,0
          */
 
+        //
+        // Note: Table and No. are assigned later
+        // Note: this method may generate a duplicate material, duplicates are filtered before being written.
+
         PickSettings pickSettings = feeder.pickSettings
 
         int statusFlags = buildStatus(feeder.enabled, pickSettings)
 
         DecimalFormat twoDigitDecimalFormat = new DecimalFormat("#0.##")
         String[] material = [
-                "Station",
-                materialNumberSequence.next(),
                 feederId,
                 twoDigitDecimalFormat.format(pickSettings.xOffset),
                 twoDigitDecimalFormat.format(pickSettings.yOffset),
