@@ -1,7 +1,6 @@
 package com.seriouslypro.pnpconvert
 
 import com.seriouslypro.pnpconvert.test.TestResources
-import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
 
 class ConverterSpec extends Specification implements TestResources {
@@ -16,24 +15,12 @@ class ConverterSpec extends Specification implements TestResources {
         System.out.flush()
     }
 
-    def 'converter generates expected output files'() {
+    def 'converter generates expected output files - with placements, components, trays and feeders'() {
         given:
-            File inputFile = createTemporaryFileFromResource(temporaryFolder, testResource('/placements1.csv'))
 
-            String inputFileName = inputFile.absolutePath
-            converter.inputFileName = inputFileName
+            configureConverter('none', 'none', 'none', 'none')
 
-            String outputPrefix = stripFilenameExtension(inputFileName)
-            converter.outputPrefix = outputPrefix
-
-            File componentsFile = createTemporaryFileFromResource(temporaryFolder, testResource('/components1.csv'))
-            converter.componentsFileName = componentsFile.absolutePath
-
-            File traysFile = createTemporaryFileFromResource(temporaryFolder, testResource('/trays1.csv'))
-            converter.traysFileName = traysFile.absolutePath
-
-            File feedersFile = createTemporaryFileFromResource(temporaryFolder, testResource('/feeders1.csv'))
-            converter.feedersFileName = feedersFile.absolutePath
+            String outputPrefix = converter.outputPrefix
 
         and:
             String expectedTransformedFileName = outputPrefix + '-transformed.csv'
@@ -58,6 +45,56 @@ class ConverterSpec extends Specification implements TestResources {
         and:
             String svgContent = new File(expectedSVGFileName).text
             !svgContent.empty
+    }
+
+    def 'converter generates expected output files - without placements, components, trays and feeders'() {
+        given:
+            configureConverter('some', 'some', 'some', 'some')
+
+            String outputPrefix = converter.outputPrefix
+
+        and:
+            String expectedTransformedFileName = outputPrefix + '-transformed.csv'
+            String expectedDPVFileName = outputPrefix + '.dpv'
+            String expectedSVGFileName = outputPrefix + '.svg'
+
+        when:
+            converter.convert()
+
+        then:
+            String transformedContent = new File(expectedTransformedFileName).text
+            dumpContent(transformedContent)
+
+            !transformedContent.empty
+
+        and:
+            String dpvContent = new File(expectedDPVFileName).text
+            dumpContent(dpvContent)
+
+            !dpvContent.empty
+
+        and:
+            String svgContent = new File(expectedSVGFileName).text
+            !svgContent.empty
+    }
+
+    private void configureConverter(String placements, String components, String trays, String feeders) {
+        File inputFile = createTemporaryFileFromResource(temporaryFolder, testResource("/placements-${placements}.csv"))
+
+        String inputFileName = inputFile.absolutePath
+        converter.inputFileName = inputFileName
+
+        String outputPrefix = stripFilenameExtension(inputFileName)
+        converter.outputPrefix = outputPrefix
+
+        File componentsFile = createTemporaryFileFromResource(temporaryFolder, testResource("/components-${components}.csv"))
+        converter.componentsFileName = componentsFile.absolutePath
+
+        File traysFile = createTemporaryFileFromResource(temporaryFolder, testResource("/trays-${trays}.csv"))
+        converter.traysFileName = traysFile.absolutePath
+
+        File feedersFile = createTemporaryFileFromResource(temporaryFolder, testResource("/feeders-${feeders}.csv"))
+        converter.feedersFileName = feedersFile.absolutePath
     }
 
     private static void dumpContent(String dpvContent) {
