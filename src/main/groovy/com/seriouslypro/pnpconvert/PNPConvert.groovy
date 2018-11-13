@@ -107,7 +107,15 @@ class PNPConvert {
         }
 
         if (options.c) {
-            Converter converter = new Converter(inputFileName, traysFileName, feedersFileName, componentsFileName, outputPrefix, boardRotation, offset)
+            Converter converter = new Converter(
+                inputFileName: inputFileName,
+                traysFileName: traysFileName,
+                feedersFileName: feedersFileName,
+                componentsFileName: componentsFileName,
+                outputPrefix: outputPrefix,
+                boardRotation: boardRotation,
+                offset: offset
+            )
             converter.convert()
             System.exit(0);
         }
