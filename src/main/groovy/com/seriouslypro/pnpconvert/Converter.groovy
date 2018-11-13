@@ -21,16 +21,6 @@ class Converter {
 
     private static final boolean append = false
 
-    Converter(String inputFileName, String traysFileName, String feedersFileName, String componentsFileName, String outputPrefix, BoardRotation boardRotation, Coordinate offset) {
-        this.inputFileName = inputFileName
-        this.traysFileName = traysFileName
-        this.feedersFileName = feedersFileName
-        this.componentsFileName = componentsFileName
-        this.outputPrefix = outputPrefix
-        this.boardRotation = boardRotation
-        this.offset = offset
-    }
-
     void convert() {
 
         SVGRenderer renderer = new SVGRenderer()
