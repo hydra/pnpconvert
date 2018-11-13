@@ -4,7 +4,6 @@ import au.com.bytecode.opencsv.CSVWriter
 import com.seriouslypro.pnpconvert.diptrace.DipTraceCSVHeaders
 import com.seriouslypro.pnpconvert.diptrace.DipTraceCSVInput
 import com.seriouslypro.pnpconvert.machine.CHMT48VB
-import sun.reflect.annotation.ExceptionProxy
 
 import java.awt.Color
 
@@ -226,6 +225,4 @@ class Converter {
 
         transformedComponentPlacement
     }
-
-
 }

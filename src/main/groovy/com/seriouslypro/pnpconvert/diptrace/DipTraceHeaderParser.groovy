@@ -5,8 +5,6 @@ import com.seriouslypro.pnpconvert.CSVHeaderParser
 import com.seriouslypro.pnpconvert.CSVInput
 import com.seriouslypro.pnpconvert.CSVInputContext
 
-import java.text.ParseException
-
 class DipTraceHeaderParser implements CSVHeaderParser<DipTraceCSVHeaders> {
 
     private Map<DipTraceCSVHeaders, CSVHeader> createHeaderMappings(CSVInputContext context, String[] headerValues) {

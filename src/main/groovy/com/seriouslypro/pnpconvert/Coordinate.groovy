@@ -1,7 +1,6 @@
 package com.seriouslypro.pnpconvert
 
 import groovy.transform.EqualsAndHashCode
-import groovy.transform.ToString
 
 @EqualsAndHashCode
 class Coordinate {
