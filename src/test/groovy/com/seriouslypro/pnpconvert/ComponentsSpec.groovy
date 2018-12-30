@@ -37,7 +37,7 @@ class ComponentsSpec extends Specification {
             ComponentPlacement componentPlacement = new ComponentPlacement()
 
         when:
-            Component result = components.findByPlacement(componentPlacement)
+            ComponentFindResult result = components.findByPlacement(componentPlacement)
 
         then:
             !result
@@ -51,10 +51,14 @@ class ComponentsSpec extends Specification {
             ComponentPlacement componentPlacement = new ComponentPlacement(name: TEST_COMPONENT_NAME)
 
         when:
-            Component result = components.findByPlacement(componentPlacement)
+            ComponentFindResult result = components.findByPlacement(componentPlacement)
 
         then:
             result
+            result.component == component
+            result.matchingStrategies.size() == 2
+            result.matchingStrategies.find { it instanceof DiptraceMatchingStrategy }
+            result.matchingStrategies.find { it instanceof NameOnlyMatchingStrategy }
     }
 
     def 'find by placement - matched against alias'() {
@@ -65,10 +69,13 @@ class ComponentsSpec extends Specification {
             ComponentPlacement componentPlacement = new ComponentPlacement(name: TEST_COMPONENT_ALIAS)
 
         when:
-            Component result = components.findByPlacement(componentPlacement)
+            ComponentFindResult result = components.findByPlacement(componentPlacement)
 
         then:
-            result
+            result.component == component
+            result.matchingStrategies.size() == 2
+            result.matchingStrategies.find { it instanceof DiptraceAliasMatchingStrategy }
+            result.matchingStrategies.find { it instanceof AliasMatchingStrategy }
     }
 
     @Ignore

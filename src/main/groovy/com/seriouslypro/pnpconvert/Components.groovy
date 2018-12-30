@@ -3,6 +3,7 @@ package com.seriouslypro.pnpconvert
 
 interface MatchingStrategy {
     boolean matches(Component candidate, ComponentPlacement componentPlacement)
+    boolean isExactMatch()
 }
 
 class DiptraceMatchingStrategy implements MatchingStrategy {
@@ -15,6 +16,10 @@ class DiptraceMatchingStrategy implements MatchingStrategy {
         candidate.name == dipTraceComponentName
     }
 
+    @Override
+    boolean isExactMatch() {
+        return true
+    }
 }
 
 class NameOnlyMatchingStrategy implements MatchingStrategy {
@@ -22,6 +27,11 @@ class NameOnlyMatchingStrategy implements MatchingStrategy {
     @Override
     boolean matches(Component candidate, ComponentPlacement componentPlacement) {
         candidate.name == componentPlacement.name
+    }
+
+    @Override
+    boolean isExactMatch() {
+        return true
     }
 }
 
@@ -34,6 +44,11 @@ class DiptraceAliasMatchingStrategy implements MatchingStrategy {
         String dipTraceComponentName = diptraceComponentNameBuilder.buildDipTraceComponentName(componentPlacement)
         candidate.aliases.contains(dipTraceComponentName)
     }
+
+    @Override
+    boolean isExactMatch() {
+        return false
+    }
 }
 
 class AliasMatchingStrategy implements MatchingStrategy {
@@ -41,6 +56,11 @@ class AliasMatchingStrategy implements MatchingStrategy {
     @Override
     boolean matches(Component candidate, ComponentPlacement componentPlacement) {
         candidate.aliases.contains(componentPlacement.name)
+    }
+
+    @Override
+    boolean isExactMatch() {
+        return false
     }
 }
 
@@ -53,12 +73,17 @@ class Components {
         new NameOnlyMatchingStrategy()
     ]
 
-    Component findByPlacement(ComponentPlacement componentPlacement) {
-        components.find { Component candidate ->
+    ComponentFindResult findByPlacement(ComponentPlacement componentPlacement) {
+        components.findResult { Component candidate ->
             List<MatchingStrategy> matchedMatchingStrategies = matchingStrategies.findAll { MatchingStrategy strategy ->
                 strategy.matches(candidate, componentPlacement)
             }
-            matchedMatchingStrategies
+
+            if (!matchedMatchingStrategies)  {
+                return null
+            }
+
+            new ComponentFindResult(component: candidate, matchingStrategies: matchedMatchingStrategies)
         }
     }
 

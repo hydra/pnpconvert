@@ -15,6 +15,7 @@ class DPVGenerator {
     List<ComponentPlacement> placementsWithUnknownComponents
     Set<Component> unloadedComponents
     Map<Feeder, Component> feedersMatchedByAlias
+    Map<ComponentPlacement, ComponentFindResult> inexactComponentMatches
 
     private PrintStream stream
 
@@ -23,6 +24,7 @@ class DPVGenerator {
         placementsWithUnknownComponents = []
         unloadedComponents = []
         feedersMatchedByAlias = [:]
+        inexactComponentMatches = [:]
 
         materialNumberSequence = new NumberSequence(0)
         Map<ComponentPlacement, MaterialSelection> materialSelections = selectMaterials()
@@ -32,9 +34,14 @@ class DPVGenerator {
         System.out.println()
         System.out.println("unloadedComponents:\n" + unloadedComponents.join('\n'))
         System.out.println()
+        System.out.println("inexactComponentsMatches:\n" + inexactComponentMatches.collect { ComponentPlacement placement, ComponentFindResult componentFindResult ->
+            "placement: $placement.name, component: $componentFindResult.component, strategies: $componentFindResult.matchingStrategies"
+        }.join('\n'))
+        System.out.println()
         System.out.println("feedersMatchedByAlias:\n" + feedersMatchedByAlias.collect { Feeder feeder, Component component ->
             "feederComponent: $feeder.componentName, component: $component"
         }.join('\n'))
+
 
         List<String[]> placements = buildPlacements(materialSelections)
 
@@ -60,11 +67,18 @@ class DPVGenerator {
         Map<ComponentPlacement, MaterialSelection> materialSelections = [:]
 
         placements.each { ComponentPlacement placement ->
-            Component component = components.findByPlacement(placement)
-            if (!component) {
+            ComponentFindResult componentFindResult = components.findByPlacement(placement)
+
+            if (!componentFindResult) {
                 placementsWithUnknownComponents << placement
                 return
             }
+
+            if (!componentFindResult.isExactMatch()) {
+                inexactComponentMatches[placement] = componentFindResult
+            }
+
+            Component component = componentFindResult.component
 
             //
             // feeder with component?
