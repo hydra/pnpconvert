@@ -96,6 +96,9 @@ The process starts by reading the pick-and-place file cross-referencing each com
 
 When things don't match up a list of unknown components and unloaded feeders is presented which should then be added to the appropriate input files.
 
+Additionally, components in the design file that are matched to components using aliases, or to aliases of components already in feeders, are also displayed.  This is so that you can check to see if a substitution is acceptable. E.g. design specifies a capacitor with 10% tolerance, and a similar spec capacitor with 20% tolerance has an alias the same as the 10% one.
+
+
 SVG file
 ========
 
