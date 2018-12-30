@@ -31,24 +31,35 @@ class DPVGenerator {
         materialNumberSequence = new NumberSequence(0)
         Map<ComponentPlacement, MaterialSelection> materialSelections = selectMaterials()
 
-        System.out.println()
-        System.out.println("placementsWithUnknownComponents:\n" + placementsWithUnknownComponents.join('\n'))
-        System.out.println()
-        System.out.println("unloadedComponents:\n" + unloadedComponents.join('\n'))
-        System.out.println()
-        System.out.println("inexactComponentsMatches:\n" + inexactComponentMatches.collect { ComponentPlacement placement, ComponentFindResult componentFindResult ->
-            "placement: $placement.name, component: $componentFindResult.component, strategies: $componentFindResult.matchingStrategies"
-        }.join('\n'))
-        System.out.println()
-        System.out.println("feedersMatchedByAlias:\n" + feedersMatchedByAlias.collect { Feeder feeder, Component component ->
-            "feederComponent: $feeder.componentName, component: $component"
-        }.join('\n'))
+
+        System.out.println('')
+        System.out.println('*** MATERIAL SELECTIONS *** - Components from the design that matched the components and feeders/trays')
+        System.out.println('')
 
         System.out.println()
         System.out.println("materialSelections:\n" + materialSelections.collect { ComponentPlacement placement, MaterialSelection materialSelection ->
             "placement: $placement, materialSelection: $materialSelection"
         }.join('\n'))
 
+        System.out.println()
+        System.out.println('*** ISSUES *** - Components that did not match, need verification or loading')
+        System.out.println('')
+
+        System.out.println()
+        System.out.println("placementsWithUnknownComponents:\n" + placementsWithUnknownComponents.join('\n'))
+
+        System.out.println()
+        System.out.println("inexactComponentsMatches:\n" + inexactComponentMatches.collect { ComponentPlacement placement, ComponentFindResult componentFindResult ->
+            "placement: $placement.name, component: $componentFindResult.component, strategies: $componentFindResult.matchingStrategies"
+        }.join('\n'))
+
+        System.out.println()
+        System.out.println("feedersMatchedByAlias:\n" + feedersMatchedByAlias.collect { Feeder feeder, Component component ->
+            "feederComponent: $feeder.componentName, component: $component"
+        }.join('\n'))
+
+        System.out.println()
+        System.out.println("unloadedComponents:\n" + unloadedComponents.join('\n'))
 
         List<String[]> placements = buildPlacements(materialSelections)
 
