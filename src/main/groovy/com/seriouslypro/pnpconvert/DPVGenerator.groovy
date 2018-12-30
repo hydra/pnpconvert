@@ -1,5 +1,7 @@
 package com.seriouslypro.pnpconvert
 
+import groovy.transform.ToString
+
 import java.nio.charset.StandardCharsets
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
@@ -42,6 +44,11 @@ class DPVGenerator {
             "feederComponent: $feeder.componentName, component: $component"
         }.join('\n'))
 
+        System.out.println()
+        System.out.println("materialSelections:\n" + materialSelections.collect { ComponentPlacement placement, MaterialSelection materialSelection ->
+            "placement: $placement, materialSelection: $materialSelection"
+        }.join('\n'))
+
 
         List<String[]> placements = buildPlacements(materialSelections)
 
@@ -54,13 +61,6 @@ class DPVGenerator {
         writePlacements(placements)
         writeTrays(trays)
         writePanel()
-    }
-
-    class MaterialSelection {
-        Component component
-        Integer feederId
-        Feeder feeder
-        String[] material
     }
 
     Map<ComponentPlacement, MaterialSelection> selectMaterials() {
@@ -379,4 +379,12 @@ class DPVGenerator {
             return id
         }
     }
+}
+
+@ToString(includeNames = true, includePackage = false)
+class MaterialSelection {
+    Component component
+    Integer feederId
+    Feeder feeder
+    String[] material
 }

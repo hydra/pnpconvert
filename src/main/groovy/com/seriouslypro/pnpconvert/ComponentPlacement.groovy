@@ -10,10 +10,10 @@ enum PCBSide {
 @ToString(includeNames = true, includePackage = false)
 class ComponentPlacement {
     String refdes
+    String name
+    String value
     String pattern
     Coordinate coordinate
     PCBSide side
     BigDecimal rotation
-    String value
-    String name
 }
