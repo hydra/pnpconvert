@@ -60,7 +60,9 @@ class DPVGeneratorSpec extends Specification {
     def 'generate for components in feeders'() {
         given:
             Component component1 = new Component(
-                name: "10K 0402 1%/RES_0402"
+                name: "10K 0402 1%/RES_0402",
+                width: 0.01,
+                length: 30
             )
             Component component2 = new Component(
                 name: "100nF 6.3V 0402/CAP_0402"
@@ -185,7 +187,7 @@ class DPVGeneratorSpec extends Specification {
 
         and:
             List<List<String>> expectedMaterials = [
-                ["Station","0","1","0","0","4","10K 0402 1%/RES_0402 - Cheap","0.5","0","6","0","0","0","0","0"],
+                ["Station","0","1","0","0","4","10K 0402 1%/RES_0402 - Cheap","0.5","0","6","1","3000","0","0","0"],
                 ["Station","1","36","0","0","4","100nF 6.3V 0402/CAP_0402 - Expensive","0.5","0","6","0","0","0","0","0"],
                 ["Station","2","91","0","0","4","MAX14851 - Back 1-4 Top-Left","0.5","0","6","0","0","0","0","0"],
                 ["Station","3","92","0","0","4","CAT24C32WI-GT3 - Back 6-7 Top-Left","0.5","0","6","0","0","0","0","0"],

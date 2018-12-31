@@ -286,6 +286,9 @@ class DPVGenerator {
         Station,0,29,4.17,0,12,??,3.75,0,6,0,0,0,0,0
          */
 
+        // SizeX/SizeY are INTEGER, machine accepts a range of 0.00 to 30.00 in the UI.
+        // The when the BigDecimal (mm) values are stored in the DPV file they need to be multiplied by 100.  e.g. "0.01" -> "1" and "30.00" -> "3000"
+
         //
         // Note: Table and No. are assigned later
         // Note: this method may generate a duplicate material, duplicates are filtered before being written.
@@ -295,6 +298,7 @@ class DPVGenerator {
         int statusFlags = buildStatus(feeder.enabled, pickSettings)
 
         DecimalFormat twoDigitDecimalFormat = new DecimalFormat("#0.##")
+        DecimalFormat zeroDigitDecimalFormat = new DecimalFormat("#0")
         String[] material = [
                 feederId,
                 twoDigitDecimalFormat.format(pickSettings.xOffset),
@@ -304,8 +308,8 @@ class DPVGenerator {
                 twoDigitDecimalFormat.format(component.height),
                 buildPlaceSpeed(pickSettings.placeSpeedPercentage),
                 statusFlags & 0xFF,
-                twoDigitDecimalFormat.format(component.width),
-                twoDigitDecimalFormat.format(component.length),
+                zeroDigitDecimalFormat.format(component.width * 100),
+                zeroDigitDecimalFormat.format(component.length * 100),
                 pickSettings.takeHeight,
                 pickSettings.placeDelay,
                 pickSettings.pullSpeed
