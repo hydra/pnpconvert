@@ -254,9 +254,10 @@ class DPVGeneratorSpec extends Specification {
 
         /*
             Design, Feeder, Pick angles are positive clockwise, 0 to 360.
+            DipTrace EDA angles are negative clockwise, 0 to 360.  Also, Diptrace UI allows you to setting a component angle of -90, but when component is re-insepected in Diptrace UI the angle is converted to 270.
             Machine angles are negative clockwise, -180 to +180.
 
-            Design angle = angle in EDA file.
+            Design angle = angle after conversion from EDA angle, this happens when component placements are loaded.
             Pick angle = angle relative to pick head and feeder e.g. angle of component in tape to tape feed direction
             Feeder angle = feeder angle relative to design
 
@@ -271,6 +272,7 @@ class DPVGeneratorSpec extends Specification {
             during placement.
 
             When vision is disabled the pick angle on the feeder needs to be correct.
+
          */
         expect:
             expectedMachineAngle == buildGenerator().calculateMachineAngle(designAngle, pickAngle, feederAngle)

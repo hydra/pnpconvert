@@ -1,5 +1,6 @@
 package com.seriouslypro.pnpconvert
 
+import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
 enum PCBSide {
@@ -8,6 +9,7 @@ enum PCBSide {
 }
 
 @ToString(includeNames = true, includePackage = false)
+@EqualsAndHashCode
 class ComponentPlacement {
     String refdes
     String name

@@ -7,6 +7,9 @@ import com.seriouslypro.pnpconvert.Coordinate
 import com.seriouslypro.pnpconvert.PCBSide
 
 class DipTraceLineParser extends CSVLineParserBase<ComponentPlacement, DipTraceCSVHeaders> {
+
+    DiptraceAngleConverter diptraceAngleConverter = new DiptraceAngleConverter()
+
     @Override
     ComponentPlacement parse(CSVInputContext context, String[] rowValues) {
 
@@ -23,12 +26,15 @@ class DipTraceLineParser extends CSVLineParserBase<ComponentPlacement, DipTraceC
             throw new IllegalArgumentException("Row contains invalid 'side': $sideValue, reference: $context.reference, line: $context.lineIndex", e)
         }
 
+        BigDecimal diptraceRotation = rowValues[columnIndex(context, DipTraceCSVHeaders.ROTATE)] as BigDecimal
+        BigDecimal placementRotation = diptraceAngleConverter.edaToDesign(diptraceRotation)
+
         ComponentPlacement c = new ComponentPlacement(
             refdes: rowValues[columnIndex(context, DipTraceCSVHeaders.REFDES)],
             coordinate: coordinate,
             pattern: rowValues[columnIndex(context, DipTraceCSVHeaders.PATTERN)],
             side: side,
-            rotation: rowValues[columnIndex(context, DipTraceCSVHeaders.ROTATE)] as BigDecimal,
+            rotation: placementRotation,
             value: rowValues[columnIndex(context, DipTraceCSVHeaders.VALUE)],
             name: rowValues[columnIndex(context, DipTraceCSVHeaders.NAME)]
         )

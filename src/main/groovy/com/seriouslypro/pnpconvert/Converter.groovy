@@ -1,8 +1,10 @@
 package com.seriouslypro.pnpconvert
 
 import au.com.bytecode.opencsv.CSVWriter
+import com.seriouslypro.pnpconvert.diptrace.AngleConverter
 import com.seriouslypro.pnpconvert.diptrace.DipTraceCSVHeaders
 import com.seriouslypro.pnpconvert.diptrace.DipTraceCSVInput
+import com.seriouslypro.pnpconvert.diptrace.DiptraceAngleConverter
 import com.seriouslypro.pnpconvert.machine.CHMT48VB
 
 import java.awt.Color
@@ -17,6 +19,8 @@ class Converter {
 
     BoardRotation boardRotation = new BoardRotation()
     Coordinate offset = new Coordinate()
+
+    AngleConverter diptraceAngleConverter = new DiptraceAngleConverter()
 
     private static final boolean append = false
 
@@ -62,7 +66,7 @@ class Converter {
                 transformedComponentPlacement.coordinate.x,
                 transformedComponentPlacement.coordinate.y,
                 pcbSideToDipTraceSide(transformedComponentPlacement.side),
-                transformedComponentPlacement.rotation,
+                diptraceAngleConverter.designToEDA(transformedComponentPlacement.rotation),
                 transformedComponentPlacement.value,
                 transformedComponentPlacement.name
             ]
