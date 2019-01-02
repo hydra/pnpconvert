@@ -128,6 +128,9 @@ class Feeders {
                     trayName = rowValues[headerMappings[FeederCSVColumn.TRAY_NAME].index].trim()
                 }
 
+                String componentName = rowValues[columnIndex(context, FeederCSVColumn.COMPONENT_NAME)].trim()
+                boolean enabled = rowValues[columnIndex(context, FeederCSVColumn.ENABLED)].toBoolean()
+
                 if (trayName) {
                     Tray tray = trays.findByName(trayName)
 
@@ -136,16 +139,14 @@ class Feeders {
                     }
 
                     loadTray(id, new TrayFeeder(
-                        enabled: rowValues[columnIndex(context, FeederCSVColumn.ENABLED)].toBoolean(),
+                        enabled: enabled,
                         tray: tray,
-                        componentName: rowValues[columnIndex(context, FeederCSVColumn.COMPONENT_NAME)],
+                        componentName: componentName,
                         note: note,
                         pickSettings: pickSettings,
                         properties: feederProperties
                     ))
                 } else {
-
-
                     if (hasColumn(FeederCSVColumn.TAPE_SPACING) && rowValues[columnIndex(context, FeederCSVColumn.TAPE_SPACING)]) {
                         pickSettings.tapeSpacing = rowValues[columnIndex(context, FeederCSVColumn.TAPE_SPACING)] as Integer
                     }
@@ -154,8 +155,8 @@ class Feeders {
                     }
 
                     loadReel(id, new ReelFeeder(
-                        enabled: rowValues[columnIndex(context, FeederCSVColumn.ENABLED)].toBoolean(),
-                        componentName: rowValues[columnIndex(context, FeederCSVColumn.COMPONENT_NAME)],
+                        enabled: enabled,
+                        componentName: componentName,
                         note: note,
                         tapeWidth: rowValues[columnIndex(context, FeederCSVColumn.TAPE_WIDTH)] as Integer,
                         pickSettings: pickSettings,
