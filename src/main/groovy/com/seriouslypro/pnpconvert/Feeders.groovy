@@ -120,7 +120,6 @@ class Feeders {
                     note = rowValues[columnIndex(context, FeederCSVColumn.NOTE)]
                 }
 
-                rowValues[columnIndex(context, FeederCSVColumn.NOTE)]
                 FeederProperties feederProperties = machine.feederProperties(id)
 
                 String trayName
