@@ -117,7 +117,7 @@ class Feeders {
 
                 String note = ""
                 if (hasColumn(FeederCSVColumn.NOTE) && rowValues[columnIndex(context, FeederCSVColumn.NOTE)]) {
-                    note = rowValues[columnIndex(context, FeederCSVColumn.NOTE)]
+                    note = rowValues[columnIndex(context, FeederCSVColumn.NOTE)].trim()
                 }
 
                 FeederProperties feederProperties = machine.feederProperties(id)
