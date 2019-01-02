@@ -110,7 +110,11 @@ class Components {
                     width: rowValues[columnIndex(context, ComponentCSVColumn.WIDTH)] as BigDecimal,
                     length: rowValues[columnIndex(context, ComponentCSVColumn.LENGTH)] as BigDecimal,
                     height: rowValues[columnIndex(context, ComponentCSVColumn.HEIGHT)] as BigDecimal,
-                    aliases: rowValues[columnIndex(context, ComponentCSVColumn.ALIASES)].split(",").collect { it.trim() }
+                    aliases: rowValues[columnIndex(context, ComponentCSVColumn.ALIASES)].split(",").findResults { raw ->
+                        String value = raw.trim()
+                        boolean emptyValue = !value
+                        emptyValue ? null : value
+                    }
                 )
             }
         }

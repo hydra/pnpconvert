@@ -7,6 +7,8 @@ class ComponentsSpec extends Specification {
 
     private static final String TEST_COMPONENT_NAME = "10K 0402 1%"
     private static final String TEST_COMPONENT_ALIAS = "10K0 1% 0402"
+    private static final String TEST_WHITESPACE_ONLY_ALIAS = "  "
+    private static final String TEST_EMPTY_ALIAS = ""
     public static final String TEST_COMPONENTS_RESOURCE = "/components1.csv"
 
     Components components
@@ -30,6 +32,19 @@ class ComponentsSpec extends Specification {
 
         then:
             components.components == expectedComponentList
+    }
+
+    def 'ignore empty aliases'() {
+        given:
+            String content = '"Name","Width","Length","Height","Aliases"\n' +
+                '"NAME",1,2,3,"' + [TEST_WHITESPACE_ONLY_ALIAS, TEST_EMPTY_ALIAS].join(',')+ '"\n'
+            Reader inputStreamReader = new StringReader(content)
+
+        when:
+            components.loadFromCSV("TEST", inputStreamReader)
+
+        then:
+            components.components.first().aliases == []
     }
 
     def 'find by placement with no components'() {
