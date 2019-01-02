@@ -13,7 +13,7 @@ class DiptraceMatchingStrategy implements MatchingStrategy {
     @Override
     boolean matches(Component candidate, ComponentPlacement componentPlacement) {
         String dipTraceComponentName = diptraceComponentNameBuilder.buildDipTraceComponentName(componentPlacement)
-        candidate.name == dipTraceComponentName
+        dipTraceComponentName && candidate.name == dipTraceComponentName
     }
 
     @Override
@@ -26,7 +26,7 @@ class NameOnlyMatchingStrategy implements MatchingStrategy {
 
     @Override
     boolean matches(Component candidate, ComponentPlacement componentPlacement) {
-        candidate.name == componentPlacement.name
+        componentPlacement.name && candidate.name == componentPlacement.name
     }
 
     @Override
@@ -42,7 +42,7 @@ class DiptraceAliasMatchingStrategy implements MatchingStrategy {
     @Override
     boolean matches(Component candidate, ComponentPlacement componentPlacement) {
         String dipTraceComponentName = diptraceComponentNameBuilder.buildDipTraceComponentName(componentPlacement)
-        candidate.aliases.contains(dipTraceComponentName)
+        dipTraceComponentName && candidate.aliases.contains(dipTraceComponentName)
     }
 
     @Override
@@ -55,7 +55,7 @@ class AliasMatchingStrategy implements MatchingStrategy {
 
     @Override
     boolean matches(Component candidate, ComponentPlacement componentPlacement) {
-        candidate.aliases.contains(componentPlacement.name)
+        componentPlacement && candidate.aliases.contains(componentPlacement.name)
     }
 
     @Override

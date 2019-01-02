@@ -29,14 +29,21 @@ class DipTraceLineParser extends CSVLineParserBase<ComponentPlacement, DipTraceC
         BigDecimal diptraceRotation = rowValues[columnIndex(context, DipTraceCSVHeaders.ROTATE)] as BigDecimal
         BigDecimal placementRotation = diptraceAngleConverter.edaToDesign(diptraceRotation)
 
+        String value = rowValues[columnIndex(context, DipTraceCSVHeaders.VALUE)].trim()
+        String name = rowValues[columnIndex(context, DipTraceCSVHeaders.NAME)].trim()
+
+        if (!(value || name)) {
+            throw new IllegalArgumentException("Row requires one or both of the 'value' and 'name' fields, reference: $context.reference, line: $context.lineIndex")
+        }
+
         ComponentPlacement c = new ComponentPlacement(
             refdes: rowValues[columnIndex(context, DipTraceCSVHeaders.REFDES)],
             coordinate: coordinate,
             pattern: rowValues[columnIndex(context, DipTraceCSVHeaders.PATTERN)],
             side: side,
             rotation: placementRotation,
-            value: rowValues[columnIndex(context, DipTraceCSVHeaders.VALUE)],
-            name: rowValues[columnIndex(context, DipTraceCSVHeaders.NAME)]
+            value: value,
+            name: name
         )
 
         return c
