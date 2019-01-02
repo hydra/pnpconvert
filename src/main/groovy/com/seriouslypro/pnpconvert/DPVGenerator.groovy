@@ -41,6 +41,13 @@ class DPVGenerator {
             "placement: $placement, materialSelection: $materialSelection"
         }.join('\n'))
 
+        List<Integer> usedFeeders = materialSelections.collect { ComponentPlacement placement, MaterialSelection materialSelection ->
+            materialSelection.feederId
+        }.unique().sort()
+
+        System.out.println()
+        System.out.println("usedFeeders:\n" + usedFeeders.join(','))
+
         System.out.println()
         System.out.println('*** ISSUES *** - Components that did not match, need verification or loading')
         System.out.println('')
