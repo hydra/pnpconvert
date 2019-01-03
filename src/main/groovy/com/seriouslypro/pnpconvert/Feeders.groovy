@@ -65,6 +65,7 @@ class Feeders {
         PLACE_DELAY,
 
         TAKE_HEIGHT,
+        TAKE_DELAY,
         PACKAGE_ANGLE,
 
         // Tape Specific Columns
@@ -109,11 +110,15 @@ class Feeders {
                     pickSettings.placeSpeedPercentage = rowValues[columnIndex(context, FeederCSVColumn.PLACE_SPEED)] as Integer
                 }
                 if (rowValues[columnIndex(context, FeederCSVColumn.PLACE_DELAY)]) {
-                    pickSettings.placeDelay = rowValues[columnIndex(context, FeederCSVColumn.PLACE_DELAY)] as Integer
+                    pickSettings.placeDelay = rowValues[columnIndex(context, FeederCSVColumn.PLACE_DELAY)] as BigDecimal
                 }
                 if (rowValues[columnIndex(context, FeederCSVColumn.TAKE_HEIGHT)]) {
                     pickSettings.takeHeight = rowValues[columnIndex(context, FeederCSVColumn.TAKE_HEIGHT)] as BigDecimal
                 }
+                if (rowValues[columnIndex(context, FeederCSVColumn.TAKE_DELAY)]) {
+                    pickSettings.takeDelay = rowValues[columnIndex(context, FeederCSVColumn.TAKE_DELAY)] as BigDecimal
+                }
+
 
                 String note = ""
                 if (hasColumn(FeederCSVColumn.NOTE) && rowValues[columnIndex(context, FeederCSVColumn.NOTE)]) {

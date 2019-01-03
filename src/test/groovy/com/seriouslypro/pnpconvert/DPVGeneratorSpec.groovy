@@ -79,7 +79,11 @@ class DPVGeneratorSpec extends Specification {
             components.add(component1)
 
         and:
-            PickSettings pickSettings = new PickSettings()
+            PickSettings slowPickSettings = new PickSettings(
+                placeDelay: 0.5G,
+                takeDelay: 0.25G
+            )
+            PickSettings fastPickSettings = new PickSettings()
 
         and:
             FeederProperties leftHandSideReel = new FeederProperties(
@@ -89,8 +93,8 @@ class DPVGeneratorSpec extends Specification {
                 feederAngle: 270
             )
 
-            feeders.loadReel(1, 8, component1.name, pickSettings, "Cheap", leftHandSideReel)
-            feeders.loadReel(36, 8, component2.name, pickSettings, "Expensive", rightHandSideReel)
+            feeders.loadReel(1, 8, component1.name, slowPickSettings, "Cheap", leftHandSideReel)
+            feeders.loadReel(36, 8, component2.name, fastPickSettings, "Expensive", rightHandSideReel)
 
         and:
             Tray tray1 = new Tray(
@@ -115,8 +119,8 @@ class DPVGeneratorSpec extends Specification {
                 feederAngle: 0
             )
 
-            feeders.loadTray(91, tray1, component3.name, pickSettings, "Back 1-4 Top-Left", trayFeederProperties)
-            feeders.loadTray(92, tray2, component4.name, pickSettings,"Back 6-7 Top-Left", trayFeederProperties)
+            feeders.loadTray(91, tray1, component3.name, slowPickSettings, "Back 1-4 Top-Left", trayFeederProperties)
+            feeders.loadTray(92, tray2, component4.name, fastPickSettings,"Back 6-7 Top-Left", trayFeederProperties)
 
         and:
             componentPlacements = [
@@ -187,19 +191,19 @@ class DPVGeneratorSpec extends Specification {
 
         and:
             List<List<String>> expectedMaterials = [
-                ["Station","0","1","0","0","4","10K 0402 1%/RES_0402 - Cheap","0.5","0","6","1","3000","0","0","0"],
+                ["Station","0","1","0","0","4","10K 0402 1%/RES_0402 - Cheap","0.5","0","6","1","3000","0","25","0"],
                 ["Station","1","36","0","0","4","100nF 6.3V 0402/CAP_0402 - Expensive","0.5","0","6","0","0","0","0","0"],
-                ["Station","2","91","0","0","4","MAX14851 - Back 1-4 Top-Left","0.5","0","6","0","0","0","0","0"],
+                ["Station","2","91","0","0","4","MAX14851 - Back 1-4 Top-Left","0.5","0","6","0","0","0","25","0"],
                 ["Station","3","92","0","0","4","CAT24C32WI-GT3 - Back 6-7 Top-Left","0.5","0","6","0","0","0","0","0"],
             ]
 
         and:
             List<List<String>> expectedComponents = [
-                ["EComponent","0","1","1","1","14.44","13.9","0","0.5","6","0","R1","10K 0402 1%/RES_0402","0"],
-                ["EComponent","1","2","1","1","15.72","25.2","-90","0.5","6","0","R2","10K 0402 1%/RES_0402","0"],
+                ["EComponent","0","1","1","1","14.44","13.9","0","0.5","6","0","R1","10K 0402 1%/RES_0402","50"],
+                ["EComponent","1","2","1","1","15.72","25.2","-90","0.5","6","0","R2","10K 0402 1%/RES_0402","50"],
                 ["EComponent","2","3","1","36","24.89","21.64","45","0.5","6","0","C1","100nF 6.3V 0402/CAP_0402","0"],
-                ["EComponent","3","4","1","91","21.3","35.07","90","0.5","6","0","U1","/MAX14851","0"],
-                ["EComponent","4","5","1","91","21.3","19.92","90","0.5","6","0","U2","/MAX14851","0"],
+                ["EComponent","3","4","1","91","21.3","35.07","90","0.5","6","0","U1","/MAX14851","50"],
+                ["EComponent","4","5","1","91","21.3","19.92","90","0.5","6","0","U2","/MAX14851","50"],
                 ["EComponent","5","6","1","92","16.8","45.45","90","0.5","6","0","U3","/CAT24C32WI-GT3","0"],
             ]
 

@@ -65,6 +65,7 @@ class FeedersSpec extends Specification {
                 placeSpeedPercentage: 100,
                 placeDelay: 50,
                 takeHeight: 1,
+                takeDelay: 0.25G,
                 pullSpeed: 50,
             )
 
@@ -92,6 +93,7 @@ class FeedersSpec extends Specification {
                 placeSpeedPercentage: 50,
                 placeDelay: 25,
                 takeHeight: 2.5G,
+                takeDelay: 0G,
                 pullSpeed: 25,
             )
 
@@ -118,6 +120,7 @@ class FeedersSpec extends Specification {
                 checkVacuum: true,
                 placeSpeedPercentage: 33,
                 placeDelay: 66,
+                takeDelay: 3G,
                 takeHeight: 3,
             )
 

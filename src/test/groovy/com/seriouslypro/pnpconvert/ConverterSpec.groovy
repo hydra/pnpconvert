@@ -15,7 +15,7 @@ class ConverterSpec extends Specification implements TestResources {
         System.out.flush()
     }
 
-    def 'converter generates expected output files - with placements, components, trays and feeders'() {
+    def 'converter generates expected output files - without placements, components, trays and feeders'() {
         given:
 
             configureConverter('none', 'none', 'none', 'none')
@@ -47,7 +47,7 @@ class ConverterSpec extends Specification implements TestResources {
             !svgContent.empty
     }
 
-    def 'converter generates expected output files - without placements, components, trays and feeders'() {
+    def 'converter generates expected output files - with placements, components, trays and feeders'() {
         given:
             configureConverter('some', 'some', 'some', 'some')
 

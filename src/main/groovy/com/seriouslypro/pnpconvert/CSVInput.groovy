@@ -39,7 +39,11 @@ class CSVInput<TResult, TColumn> {
         lineParser.setHeaderMappings(headers)
     }
 
-    void parseLines(Closure c) {
+    void defaultExceptionHandler(CSVInputContext context, String[] line, Exception cause) {
+        System.out.println("Parse error, reference: $context.reference, lineNumber: $context.lineIndex, column: $context.columnName, lineValues: $line, cause: $cause")
+    }
+
+    void parseLines(Closure c, Closure exceptionHandler = this.&defaultExceptionHandler) {
         String[] line
 
         while ((line = inputCSVReader.readNext()) != null) {
@@ -50,7 +54,8 @@ class CSVInput<TResult, TColumn> {
             try {
                 t = lineParser.parse(context, line)
             } catch(Exception cause) {
-                System.out.println("Parse error, reference: $context.reference, lineNumber: $context.lineIndex, column: $context.columnName, lineValues: $line, cause: $cause")
+                exceptionHandler(context, line, cause)
+
                 continue
             }
             c(context, t, line)

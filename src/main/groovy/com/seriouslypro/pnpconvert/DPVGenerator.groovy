@@ -192,7 +192,7 @@ class DPVGenerator {
                 buildPlaceSpeed(pickSettings.placeSpeedPercentage),
                 componentPlacement.refdes,
                 componentPlacement.value + "/" + componentPlacement.name,
-                pickSettings.placeDelay
+                (pickSettings.placeDelay * 100) as Integer
             ]
 
             placements << placement
@@ -298,6 +298,9 @@ class DPVGenerator {
         // SizeX/SizeY are INTEGER, machine accepts a range of 0.00 to 30.00 in the UI.
         // The when the BigDecimal (mm) values are stored in the DPV file they need to be multiplied by 100.  e.g. "0.01" -> "1" and "30.00" -> "3000"
 
+        // DelayTake is INTEGER, machine accepts a range of 0.00 to 3.00 in the UI.
+        // The when the BigDecimal (second) values are stored in the DPV file they need to be multiplied by 100.  1 second = 100, 0.01 second = 1.
+
         //
         // Note: Table and No. are assigned later
         // Note: this method may generate a duplicate material, duplicates are filtered before being written.
@@ -320,7 +323,7 @@ class DPVGenerator {
                 zeroDigitDecimalFormat.format(component.width * 100),
                 zeroDigitDecimalFormat.format(component.length * 100),
                 pickSettings.takeHeight,
-                pickSettings.placeDelay,
+                zeroDigitDecimalFormat.format(pickSettings.takeDelay * 100),
                 pickSettings.pullSpeed
         ]
 
