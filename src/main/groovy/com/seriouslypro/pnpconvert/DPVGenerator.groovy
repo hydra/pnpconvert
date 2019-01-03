@@ -31,6 +31,9 @@ class DPVGenerator {
         materialNumberSequence = new NumberSequence(0)
         Map<ComponentPlacement, MaterialSelection> materialSelections = selectMaterials()
 
+        materialSelections = materialSelections.sort {a,  b ->
+            a.value.feederId <=> b.value.feederId
+        }
 
         System.out.println('')
         System.out.println('*** MATERIAL SELECTIONS *** - Components from the design that matched the components and feeders/trays')
