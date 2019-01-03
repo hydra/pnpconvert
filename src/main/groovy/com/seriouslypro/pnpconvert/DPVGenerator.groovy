@@ -209,6 +209,8 @@ class DPVGenerator {
 
         BigDecimal machineAngle = (designAngle + feederAngle + pickAngle).remainder(360)
 
+        machineAngle = 180 - machineAngle
+
         if (machineAngle > 180) machineAngle -= 360
 
         return machineAngle
