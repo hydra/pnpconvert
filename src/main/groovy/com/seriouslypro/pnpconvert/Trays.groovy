@@ -7,7 +7,7 @@ class Trays {
         trays.find { it.name == name }
     }
 
-    static enum TrayCSVColumn {
+    static enum TrayCSVColumn implements CSVColumn<TrayCSVColumn> {
         NAME,
         FIRST_COMPONENT_X,
         FIRST_COMPONENT_Y,
@@ -40,7 +40,7 @@ class Trays {
         CSVHeaderParser<TrayCSVColumn> trayHeaderParser = new CSVHeaderParserBase<TrayCSVColumn>() {
             @Override
             TrayCSVColumn parseHeader(CSVInputContext context, String headerValue) {
-                headerValue.toUpperCase().replaceAll('[^A-Za-z0-9]', "_") as TrayCSVColumn
+                TrayCSVColumn.fromString(TrayCSVColumn, headerValue) as TrayCSVColumn
             }
         }
 

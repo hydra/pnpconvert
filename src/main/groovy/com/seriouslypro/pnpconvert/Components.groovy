@@ -91,12 +91,16 @@ class Components {
         components << component
     }
 
-    static enum ComponentCSVColumn {
+    static enum ComponentCSVColumn implements CSVColumn<ComponentCSVColumn> {
         NAME,
-        WIDTH,
-        LENGTH,
-        HEIGHT,
+        WIDTH(["WIDTH/X", "X","WIDTH (X)"]),
+        LENGTH(["LENGTH/Y", "Y","LENGTH (Y)"]),
+        HEIGHT(["HEIGHT/Z", "Z","HEIGHT (Z)"]),
         ALIASES
+
+        ComponentCSVColumn(List<String> aliases = []) {
+            this.aliases = aliases
+        }
     }
 
     void loadFromCSV(String reference, Reader reader) {
@@ -122,7 +126,7 @@ class Components {
         CSVHeaderParser<ComponentCSVColumn> componentHeaderParser = new CSVHeaderParserBase<ComponentCSVColumn>() {
             @Override
             ComponentCSVColumn parseHeader(CSVInputContext context, String headerValue) {
-                headerValue.toUpperCase().replaceAll('[^A-Za-z0-9]', "_") as ComponentCSVColumn
+                ComponentCSVColumn.fromString(ComponentCSVColumn, headerValue) as ComponentCSVColumn
             }
         }
 

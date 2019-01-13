@@ -43,14 +43,14 @@ class Converter {
         csvInput.parseHeader()
 
         String[] outputHeaderRow = [
-            DipTraceCSVHeaders.REFDES.value,
-            DipTraceCSVHeaders.PATTERN.value,
-            DipTraceCSVHeaders.X.value,
-            DipTraceCSVHeaders.Y.value,
-            DipTraceCSVHeaders.SIDE.value,
-            DipTraceCSVHeaders.ROTATE.value,
-            DipTraceCSVHeaders.VALUE.value,
-            DipTraceCSVHeaders.NAME.value,
+            DipTraceCSVHeaders.REFDES.aliases.first(),
+            DipTraceCSVHeaders.PATTERN.aliases.first(),
+            DipTraceCSVHeaders.X.aliases.first(),
+            DipTraceCSVHeaders.Y.aliases.first(),
+            DipTraceCSVHeaders.SIDE.aliases.first(),
+            DipTraceCSVHeaders.ROTATE.aliases.first(),
+            DipTraceCSVHeaders.VALUE.aliases.first(),
+            DipTraceCSVHeaders.NAME.aliases.first(),
         ]
         transformCSVWriter.writeNext(outputHeaderRow)
 

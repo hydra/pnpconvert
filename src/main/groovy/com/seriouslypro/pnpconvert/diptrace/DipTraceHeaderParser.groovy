@@ -24,7 +24,7 @@ class DipTraceHeaderParser implements CSVHeaderParser<DipTraceCSVHeaders> {
 
     @Override
     DipTraceCSVHeaders parseHeader(CSVInputContext context, String headerValue) {
-        DipTraceCSVHeaders dipTraceCSVHeader = DipTraceCSVHeaders.fromString(headerValue)
+        DipTraceCSVHeaders dipTraceCSVHeader = DipTraceCSVHeaders.fromString(DipTraceCSVHeaders, headerValue)
         dipTraceCSVHeader
     }
 
@@ -46,7 +46,7 @@ class DipTraceHeaderParser implements CSVHeaderParser<DipTraceCSVHeaders> {
 
         if (!haveRequiredHeaders) {
             String requiredHeaders = requiredDipTraceCSVHeaders.collect {
-                it.value
+                it.name()
             }.toArray().join(',')
 
             throw new CSVInput.CSVParseException("Input CSV file does not contain all required headers, required: '$requiredHeaders', found: '$headerValues'")

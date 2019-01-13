@@ -1,11 +1,11 @@
 package com.seriouslypro.pnpconvert
 
-interface CSVHeaderParser<TColumn> {
+interface CSVHeaderParser<TColumn extends Enum> {
     Map<TColumn, CSVHeader> parseHeaders(CSVInputContext context, String[] headerValues)
     TColumn parseHeader(CSVInputContext context, String headerValue)
 }
 
-class CSVHeaderParserBase<TColumn> implements CSVHeaderParser<TColumn> {
+class CSVHeaderParserBase<TColumn extends Enum> implements CSVHeaderParser<TColumn> {
 
     @Override
     Map<TColumn, CSVHeader> parseHeaders(CSVInputContext context, String[] headerValues) {
@@ -28,7 +28,7 @@ class CSVHeaderParserBase<TColumn> implements CSVHeaderParser<TColumn> {
 
     @Override
     TColumn parseHeader(CSVInputContext context, String headerValue) {
-        TColumn column = (TColumn)(headerValue.toUpperCase().replaceAll('[^A-Za-z0-9]', "_")) as TColumn // FIXME this doesn't appear to work, TColumn is always of type "String"
-        column
+        String candidate = headerValue.toUpperCase().replaceAll('[^A-Za-z0-9]', "_")
+        return TColumn.valueOf(TColumn, candidate)
     }
 }

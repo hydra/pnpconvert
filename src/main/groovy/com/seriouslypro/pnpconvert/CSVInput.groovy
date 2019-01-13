@@ -10,7 +10,7 @@ class CSVInputContext {
     String columnName
 }
 
-class CSVInput<TResult, TColumn> {
+class CSVInput<TResult, TColumn extends Enum> {
     Reader reader
     CSVHeaderParser<TColumn> headerParser
     CSVLineParser<TResult, TColumn> lineParser

@@ -1,26 +1,18 @@
 package com.seriouslypro.pnpconvert.diptrace
 
-enum DipTraceCSVHeaders {
-    REFDES("RefDes"),
-    PATTERN("Pattern"),
-    X("X (mm)"),
-    Y("Y (mm)"),
-    SIDE("Side"),
-    ROTATE("Rotate"),
-    VALUE("Value"),
-    NAME("Name")
+import com.seriouslypro.pnpconvert.CSVColumn
 
-    private final String value
+enum DipTraceCSVHeaders implements CSVColumn<DipTraceCSVHeaders> {
+    REFDES(["RefDes"]),
+    PATTERN(["Pattern"]),
+    X(["X (mm)"]),
+    Y(["Y (mm)"]),
+    SIDE(["Side"]),
+    ROTATE(["Rotate"]),
+    VALUE(["Value"]),
+    NAME(["Name"])
 
-    DipTraceCSVHeaders(String headerValue) {
-        this.value = headerValue
-    }
-
-    static DipTraceCSVHeaders fromString(String headerValue) {
-        def result = values().find { it.value == headerValue }
-        if (result == null) {
-            throw new IllegalArgumentException("Unknown header value '$headerValue'")
-        }
-        result
+    DipTraceCSVHeaders(List<String> aliases = []) {
+        this.aliases = aliases
     }
 }
