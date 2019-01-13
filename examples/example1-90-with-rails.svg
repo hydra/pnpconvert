@@ -20,37 +20,37 @@
     ></defs
     ><g style="fill:red; stroke:red;"
     ><circle r="1" style="fill:none;" cx="10" cy="-98"
-      /><line y2="-100" style="fill:none;" x1="10" x2="10" y1="-99"
+      /><line y2="-96" style="fill:none;" x1="10" x2="10" y1="-97"
       /><text x="12" y="-97" style="font-size:4px; font-family:monospace; stroke:none;" xml:space="preserve"
       >D1</text
     ></g
     ><g style="fill:blue; font-size:4px; font-family:monospace; stroke:blue;"
     ><circle r="1" style="fill:none;" cx="238" cy="-130"
-      /><line y2="-130" style="fill:none;" x1="239" x2="240" y1="-130"
+      /><line y2="-130" style="fill:none;" x1="237" x2="236" y1="-130"
       /><text x="240" xml:space="preserve" y="-129" style="stroke:none;"
       >D1</text
       ><circle r="1" style="fill:none; stroke:rgb(255,175,175);" cx="98" cy="-130"
-      /><line x1="99" x2="100" y1="-130" style="fill:none; stroke:rgb(255,175,175);" y2="-130"
+      /><line x1="97" x2="96" y1="-130" style="fill:none; stroke:rgb(255,175,175);" y2="-130"
       /><text x="100" xml:space="preserve" y="-129" style="fill:rgb(255,175,175); stroke:none;"
       >D1</text
       ><circle r="1" style="fill:none; stroke:lime;" cx="108" cy="-140"
-      /><line x1="109" x2="110" y1="-140" style="fill:none; stroke:lime;" y2="-140"
+      /><line x1="107" x2="106" y1="-140" style="fill:none; stroke:lime;" y2="-140"
       /><text x="110" xml:space="preserve" y="-139" style="fill:lime; stroke:none;"
       >D1</text
       ><circle r="1" style="fill:none; stroke:red;" cx="130" cy="-185"
-      /><line x1="130" x2="130" y1="-184" style="fill:none; stroke:red;" y2="-183"
+      /><line x1="130" x2="130" y1="-186" style="fill:none; stroke:red;" y2="-187"
       /><text x="132" xml:space="preserve" y="-184" style="fill:red; stroke:none;"
       >R3</text
       ><circle r="1" style="fill:none;" cx="325" cy="-10"
-      /><line y2="-10" style="fill:none;" x1="324" x2="323" y1="-10"
+      /><line y2="-10" style="fill:none;" x1="326" x2="327" y1="-10"
       /><text x="327" xml:space="preserve" y="-9" style="stroke:none;"
       >R3</text
       ><circle r="1" style="fill:none; stroke:rgb(255,175,175);" cx="185" cy="-10"
-      /><line x1="184" x2="183" y1="-10" style="fill:none; stroke:rgb(255,175,175);" y2="-10"
+      /><line x1="186" x2="187" y1="-10" style="fill:none; stroke:rgb(255,175,175);" y2="-10"
       /><text x="187" xml:space="preserve" y="-9" style="fill:rgb(255,175,175); stroke:none;"
       >R3</text
       ><circle r="1" style="fill:none; stroke:lime;" cx="195" cy="-20"
-      /><line x1="194" x2="193" y1="-20" style="fill:none; stroke:lime;" y2="-20"
+      /><line x1="196" x2="197" y1="-20" style="fill:none; stroke:lime;" y2="-20"
       /><text x="197" xml:space="preserve" y="-19" style="fill:lime; stroke:none;"
       >R3</text
       ><circle r="1" style="fill:none; stroke:red;" cx="124" cy="-10"
@@ -70,19 +70,19 @@
       /><text x="22" xml:space="preserve" y="-24" style="fill:lime; stroke:none;"
       >R4</text
       ><circle r="1" style="fill:none; stroke:red;" cx="10" cy="-14"
-      /><line x1="10" x2="10" y1="-15" style="fill:none; stroke:red;" y2="-16"
+      /><line x1="10" x2="10" y1="-13" style="fill:none; stroke:red;" y2="-12"
       /><text x="12" xml:space="preserve" y="-13" style="fill:red; stroke:none;"
       >R5</text
       ><circle r="1" style="fill:none;" cx="154" cy="-130"
-      /><line y2="-130" style="fill:none;" x1="155" x2="156" y1="-130"
+      /><line y2="-130" style="fill:none;" x1="153" x2="152" y1="-130"
       /><text x="156" xml:space="preserve" y="-129" style="stroke:none;"
       >R5</text
       ><circle r="1" style="fill:none; stroke:rgb(255,175,175);" cx="14" cy="-130"
-      /><line x1="15" x2="16" y1="-130" style="fill:none; stroke:rgb(255,175,175);" y2="-130"
+      /><line x1="13" x2="12" y1="-130" style="fill:none; stroke:rgb(255,175,175);" y2="-130"
       /><text x="16" xml:space="preserve" y="-129" style="fill:rgb(255,175,175); stroke:none;"
       >R5</text
       ><circle r="1" style="fill:none; stroke:lime;" cx="24" cy="-140"
-      /><line x1="25" x2="26" y1="-140" style="fill:none; stroke:lime;" y2="-140"
+      /><line x1="23" x2="22" y1="-140" style="fill:none; stroke:lime;" y2="-140"
       /><text x="26" xml:space="preserve" y="-139" style="fill:lime; stroke:none;"
       >R5</text
       ><circle r="1" style="fill:none; stroke:red;" cx="68" cy="-190"
@@ -102,19 +102,19 @@
       /><text x="202" xml:space="preserve" y="-80" style="fill:lime; stroke:none;"
       >D2</text
       ><circle r="1" style="fill:none; stroke:red;" cx="130" cy="-101"
-      /><line x1="130" x2="130" y1="-100" style="fill:none; stroke:red;" y2="-99"
+      /><line x1="130" x2="130" y1="-102" style="fill:none; stroke:red;" y2="-103"
       /><text x="132" xml:space="preserve" y="-100" style="fill:red; stroke:none;"
       >D3</text
       ><circle r="1" style="fill:none;" cx="241" cy="-10"
-      /><line y2="-10" style="fill:none;" x1="240" x2="239" y1="-10"
+      /><line y2="-10" style="fill:none;" x1="242" x2="243" y1="-10"
       /><text x="243" xml:space="preserve" y="-9" style="stroke:none;"
       >D3</text
       ><circle r="1" style="fill:none; stroke:rgb(255,175,175);" cx="101" cy="-10"
-      /><line x1="100" x2="99" y1="-10" style="fill:none; stroke:rgb(255,175,175);" y2="-10"
+      /><line x1="102" x2="103" y1="-10" style="fill:none; stroke:rgb(255,175,175);" y2="-10"
       /><text x="103" xml:space="preserve" y="-9" style="fill:rgb(255,175,175); stroke:none;"
       >D3</text
       ><circle r="1" style="fill:none; stroke:lime;" cx="111" cy="-20"
-      /><line x1="110" x2="109" y1="-20" style="fill:none; stroke:lime;" y2="-20"
+      /><line x1="112" x2="113" y1="-20" style="fill:none; stroke:lime;" y2="-20"
       /><text x="113" xml:space="preserve" y="-19" style="fill:lime; stroke:none;"
       >D3</text
       ><circle r="1" style="fill:none; stroke:red;" cx="71" cy="-10"
