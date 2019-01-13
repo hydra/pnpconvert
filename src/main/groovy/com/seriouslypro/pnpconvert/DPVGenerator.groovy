@@ -166,6 +166,8 @@ class DPVGenerator {
         EComponent,0,1,1,16,24.89,21.64,90,0.5,5,0,C1,100nF 6.3V 0402/CAP_0402,0
          */
 
+        DecimalFormat twoDigitDecimalFormat = new DecimalFormat("#0.##")
+
         List<String[]> placements =[]
 
         NumberSequence placementNumberSequence = new NumberSequence(0)
@@ -187,10 +189,10 @@ class DPVGenerator {
                 placementIDSequence.next(),
                 materialSelection.feeder.pickSettings.head,
                 materialSelection.feederId,
-                componentPlacement.coordinate.x,
-                componentPlacement.coordinate.y,
-                counterClockwiseMachineAngle,
-                materialSelection.component.height,
+                twoDigitDecimalFormat.format(componentPlacement.coordinate.x),
+                twoDigitDecimalFormat.format(componentPlacement.coordinate.y),
+                twoDigitDecimalFormat.format(counterClockwiseMachineAngle),
+                twoDigitDecimalFormat.format(materialSelection.component.height),
                 buildStatus(materialSelection.feeder.enabled, pickSettings),
                 buildPlaceSpeed(pickSettings.placeSpeedPercentage),
                 componentPlacement.refdes,
@@ -224,6 +226,8 @@ class DPVGenerator {
 
         NumberSequence trayNumberSequence = new NumberSequence(0)
 
+        DecimalFormat twoDigitDecimalFormat = new DecimalFormat("#0.##")
+
         materialSelections.each { ComponentPlacement placement, MaterialSelection materialSelection ->
             Feeder candidate = materialSelection.feeder
 
@@ -239,10 +243,10 @@ class DPVGenerator {
                 "ICTray",
                 trayNumberSequence.next(),
                 materialSelection.feederId,
-                tray.firstComponentX,
-                tray.firstComponentY,
-                tray.lastComponentX,
-                tray.lastComponentY,
+                twoDigitDecimalFormat.format(tray.firstComponentX),
+                twoDigitDecimalFormat.format(tray.firstComponentY),
+                twoDigitDecimalFormat.format(tray.lastComponentX),
+                twoDigitDecimalFormat.format(tray.lastComponentY),
                 tray.columns,
                 tray.rows,
                 tray.firstComponentIndex,
@@ -318,14 +322,14 @@ class DPVGenerator {
                 feederId,
                 twoDigitDecimalFormat.format(pickSettings.xOffset),
                 twoDigitDecimalFormat.format(pickSettings.yOffset),
-                pickSettings.tapeSpacing,
+                twoDigitDecimalFormat.format(pickSettings.tapeSpacing),
                 buildMaterialNote(component, feeder),
                 twoDigitDecimalFormat.format(component.height),
                 buildPlaceSpeed(pickSettings.placeSpeedPercentage),
                 statusFlags & 0xFF,
                 zeroDigitDecimalFormat.format(component.width * 100),
                 zeroDigitDecimalFormat.format(component.length * 100),
-                pickSettings.takeHeight,
+                twoDigitDecimalFormat.format(pickSettings.takeHeight),
                 zeroDigitDecimalFormat.format(pickSettings.takeDelay * 100),
                 pickSettings.pullSpeed
         ]

@@ -165,14 +165,14 @@ class DPVGeneratorSpec extends Specification {
                     pattern: "QSOP-16",
                     coordinate: new Coordinate(x: 21.3, y: 19.92),
                     side: PCBSide.TOP,
-                    rotation: 90,
+                    rotation: 22.5,
                     value: "",
                     name: "MAX14851"
                 ),
                 new ComponentPlacement(
                     refdes: "U3",
                     pattern: "SOIC-8/150mil",
-                    coordinate: new Coordinate(x: 16.8, y: 45.45),
+                    coordinate: new Coordinate(x: 16.00, y: 45.00),
                     side: PCBSide.TOP,
                     rotation: 90,
                     value: "",
@@ -203,8 +203,8 @@ class DPVGeneratorSpec extends Specification {
                 ["EComponent","1","2","1","1","15.72","25.2","-90","0.5","6","0","R2","10K 0402 1%/RES_0402","50"],
                 ["EComponent","2","3","1","36","24.89","21.64","45","0.5","6","0","C1","100nF 6.3V 0402/CAP_0402","0"],
                 ["EComponent","3","4","1","91","21.3","35.07","90","0.5","6","0","U1","/MAX14851","50"],
-                ["EComponent","4","5","1","91","21.3","19.92","90","0.5","6","0","U2","/MAX14851","50"],
-                ["EComponent","5","6","1","92","16.8","45.45","90","0.5","6","0","U3","/CAT24C32WI-GT3","0"],
+                ["EComponent","4","5","1","91","21.3","19.92","157.5","0.5","6","0","U2","/MAX14851","50"],
+                ["EComponent","5","6","1","92","16","45","90","0.5","6","0","U3","/CAT24C32WI-GT3","0"],
             ]
 
         and:
