@@ -7,7 +7,8 @@ import spock.lang.Unroll
 
 class DPVGeneratorSpec extends Specification {
 
-    private static final LF = System.getProperty("line.separator")
+    private static final CRLF = "\r\n"
+    private static final TEST_TABLE_LINE_ENDING = CRLF * 2
 
     DPVHeader dpvHeader = new DPVHeader(
             fileName: "TEST-FILE",
@@ -52,8 +53,8 @@ class DPVGeneratorSpec extends Specification {
 
         and:
             content.contains(
-                "Table,No.,ID,DeltX,DeltY" + LF +
-                "Panel_Coord,0,1,0,0"
+                "Table,No.,ID,DeltX,DeltY" + TEST_TABLE_LINE_ENDING +
+                "Panel_Coord,0,1,0,0" + TEST_TABLE_LINE_ENDING
             )
     }
 

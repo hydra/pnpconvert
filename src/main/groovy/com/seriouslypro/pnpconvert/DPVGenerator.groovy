@@ -19,9 +19,16 @@ class DPVGenerator {
     Map<Feeder, Component> feedersMatchedByAlias
     Map<ComponentPlacement, ComponentFindResult> inexactComponentMatches
 
+    private String lineEnding
+    private String tableLineEnding
+
     private PrintStream stream
 
     void generate(OutputStream outputStream) {
+
+        lineEnding = "\r\n"
+
+        tableLineEnding = lineEnding * 2
 
         placementsWithUnknownComponents = []
         unloadedComponents = []
@@ -166,6 +173,10 @@ class DPVGenerator {
         EComponent,0,1,1,16,24.89,21.64,90,0.5,5,0,C1,100nF 6.3V 0402/CAP_0402,0
          */
 
+        // "Note" field is limited to 31 characters, e.g. "47uF 6.3V 1206 10% TANTALUM/CAP_1206" will be re-saved by the machine as "47uF 6.3V 1206 10% TANTALUM/CAP".
+        // Since the machine handles the import without imposing the limit here we choose NOT to truncate the field.  This does make comparing machine-saved files and generated files more difficult though.
+
+
         DecimalFormat twoDigitDecimalFormat = new DecimalFormat("#0.##")
 
         List<String[]> placements =[]
@@ -264,21 +275,21 @@ class DPVGenerator {
         String formattedDate = new SimpleDateFormat('yyyy/MM/dd').format(now)
         String formattedTime = new SimpleDateFormat('HH:mm:ss').format(now)
 
-        String header = "separated\n" +
-                DPVFileHeaders.FILE + ",$dpvHeader.fileName\n" +
-                DPVFileHeaders.PCBFILE + ",$dpvHeader.pcbFileName\n" +
-                DPVFileHeaders.DATE + ",$formattedDate\n" +
-                DPVFileHeaders.TIME + ",$formattedTime\n" +
-                DPVFileHeaders.PANELTYPE + ",0" // Type 0 = batch of PCBs. Type 1 = panel of PCBs.
+        String content = "separated" + lineEnding +
+                DPVFileHeaders.FILE + ",$dpvHeader.fileName" + lineEnding +
+                DPVFileHeaders.PCBFILE + ",$dpvHeader.pcbFileName" + lineEnding +
+                DPVFileHeaders.DATE + ",$formattedDate" + lineEnding +
+                DPVFileHeaders.TIME + ",$formattedTime" + lineEnding +
+                DPVFileHeaders.PANELTYPE + ",0" + lineEnding // Type 0 = batch of PCBs. Type 1 = panel of PCBs.
 
-        stream.println(header)
-        stream.println()
+        stream.print(content)
+        stream.print(lineEnding)
     }
 
     def writeMaterials(Map<ComponentPlacement, MaterialSelection> materials) {
         String sectionHeader =
                 "Table,No.,ID,DeltX,DeltY,FeedRates,Note,Height,Speed,Status,SizeX,SizeY,HeightTake,DelayTake,nPullStripSpeed"
-        stream.println(sectionHeader)
+        stream.print(sectionHeader + tableLineEnding)
 
 
         materials.values().toUnique { a ->
@@ -290,9 +301,9 @@ class DPVGenerator {
                 "Station",
                 materialNumberSequence.next()
             ]
-            stream.println((managedColumns + materialSelection.material).join(","))
+            stream.print((managedColumns + materialSelection.material).join(",") + tableLineEnding)
         }
-        stream.println()
+        stream.print(tableLineEnding)
     }
 
     String[] buildMaterial(Integer feederId, Feeder feeder, Component component) {
@@ -377,27 +388,27 @@ class DPVGenerator {
         stream.println(sectionHeader)
 
         placements.each { placement ->
-            stream.println(placement.join(","))
+            stream.print(placement.join(",") + tableLineEnding)
         }
-        stream.println()
+        stream.print(tableLineEnding)
     }
 
     void writeTrays(List<String[]> trays) {
         String sectionHeader = "Table,No.,ID,CenterX,CenterY,IntervalX,IntervalY,NumX,NumY,Start"
 
-        stream.println(sectionHeader)
+        stream.print(sectionHeader + tableLineEnding)
 
         trays.each { tray ->
-            stream.println(tray.join(","))
+            stream.print(tray.join(",") + tableLineEnding)
         }
 
-        stream.println()
+        stream.print(tableLineEnding)
     }
 
     void writePanel() {
-        stream.println("Table,No.,ID,DeltX,DeltY")
-        stream.println("Panel_Coord,0,1,0,0")
-        stream.println()
+        stream.print("Table,No.,ID,DeltX,DeltY" + tableLineEnding)
+        stream.print("Panel_Coord,0,1,0,0" + tableLineEnding)
+        stream.print(tableLineEnding)
     }
 
     class NumberSequence {
