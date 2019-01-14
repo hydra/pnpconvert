@@ -88,9 +88,9 @@ class DPVGenerator {
 
         writeHeader(dpvHeader)
         writeMaterials(materialSelections)
+        writePanel()
         writePlacements(placements)
         writeTrays(trays)
-        writePanel()
     }
 
     void relocatePlacements(Map<ComponentPlacement, MaterialSelection> materialSelections) {
