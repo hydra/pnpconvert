@@ -69,7 +69,7 @@ class DPVGenerator {
 
         System.out.println()
         System.out.println("inexactComponentsMatches:\n" + inexactComponentMatches.collect { ComponentPlacement placement, ComponentFindResult componentFindResult ->
-            "placement: $placement.name, component: $componentFindResult.component, strategies: $componentFindResult.matchingStrategies"
+            "placement: $placement, component: $componentFindResult.component, strategies: $componentFindResult.matchingStrategies"
         }.join('\n'))
 
         System.out.println()
