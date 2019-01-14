@@ -74,6 +74,19 @@ class DPVGeneratorSpec extends Specification {
             Component component4 = new Component(
                 name: "CAT24C32WI-GT3"
             )
+            Component component5 = new Component(
+                name: "Micro USB Socket",
+                width: 8,
+                height: 3.5,
+                length: 5,
+
+                // use zero second fraction digit to aid matching rotation calculations (note: easy to see 0.1 + 0.02 = 0.12)
+                // use offsets that will result it the first digit of the placement being different for X/Y
+                placementOffsetX: 1.10,
+                placementOffsetY: 0.80,
+
+            )
+            components.add(component5)
             components.add(component4)
             components.add(component3)
             components.add(component2)
@@ -96,6 +109,8 @@ class DPVGeneratorSpec extends Specification {
 
             feeders.loadReel(1, 8, component1.name, slowPickSettings, "Cheap", leftHandSideReel)
             feeders.loadReel(36, 8, component2.name, fastPickSettings, "Expensive", rightHandSideReel)
+
+            feeders.loadReel(33, 12, component5.name, new PickSettings(), "Special", leftHandSideReel)
 
         and:
             Tray tray1 = new Tray(
@@ -148,7 +163,7 @@ class DPVGeneratorSpec extends Specification {
                     pattern: "CAP_0402_HIGH_DENSITY",
                     coordinate: new Coordinate(x: 24.89, y: 21.64),
                     side: PCBSide.TOP,
-                    rotation: 225,
+                    rotation: 225, // arbitrary, without fraction, but not 0/90/180/270
                     value: "100nF 6.3V 0402",
                     name: "CAP_0402"
                 ),
@@ -164,28 +179,61 @@ class DPVGeneratorSpec extends Specification {
                 new ComponentPlacement(
                     refdes: "U2",
                     pattern: "QSOP-16",
-                    coordinate: new Coordinate(x: 21.3, y: 19.92),
+                    coordinate: new Coordinate(x: 21.50, y: 19.50), // one digit fraction
                     side: PCBSide.TOP,
-                    rotation: 22.5,
+                    rotation: 22.5,  // arbitrary, with fraction, but not 0/90/180/270
                     value: "",
                     name: "MAX14851"
                 ),
                 new ComponentPlacement(
                     refdes: "U3",
                     pattern: "SOIC-8/150mil",
-                    coordinate: new Coordinate(x: 16.00, y: 45.00),
+                    coordinate: new Coordinate(x: 16.00, y: 45.00), // no fraction
                     side: PCBSide.TOP,
                     rotation: 90,
                     value: "",
                     name: "CAT24C32WI-GT3"
+                ),
+                new ComponentPlacement(
+                    refdes: "J1",
+                    pattern: "USB/MICRO1",
+                    coordinate: new Coordinate(x: 50.03, y: 25.07), // use non-zero second fraction digit to aid matching rotation calculations
+                    side: PCBSide.TOP,
+                    rotation: 90, // rotation also used for placement offset
+                    value: "",
+                    name: "Micro USB Socket"
                 )
             ]
 
+        and: // test data expectations
             boolean haveTwoIdenticalComponents = (
                 componentPlacements[0].value == componentPlacements[1].value &&
                 componentPlacements[0].name == componentPlacements[1].name
             )
             assert haveTwoIdenticalComponents // two identical components should result in a single material.
+
+            boolean haveXYCoordinateWithoutFraction = componentPlacements.find {
+                it.coordinate.x.remainder(BigDecimal.ONE) == BigDecimal.ZERO &&
+                it.coordinate.y.remainder(BigDecimal.ONE) == BigDecimal.ZERO
+            }
+            assert haveXYCoordinateWithoutFraction // trailing zeros should be removed in output
+
+            boolean haveXYCoordinateWithTrailingZeros = componentPlacements.find {
+                it.coordinate.x.remainder(BigDecimal.ONE).precision() == 1 &&
+                it.coordinate.y.remainder(BigDecimal.ONE).precision() == 1
+            }
+            assert haveXYCoordinateWithTrailingZeros // trailing zeros should be removed in output
+
+            boolean haveAngleOf90 = componentPlacements.find { it.rotation == 90.0G }
+            assert haveAngleOf90 // for checking rotation
+
+            boolean haveAngleWithFraction = componentPlacements.find { it.rotation.remainder(BigDecimal.ONE) != BigDecimal.ZERO }
+            assert haveAngleWithFraction // for checking rotation
+
+            String nameOfComponentWithPlacementOffset = "Micro USB Socket"
+            boolean haveComponentWithPlacementOffset = componentPlacements.find { it.name == nameOfComponentWithPlacementOffset && it.rotation != 0 && it.coordinate.x != it.coordinate.y}
+            boolean havePlacementThatUsesComponentWithPlacementOffset = components.components.find { it.name == nameOfComponentWithPlacementOffset && it.placementOffsetX != 0 && it.placementOffsetY != 0 && it.placementOffsetX != it.placementOffsetY}
+            assert haveComponentWithPlacementOffset && havePlacementThatUsesComponentWithPlacementOffset
 
         and:
             DPVGenerator generator = buildGenerator()
@@ -193,19 +241,21 @@ class DPVGeneratorSpec extends Specification {
         and:
             List<List<String>> expectedMaterials = [
                 ["Station","0","1","0","0","4","10K 0402 1%/RES_0402 - Cheap","0.5","0","6","1","3000","0","25","0"],
-                ["Station","1","36","0","0","4","100nF 6.3V 0402/CAP_0402 - Expensive","0.5","0","6","0","0","0","0","0"],
-                ["Station","2","91","0","0","4","MAX14851 - Back 1-4 Top-Left","0.5","0","6","0","0","0","25","0"],
-                ["Station","3","92","0","0","4","CAT24C32WI-GT3 - Back 6-7 Top-Left","0.5","0","6","0","0","0","0","0"],
+                ["Station","1","33","0","0","4","Micro USB Socket - Special","3.5","0","6","800","500","0","0","0"],
+                ["Station","2","36","0","0","4","100nF 6.3V 0402/CAP_0402 - Expensive","0.5","0","6","0","0","0","0","0"],
+                ["Station","3","91","0","0","4","MAX14851 - Back 1-4 Top-Left","0.5","0","6","0","0","0","25","0"],
+                ["Station","4","92","0","0","4","CAT24C32WI-GT3 - Back 6-7 Top-Left","0.5","0","6","0","0","0","0","0"],
             ]
 
         and:
             List<List<String>> expectedComponents = [
                 ["EComponent","0","1","1","1","14.44","13.9","0","0.5","6","0","R1","10K 0402 1%/RES_0402","50"],
                 ["EComponent","1","2","1","1","15.72","25.2","-90","0.5","6","0","R2","10K 0402 1%/RES_0402","50"],
-                ["EComponent","2","3","1","36","24.89","21.64","45","0.5","6","0","C1","100nF 6.3V 0402/CAP_0402","0"],
-                ["EComponent","3","4","1","91","21.3","35.07","90","0.5","6","0","U1","/MAX14851","50"],
-                ["EComponent","4","5","1","91","21.3","19.92","157.5","0.5","6","0","U2","/MAX14851","50"],
-                ["EComponent","5","6","1","92","16","45","90","0.5","6","0","U3","/CAT24C32WI-GT3","0"],
+                ["EComponent","2","3","1","33","50.83","23.97","0","3.5","6","0","J1","/Micro USB Socket","0"],
+                ["EComponent","3","4","1","36","24.89","21.64","45","0.5","6","0","C1","100nF 6.3V 0402/CAP_0402","0"],
+                ["EComponent","4","5","1","91","21.3","35.07","90","0.5","6","0","U1","/MAX14851","50"],
+                ["EComponent","5","6","1","91","21.5","19.5","157.5","0.5","6","0","U2","/MAX14851","50"],
+                ["EComponent","6","7","1","92","16","45","90","0.5","6","0","U3","/CAT24C32WI-GT3","0"],
             ]
 
         and:

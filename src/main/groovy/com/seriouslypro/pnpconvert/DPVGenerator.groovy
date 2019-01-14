@@ -42,6 +42,8 @@ class DPVGenerator {
             a.value.feederId <=> b.value.feederId
         }
 
+        relocatePlacements(materialSelections)
+
         System.out.println('')
         System.out.println('*** MATERIAL SELECTIONS *** - Components from the design that matched the components and feeders/trays')
         System.out.println('')
@@ -89,6 +91,13 @@ class DPVGenerator {
         writePlacements(placements)
         writeTrays(trays)
         writePanel()
+    }
+
+    void relocatePlacements(Map<ComponentPlacement, MaterialSelection> materialSelections) {
+
+        materialSelections.each { ComponentPlacement cp, MaterialSelection ms ->
+            cp.coordinate = cp.coordinate.relocate(cp.rotation, ms.component.placementOffsetX, ms.component.placementOffsetY)
+        }
     }
 
     Map<ComponentPlacement, MaterialSelection> selectMaterials() {

@@ -1,9 +1,9 @@
 package com.seriouslypro.pnpconvert
 
+import spock.lang.Specification
 import spock.lang.Unroll
 
-
-class BoardRotationSpec extends spock.lang.Specification {
+class BoardRotationSpec extends Specification {
 
     // right-handed coordinate system
     // x+ = right

@@ -96,7 +96,9 @@ class Components {
         WIDTH(["WIDTH/X", "X","WIDTH (X)"]),
         LENGTH(["LENGTH/Y", "Y","LENGTH (Y)"]),
         HEIGHT(["HEIGHT/Z", "Z","HEIGHT (Z)"]),
-        ALIASES
+        ALIASES,
+        PLACEMENT_OFFSET_X(["OFFSET X", "OFFSETX"]),
+        PLACEMENT_OFFSET_Y(["OFFSET Y", "OFFSETY"])
 
         ComponentCSVColumn(List<String> aliases = []) {
             this.aliases = aliases
@@ -109,6 +111,10 @@ class Components {
 
             @Override
             Component parse(CSVInputContext context, String[] rowValues) {
+
+                BigDecimal placementOffsetX = (hasColumn(ComponentCSVColumn.PLACEMENT_OFFSET_X) && rowValues[columnIndex(context, ComponentCSVColumn.PLACEMENT_OFFSET_X)]) ? rowValues[columnIndex(context, ComponentCSVColumn.PLACEMENT_OFFSET_X)] as BigDecimal : 0
+                BigDecimal placementOffsetY = (hasColumn(ComponentCSVColumn.PLACEMENT_OFFSET_Y) && rowValues[columnIndex(context, ComponentCSVColumn.PLACEMENT_OFFSET_Y)]) ? rowValues[columnIndex(context, ComponentCSVColumn.PLACEMENT_OFFSET_Y)] as BigDecimal : 0
+
                 return new Component(
                     name: rowValues[columnIndex(context, ComponentCSVColumn.NAME)].trim(),
                     width: rowValues[columnIndex(context, ComponentCSVColumn.WIDTH)] as BigDecimal,
@@ -118,7 +124,9 @@ class Components {
                         String value = raw.trim()
                         boolean emptyValue = !value
                         emptyValue ? null : value
-                    }
+                    },
+                    placementOffsetX: placementOffsetX,
+                    placementOffsetY: placementOffsetY,
                 )
             }
         }
