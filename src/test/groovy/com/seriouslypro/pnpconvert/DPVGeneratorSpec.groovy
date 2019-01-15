@@ -135,8 +135,8 @@ class DPVGeneratorSpec extends Specification {
                 feederAngle: 0
             )
 
-            feeders.loadTray(91, tray1, component3.name, slowPickSettings, "Back 1-4 Top-Left", trayFeederProperties)
-            feeders.loadTray(92, tray2, component4.name, fastPickSettings,"Back 6-7 Top-Left", trayFeederProperties)
+            feeders.loadTray(91, tray1, component3.name, slowPickSettings, "Back 1-4 Top-Left, Pin 1 Top-Left", trayFeederProperties)
+            feeders.loadTray(92, tray2, component4.name, fastPickSettings,"Back 6-7 Top-Left, Pin 1 Bottom-Right", trayFeederProperties)
 
         and:
             componentPlacements = [
@@ -243,8 +243,8 @@ class DPVGeneratorSpec extends Specification {
                 ["Station","0","1","0","0","4","10K 0402 1%/RES_0402 - Cheap","0.5","0","6","1","3000","0","25","0"],
                 ["Station","1","33","0","0","4","Micro USB Socket - Special","3.5","0","6","800","500","0","0","0"],
                 ["Station","2","36","0","0","4","100nF 6.3V 0402/CAP_0402 - Expensive","0.5","0","6","0","0","0","0","0"],
-                ["Station","3","91","0","0","4","MAX14851 - Back 1-4 Top-Left","0.5","0","6","0","0","0","25","0"],
-                ["Station","4","92","0","0","4","CAT24C32WI-GT3 - Back 6-7 Top-Left","0.5","0","6","0","0","0","0","0"],
+                ["Station","3","91","0","0","4","MAX14851 - Back 1-4 Top-Left; Pin 1 Top-Left","0.5","0","6","0","0","0","25","0"],
+                ["Station","4","92","0","0","4","CAT24C32WI-GT3 - Back 6-7 Top-Left; Pin 1 Bottom-Right","0.5","0","6","0","0","0","0","0"],
             ]
 
         and:

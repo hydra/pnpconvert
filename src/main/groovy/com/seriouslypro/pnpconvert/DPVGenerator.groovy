@@ -310,7 +310,7 @@ class DPVGenerator {
                 "Station",
                 materialNumberSequence.next()
             ]
-            stream.print((managedColumns + materialSelection.material).join(",") + tableLineEnding)
+            stream.print((managedColumns + materialSelection.material).collect { it.replace(',', ';') }.join(",") + tableLineEnding)
         }
         stream.print(tableLineEnding)
     }
@@ -397,7 +397,7 @@ class DPVGenerator {
         stream.println(sectionHeader)
 
         placements.each { placement ->
-            stream.print(placement.join(",") + tableLineEnding)
+            stream.print(placement.collect { it.replace(',', ';') }.join(",") + tableLineEnding)
         }
         stream.print(tableLineEnding)
     }
@@ -408,7 +408,7 @@ class DPVGenerator {
         stream.print(sectionHeader + tableLineEnding)
 
         trays.each { tray ->
-            stream.print(tray.join(",") + tableLineEnding)
+            stream.print(tray.collect { it.replace(',', ';') }.join(",") + tableLineEnding)
         }
 
         stream.print(tableLineEnding)
