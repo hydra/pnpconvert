@@ -394,7 +394,7 @@ class DPVGenerator {
         String sectionHeader =
             "Table,No.,ID,PHead,STNo.,DeltX,DeltY,Angle,Height,Skip,Speed,Explain,Note,Delay"
 
-        stream.println(sectionHeader)
+        stream.print(sectionHeader + tableLineEnding)
 
         placements.each { placement ->
             stream.print(placement.collect { it.replace(',', ';') }.join(",") + tableLineEnding)
