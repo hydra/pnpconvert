@@ -4,12 +4,14 @@ import com.seriouslypro.pnpconvert.diptrace.DipTraceCSVInput
 
 import static FileTools.*
 
-class CSVItem {
-    ComponentPlacement componentPlacement
-    String[] line
-}
-
 class CSVProcessor {
+
+    private final class CSVItem {
+        ComponentPlacement componentPlacement
+        String[] line
+    }
+
+    ComponentPlacementFilter filter
     ComponentPlacementWriter writer
     ComponentPlacementTransformer transformer
 
@@ -27,11 +29,14 @@ class CSVProcessor {
         }
 
         List<ComponentPlacement> placements = csvItems.stream()
+            .filter { csvItem ->
+                filter.shouldFilter(csvItem.componentPlacement)
+            }
             .map { csvItem ->
                 new CSVItem(componentPlacement: transformer.process(csvItem.componentPlacement), line: csvItem.line)
             }
             .peek { csvItem ->
-                writer.process(csvItem.componentPlacement)
+                writer.process(csvItem.componentPlacement, csvItem.line)
             }
             .collect { csvItem ->
                 csvItem.componentPlacement
