@@ -30,9 +30,7 @@ class Converter {
         ComponentPlacementTransformer transformer = new DiptraceComponentPlacementTransformer(outputPrefix, boardRotation, offset)
         ComponentPlacementWriter dipTraceComponentPlacementWriter = new DipTraceComponentPlacementWriter(transformFileName)
 
-        csvProcessor = new CSVProcessor()
-            .withTransformer(transformer)
-            .withWriter(dipTraceComponentPlacementWriter)
+        csvProcessor = new CSVProcessor(transformer: transformer, writer: dipTraceComponentPlacementWriter)
 
         List<ComponentPlacement> placements = csvProcessor.process(inputFileName)
 

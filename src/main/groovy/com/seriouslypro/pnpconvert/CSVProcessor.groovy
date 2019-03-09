@@ -34,14 +34,4 @@ class CSVProcessor {
 
         return placements
     }
-
-    CSVProcessor withTransformer(ComponentPlacementTransformer transformer) {
-        this.transformer = transformer
-        return this
-    }
-
-    CSVProcessor withWriter(ComponentPlacementWriter writer) {
-        this.writer = writer
-        return this
-    }
 }
