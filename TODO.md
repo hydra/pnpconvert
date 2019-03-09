@@ -34,3 +34,6 @@ Would-be-nice
 * Display origin in SVG
 * Make SVG nicer.
 * Set units for SVG display
+* Filter TOP/BOTTOM components. Currently both sides are processed.
+* Exclude specific reference designators, from list in a file.
+* Replace specific components by reference designator.
