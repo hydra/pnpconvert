@@ -7,6 +7,11 @@ class ConverterSpec extends Specification implements TestResources {
 
     Converter converter
 
+    final String noPlacements = 'none'
+    final String noComponents = 'none'
+    final String noTrays = 'none'
+    final String noFeeders = 'none'
+
     void setup() {
         converter = new Converter()
     }
@@ -18,7 +23,7 @@ class ConverterSpec extends Specification implements TestResources {
     def 'converter generates expected output files - without placements, components, trays and feeders'() {
         given:
 
-            configureConverter('none', 'none', 'none', 'none')
+            configureConverter(noPlacements, noComponents, noTrays, noFeeders)
 
             String outputPrefix = converter.outputPrefix
 
