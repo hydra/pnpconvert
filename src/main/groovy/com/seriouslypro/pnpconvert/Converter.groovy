@@ -1,13 +1,8 @@
 package com.seriouslypro.pnpconvert
 
-import au.com.bytecode.opencsv.CSVWriter
-import com.seriouslypro.pnpconvert.diptrace.AngleConverter
-import com.seriouslypro.pnpconvert.diptrace.DipTraceCSVHeaders
-import com.seriouslypro.pnpconvert.diptrace.DipTraceCSVInput
-import com.seriouslypro.pnpconvert.diptrace.DiptraceAngleConverter
 import com.seriouslypro.pnpconvert.machine.CHMT48VB
 
-import java.awt.Color
+import static FileTools.*
 
 class Converter {
 
@@ -20,13 +15,11 @@ class Converter {
     BoardRotation boardRotation = new BoardRotation()
     Coordinate offset = new Coordinate()
 
-    AngleConverter diptraceAngleConverter = new DiptraceAngleConverter()
+    CSVProcessor csvProcessor
 
     private static final boolean append = false
 
     void convert() {
-
-        SVGRenderer renderer = new SVGRenderer()
 
         //
         // CSV processing
@@ -34,55 +27,14 @@ class Converter {
 
         String transformFileName = outputPrefix + "-transformed.csv"
 
-        Reader reader = openFileOrUrl(inputFileName)
-        CSVInput csvInput = new DipTraceCSVInput(inputFileName, reader)
+        ComponentPlacementTransformer transformer = new DiptraceComponentPlacementTransformer(outputPrefix, boardRotation, offset)
+        ComponentPlacementWriter dipTraceComponentPlacementWriter = new DipTraceComponentPlacementWriter(transformFileName)
 
-        Writer transformFileWriter = new FileWriter(transformFileName, append)
-        CSVWriter transformCSVWriter = new CSVWriter(transformFileWriter, ',' as char)
+        csvProcessor = new CSVProcessor()
+            .withTransformer(transformer)
+            .withWriter(dipTraceComponentPlacementWriter)
 
-        csvInput.parseHeader()
-
-        String[] outputHeaderRow = [
-            DipTraceCSVHeaders.REFDES.aliases.first(),
-            DipTraceCSVHeaders.PATTERN.aliases.first(),
-            DipTraceCSVHeaders.X.aliases.first(),
-            DipTraceCSVHeaders.Y.aliases.first(),
-            DipTraceCSVHeaders.SIDE.aliases.first(),
-            DipTraceCSVHeaders.ROTATE.aliases.first(),
-            DipTraceCSVHeaders.VALUE.aliases.first(),
-            DipTraceCSVHeaders.NAME.aliases.first(),
-        ]
-        transformCSVWriter.writeNext(outputHeaderRow)
-
-        List<ComponentPlacement> placements = []
-
-        csvInput.parseLines { CSVInputContext context, ComponentPlacement componentPlacement, String[] line ->
-
-            ComponentPlacement transformedComponentPlacement = transformAndRender(renderer, componentPlacement)
-
-            String[] outputRow = [
-                transformedComponentPlacement.refdes,
-                transformedComponentPlacement.pattern,
-                transformedComponentPlacement.coordinate.x,
-                transformedComponentPlacement.coordinate.y,
-                pcbSideToDipTraceSide(transformedComponentPlacement.side),
-                diptraceAngleConverter.designToEDA(transformedComponentPlacement.rotation),
-                transformedComponentPlacement.value,
-                transformedComponentPlacement.name
-            ]
-            transformCSVWriter.writeNext(outputRow)
-
-            System.out.println(line.join(",").padRight(80) + " -> " + outputRow.join(","))
-
-            placements << transformedComponentPlacement
-        }
-
-        csvInput.close()
-
-        transformCSVWriter.close()
-
-        String svgFileName = outputPrefix + ".svg"
-        renderer.save(svgFileName)
+        List<ComponentPlacement> placements = csvProcessor.process(inputFileName)
 
         //
         // Load Components
@@ -95,6 +47,9 @@ class Converter {
         components.components.each { Component component ->
             System.out.println(component)
         }
+
+        System.out.println()
+
 
         //
         // Load Trays
@@ -173,60 +128,5 @@ class Converter {
         components.loadFromCSV(componentsFileName, reader)
 
         components
-    }
-
-    boolean isUrl(String fileName) {
-        try {
-            new URL(fileName)
-            return true
-        } catch (Exception e) {
-            return false
-        }
-    }
-
-    private Reader openFileOrUrl(String fileName) {
-        if (isUrl(fileName)) {
-            URL url = new URL(fileName)
-            return new StringReader(url.text)
-        }
-
-        InputStream inputStream = new FileInputStream(fileName)
-        InputStreamReader inputStreamReader = new InputStreamReader(inputStream)
-        inputStreamReader
-    }
-
-    private String pcbSideToDipTraceSide(PCBSide side) {
-        side == PCBSide.TOP ? "Top" : "Bottom"
-    }
-
-    private ComponentPlacement transformAndRender(SVGRenderer renderer, ComponentPlacement componentPlacement) {
-
-        // render original position
-        renderer.drawPart(Color.RED, componentPlacement.coordinate, componentPlacement.refdes, componentPlacement.rotation)
-
-        // apply board rotation
-        Coordinate rotatedCoordinate = boardRotation.applyRotation(componentPlacement.coordinate)
-        BigDecimal rotatedRotation = (componentPlacement.rotation + boardRotation.degrees).remainder(360)
-        renderer.drawPart(Color.BLUE, rotatedCoordinate, componentPlacement.refdes, rotatedRotation)
-
-        // apply board origin
-        Coordinate relocatedCoordinate = rotatedCoordinate - boardRotation.origin
-        renderer.drawPart(Color.PINK, relocatedCoordinate, componentPlacement.refdes, rotatedRotation)
-
-        // apply offset
-        Coordinate relocatedCoordinateWithOffset = relocatedCoordinate + offset
-        renderer.drawPart(Color.GREEN, relocatedCoordinateWithOffset, componentPlacement.refdes, rotatedRotation)
-
-        ComponentPlacement transformedComponentPlacement = new ComponentPlacement(
-                refdes: componentPlacement.refdes,
-                pattern: componentPlacement.pattern,
-                coordinate: relocatedCoordinateWithOffset,
-                side: componentPlacement.side,
-                rotation: rotatedRotation,
-                value: componentPlacement.value,
-                name: componentPlacement.name
-        )
-
-        transformedComponentPlacement
     }
 }
