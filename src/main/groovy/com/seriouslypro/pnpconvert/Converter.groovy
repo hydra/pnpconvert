@@ -14,6 +14,7 @@ class Converter {
 
     BoardRotation boardRotation = new BoardRotation()
     Coordinate offset = new Coordinate()
+    PCBSideComponentPlacementFilter.SideInclusion sideInclusion = PCBSideComponentPlacementFilter.SideInclusion.ALL
 
     CSVProcessor csvProcessor
 
@@ -30,7 +31,8 @@ class Converter {
         ComponentPlacementTransformer transformer = new DiptraceComponentPlacementTransformer(outputPrefix, boardRotation, offset)
         ComponentPlacementWriter dipTraceComponentPlacementWriter = new DipTraceComponentPlacementWriter(transformFileName)
 
-        PCBSideComponentPlacementFilter filter = new PCBSideComponentPlacementFilter(sideInclusion: PCBSideComponentPlacementFilter.SideInclusion.ALL)
+
+        PCBSideComponentPlacementFilter filter = new PCBSideComponentPlacementFilter(sideInclusion: sideInclusion)
 
         csvProcessor = new CSVProcessor(filter: filter, transformer: transformer, writer: dipTraceComponentPlacementWriter)
 

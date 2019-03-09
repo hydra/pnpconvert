@@ -12,13 +12,13 @@ class PNPConvert {
     static def processArgs(String[] args) {
         CliBuilder builder = new CliBuilder(usage: 'pnpconvert')
         builder.v('version')
-        builder.s(args:1, argName: 'source directory', 'scan and import csv files')
         builder.i(args:1, argName: 'input', 'input csv file/url')
         builder.o(args:1, argName: 'output', 'output prefix')
         builder.t(args:1, argName: 'trays', 'trays csv file/url')
         builder.f(args:1, argName: 'feeders', 'feeders csv file/url')
         builder.co(args:1, argName: 'components', 'components csv file/url')
         builder.r(args:1, argName: 'rotation', 'rotation degrees (positive is clockwise)')
+        builder.s(args:1, argName: 'side', 'pcb side (top|bottom|all), default is all')
 
         builder.rx(args:1, argName: 'rotationX', 'rotation X origin')
         builder.ry(args:1, argName: 'rotationY', 'rotation Y origin')
@@ -65,6 +65,7 @@ class PNPConvert {
 
         BoardRotation boardRotation = new BoardRotation()
         Coordinate offset = new Coordinate()
+        PCBSideComponentPlacementFilter.SideInclusion sideInclusion = PCBSideComponentPlacementFilter.SideInclusion.ALL
 
         if (options.i) {
             inputFileName = options.i
@@ -106,6 +107,12 @@ class PNPConvert {
             offset.y = (options.oy as BigDecimal)
         }
 
+        if (options.s) {
+            sideInclusion = parseSideInclusion(options.s)
+        }
+
+
+
         if (options.c) {
             Converter converter = new Converter(
                 inputFileName: inputFileName,
@@ -114,7 +121,8 @@ class PNPConvert {
                 componentsFileName: componentsFileName,
                 outputPrefix: outputPrefix,
                 boardRotation: boardRotation,
-                offset: offset
+                offset: offset,
+                sideInclusion: sideInclusion
             )
             converter.convert()
             System.exit(0);
@@ -127,6 +135,16 @@ class PNPConvert {
         System.exit(-1);
     }
 
+    static PCBSideComponentPlacementFilter.SideInclusion parseSideInclusion(String arg) {
+        String uppercaseArg = arg.toUpperCase()
+        try {
+            PCBSideComponentPlacementFilter.SideInclusion sideInclusion = PCBSideComponentPlacementFilter.SideInclusion.valueOf(uppercaseArg)
+            return sideInclusion
+        } catch (Exception e) {
+            String[] candidates = PCBSideComponentPlacementFilter.SideInclusion.values()
+            throw new IllegalArgumentException("Unknown side: $arg, expected $candidates", e)
+        }
+    }
 
     private static void about() {
         System.out.println('PNPConvert (C) 2018 Dominic Clifton')
