@@ -31,18 +31,18 @@ class PNPConvert {
         builder.c('convert')
 
         OptionAccessor options = builder.parse(args)
-        options.arguments()
 
-        if (!options) {
+        if (!options || options.getCommandLine().options.size() == 0) {
+            about()
             builder.usage()
-            System.exit(-1);
+            System.exit(-1)
         }
 
         if (options.v) {
             about();
             InputStream stream = this.getClass().getResourceAsStream('/version.properties')
 
-            Properties versionProperties = new Properties();
+            Properties versionProperties = new Properties()
             versionProperties.load(stream as InputStream)
             String version = 'v' + versionProperties.get('version')
 
