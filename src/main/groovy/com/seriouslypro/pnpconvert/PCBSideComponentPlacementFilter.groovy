@@ -2,8 +2,8 @@ package com.seriouslypro.pnpconvert
 
 class PCBSideComponentPlacementFilter implements ComponentPlacementFilter {
 
-    static enum SideExclusions {
-        NONE,
+    static enum SideInclusion {
+        ALL,
         TOP,
         BOTTOM
     }
@@ -11,15 +11,16 @@ class PCBSideComponentPlacementFilter implements ComponentPlacementFilter {
     final boolean INCLUDE = true
     final boolean EXCLUDE = false
 
-    SideExclusions sideExclusion = SideExclusions.NONE
-
+    SideInclusion sideInclusion = SideInclusion.ALL
 
     @Override
     boolean shouldFilter(ComponentPlacement componentPlacement) {
-        if (
-            (componentPlacement.side == PCBSide.TOP && sideExclusion == SideExclusions.TOP) ||
-            (componentPlacement.side == PCBSide.BOTTOM && sideExclusion == SideExclusions.BOTTOM)
-        ) {
+        boolean include = sideInclusion == SideInclusion.ALL || (
+            (componentPlacement.side == PCBSide.TOP && sideInclusion == SideInclusion.TOP) ||
+            (componentPlacement.side == PCBSide.BOTTOM && sideInclusion == SideInclusion.BOTTOM)
+        )
+
+        if (!include) {
             return EXCLUDE
         }
 

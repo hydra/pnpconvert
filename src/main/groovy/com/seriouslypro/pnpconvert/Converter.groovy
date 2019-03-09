@@ -30,7 +30,7 @@ class Converter {
         ComponentPlacementTransformer transformer = new DiptraceComponentPlacementTransformer(outputPrefix, boardRotation, offset)
         ComponentPlacementWriter dipTraceComponentPlacementWriter = new DipTraceComponentPlacementWriter(transformFileName)
 
-        PCBSideComponentPlacementFilter filter = new PCBSideComponentPlacementFilter(sideExclusion: PCBSideComponentPlacementFilter.SideExclusions.NONE)
+        PCBSideComponentPlacementFilter filter = new PCBSideComponentPlacementFilter(sideInclusion: PCBSideComponentPlacementFilter.SideInclusion.ALL)
 
         csvProcessor = new CSVProcessor(filter: filter, transformer: transformer, writer: dipTraceComponentPlacementWriter)
 
