@@ -15,27 +15,26 @@ Basic Features
 Usage
 =====
 
-pnpconvert -v
+`pnpconvert <args>`
 
 ```
 PNPConvert (C) 2018 Dominic Clifton
 Written by Dominic Clifton
-invalid parameter combinations
 usage: pnpconvert
- -c                      convert
- -cfg <config>           configuration file (in "key=value" format)
- -co <components>        components csv file
- -f <feeders>            feeders csv file
- -i <input>              input csv file
- -o <output>             output prefix
- -ox <offsetX>           X offset, applied after rotation
- -oy <offsetY>           Y offset, applied after rotation
- -r <rotation>           rotation degrees (positive is clockwise)
- -rx <rotationX>         rotation X origin
- -ry <rotationY>         rotation Y origin
- -s <source directory>   scan and import csv files
- -t <trays>              trays csv file
- -v                      version
+ -c                 convert
+ -cfg <config>      configuration file (in "key=value" format)
+ -co <components>   components csv file/url
+ -f <feeders>       feeders csv file/url
+ -i <input>         input csv file/url
+ -o <output>        output prefix
+ -ox <offsetX>      X offset, applied after rotation
+ -oy <offsetY>      Y offset, applied after rotation
+ -r <rotation>      rotation degrees (positive is clockwise)
+ -rx <rotationX>    rotation X origin
+ -ry <rotationY>    rotation Y origin
+ -s <side>          pcb side (top|bottom|all), default is all
+ -t <trays>         trays csv file/url
+ -v                 version
 ```
 
 Configuration values for the input,output,feeders,components and trays can be loaded from a config file in `key=value` format, e.g.
