@@ -22,6 +22,9 @@ class Converter {
 
     void convert() {
 
+        String sidePostfix = '-' + sideInclusion.toString().toUpperCase()
+        outputPrefix += sidePostfix
+
         //
         // CSV processing
         //
