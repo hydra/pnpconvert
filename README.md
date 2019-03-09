@@ -32,12 +32,20 @@ usage: pnpconvert
  -r <rotation>      rotation degrees (positive is clockwise)
  -rx <rotationX>    rotation X origin
  -ry <rotationY>    rotation Y origin
- -s <side>          pcb side (top|bottom|all), default is all
+ -s <side>          pcb side (TOP|BOTTOM|ALL), default is ALL
  -t <trays>         trays csv file/url
  -v                 version
 ```
 
-Configuration values for the input,output,feeders,components and trays can be loaded from a config file in `key=value` format, e.g.
+PnPConvert also supports reading one or more files containing arguments, prefix each filename with an @ symbol.
+
+Arguments are processed in the order they appear.  If an argument is specified more than once, the first occurrence applies.
+
+```
+pnpconvert @args-file1 @args-file2
+```
+
+Configuration values for the specific input,output,feeders,components and tray settings can be loaded from a config file in `key=value` format, e.g.
 
 Example config file
 ```
@@ -72,6 +80,27 @@ Note: PCB width and height has to be added to offsets to avoid negative componen
 * As above but load settings from config file.
 
 `-i examples/example1.csv -o example1-270-with-rails -cfg examples/example1-google-sheets.properties -r 270 -rx 70 -ry 0 -ox 105 -oy 75 -c`
+
+* Use per-machine and per-project argument files.
+```
+pnpconvert @machine-settings.pnpconvert @projects/my-project.pnpconvert -s TOP -c
+```
+
+`machine-settings.pnpconvert` file content:
+```
+-f feeders.csv
+-t trays.csv
+-co components.csv
+```
+
+`projects/my-project.pnpconvert` file content:
+```
+-i projects/my-project.csv
+-o projects/my-project
+-r 90
+-ox 5
+-oy 5
+```
 
 DPV Generation process
 ======================
