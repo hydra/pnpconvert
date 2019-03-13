@@ -22,8 +22,10 @@ class Converter {
 
     void convert() {
 
-        String sidePostfix = '-' + sideInclusion.toString().toUpperCase()
-        outputPrefix += sidePostfix
+        if (sideInclusion != PCBSideComponentPlacementFilter.SideInclusion.ALL) {
+            String sidePostfix = '-' + sideInclusion.toString().toUpperCase()
+            outputPrefix += sidePostfix
+        }
 
         //
         // CSV processing
