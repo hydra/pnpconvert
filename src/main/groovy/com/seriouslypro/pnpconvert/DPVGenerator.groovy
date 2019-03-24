@@ -227,7 +227,10 @@ class DPVGenerator {
     }
 
     private int buildPlaceSpeed(int placeSpeedPercentage) {
-        100 - placeSpeedPercentage
+        if (placeSpeedPercentage >= 100 || placeSpeedPercentage == 0) {
+            return 100
+        }
+        return placeSpeedPercentage
     }
 
     BigDecimal calculateMachineAngle(BigDecimal designAngle, BigDecimal pickAngle, BigDecimal feederAngle) {
