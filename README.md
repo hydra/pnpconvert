@@ -1,7 +1,7 @@
 PNPConvert
 ==========
 
-by Dominic Clifton. (C) 2018
+by Dominic Clifton. (C) 2018/19
 
 [![Build Status](https://travis-ci.com/hydra/pnpconvert.svg?branch=master)](https://travis-ci.com/hydra/pnpconvert)
 
