@@ -100,6 +100,8 @@ class ConverterSpec extends Specification implements TestResources {
 
         File feedersFile = createTemporaryFileFromResource(temporaryFolder, testResource("/feeders-${feeders}.csv"))
         converter.feedersFileName = feedersFile.absolutePath
+
+        converter.optionalPanel = Optional.empty()
     }
 
     private static void dumpContent(String dpvContent) {

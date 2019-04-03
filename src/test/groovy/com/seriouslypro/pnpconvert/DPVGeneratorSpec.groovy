@@ -52,10 +52,7 @@ class DPVGeneratorSpec extends Specification {
             traysPresent(content, [])
 
         and:
-            content.contains(
-                "Table,No.,ID,DeltX,DeltY" + TEST_TABLE_LINE_ENDING +
-                "Panel_Coord,0,1,0,0" + TEST_TABLE_LINE_ENDING
-            )
+            defaultPanelPresent(content)
     }
 
     def 'generate for components in feeders'() {
@@ -272,6 +269,7 @@ class DPVGeneratorSpec extends Specification {
             materialsPresent(content, expectedMaterials)
             componentsPresent(content, expectedComponents)
             traysPresent(content, expectedTrays)
+            defaultPanelPresent(content)
     }
 
     @Ignore
@@ -353,7 +351,8 @@ class DPVGeneratorSpec extends Specification {
                 dpvHeader: dpvHeader,
                 placements: componentPlacements,
                 components: components,
-                feeders: feeders
+                feeders: feeders,
+                optionalPanel: Optional.empty()
         )
         generator
     }
@@ -391,18 +390,46 @@ class DPVGeneratorSpec extends Specification {
         }
     }
 
-    @Ignore
-    def 'generate panel'() {
-        //https://github.com/sparkfunX/Desktop-PickAndPlace-CHMT36VA/blob/master/Eagle-Conversion/ConvertToCharm.ulp#L469-L498
-        expect:
-            false
+    void defaultPanelPresent(String content) {
+        assert content.contains(
+            "Table,No.,ID,DeltX,DeltY" + TEST_TABLE_LINE_ENDING +
+            "Panel_Coord,0,1,0,0" + TEST_TABLE_LINE_ENDING
+        )
     }
 
-    @Ignore
-    def 'generate array'() {
-        //https://github.com/sparkfunX/Desktop-PickAndPlace-CHMT36VA/blob/master/Eagle-Conversion/ConvertToCharm.ulp#L469-L498
-        expect:
-            false
+    void panelArrayPresent(String content, Panel panel) {
+        assert content.contains(
+            "Table,No.,ID,IntervalX,IntervalY,NumX,NumY" + TEST_TABLE_LINE_ENDING +
+            "Panel_Array,0,1,${panel.intervalX},${panel.intervalY},${panel.numberX},${panel.numberY}" + TEST_TABLE_LINE_ENDING
+        )
+    }
+
+    def 'generate default panel'() {
+        given:
+            DPVGenerator generator = buildGenerator()
+
+        when:
+            generator.generate(outputStream)
+
+        then:
+            String content = outputStream.toString()
+            defaultPanelPresent(content)
+    }
+
+    def 'generate array panel'() {
+        given:
+            // reference: https://github.com/sparkfunX/Desktop-PickAndPlace-CHMT36VA/blob/master/Eagle-Conversion/ConvertToCharm.ulp#L469-L498
+
+            DPVGenerator generator = buildGenerator()
+            Panel panel = new Panel(intervalX: 1, intervalY: 2, numberX: 3, numberY: 4)
+            generator.optionalPanel = Optional.of(panel)
+
+        when:
+            generator.generate(outputStream)
+
+        then:
+            String content = outputStream.toString()
+            panelArrayPresent(content, panel)
     }
 
 }

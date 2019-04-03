@@ -26,6 +26,11 @@ class PNPConvert {
         builder.ox(args:1, argName: 'offsetX', 'X offset, applied after rotation')
         builder.oy(args:1, argName: 'offsetY', 'Y offset, applied after rotation')
 
+        builder.pnx(args:1, argName: 'panelNumberX','Number of PCBs on the X axis')
+        builder.pny(args:1, argName: 'panelNumberY','Number of PCBs on the Y axis')
+        builder.pix(args:1, argName: 'panelIntervalX','Interval spacing on the X axis')
+        builder.piy(args:1, argName: 'panelIntervalY','Interval spacing on the Y axis')
+
         builder.cfg(args: 1, argName: 'config', 'configuration file (in "key=value" format)')
 
         builder.c('convert')
@@ -66,6 +71,7 @@ class PNPConvert {
         BoardRotation boardRotation = new BoardRotation()
         Coordinate offset = new Coordinate()
         PCBSideComponentPlacementFilter.SideInclusion sideInclusion = PCBSideComponentPlacementFilter.SideInclusion.ALL
+        Optional<Panel> optionalPanel = Optional.empty()
 
         if (options.i) {
             inputFileName = options.i
@@ -107,11 +113,25 @@ class PNPConvert {
             offset.y = (options.oy as BigDecimal)
         }
 
+        boolean havePanelOption = (options.pix || options.piy || options.pnx || options.pny)
+        if (havePanelOption) {
+            boolean haveRequiredPanelOptions = options.pix && options.piy && options.pnx && options.pny
+            if (!haveRequiredPanelOptions) {
+                builder.usage()
+                System.exit(-1)
+            }
+
+            optionalPanel = Optional.of(new Panel(
+                intervalX: options.pix as int,
+                intervalY: options.piy as int,
+                numberX: options.pnx as int,
+                numberY: options.pny as int,
+            ))
+        }
+
         if (options.s) {
             sideInclusion = parseSideInclusion(options.s)
         }
-
-
 
         if (options.c) {
             Converter converter = new Converter(
@@ -122,7 +142,8 @@ class PNPConvert {
                 outputPrefix: outputPrefix,
                 boardRotation: boardRotation,
                 offset: offset,
-                sideInclusion: sideInclusion
+                sideInclusion: sideInclusion,
+                optionalPanel: optionalPanel
             )
             converter.convert()
             System.exit(0);

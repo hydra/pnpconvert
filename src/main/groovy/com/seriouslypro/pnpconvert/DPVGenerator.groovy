@@ -23,6 +23,7 @@ class DPVGenerator {
     private String tableLineEnding
 
     private PrintStream stream
+    Optional<Panel> optionalPanel
 
     void generate(OutputStream outputStream) {
 
@@ -421,9 +422,16 @@ class DPVGenerator {
     }
 
     void writePanel() {
-        stream.print("Table,No.,ID,DeltX,DeltY" + tableLineEnding)
-        stream.print("Panel_Coord,0,1,0,0" + tableLineEnding)
-        stream.print(tableLineEnding)
+        if (optionalPanel.present) {
+            Panel panel = optionalPanel.get()
+            stream.print("Table,No.,ID,IntervalX,IntervalY,NumX,NumY" + tableLineEnding)
+            stream.print("Panel_Array,0,1,${panel.intervalX},${panel.intervalY},${panel.numberX},${panel.numberY}" + tableLineEnding)
+            stream.print(tableLineEnding)
+        } else {
+            stream.print("Table,No.,ID,DeltX,DeltY" + tableLineEnding)
+            stream.print("Panel_Coord,0,1,0,0" + tableLineEnding)
+            stream.print(tableLineEnding)
+        }
     }
 
     class NumberSequence {

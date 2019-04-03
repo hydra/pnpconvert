@@ -17,6 +17,7 @@ class Converter {
     PCBSideComponentPlacementFilter.SideInclusion sideInclusion = PCBSideComponentPlacementFilter.SideInclusion.ALL
 
     CSVProcessor csvProcessor
+    Optional<Panel> optionalPanel
 
     private static final boolean append = false
 
@@ -99,7 +100,8 @@ class Converter {
                 dpvHeader: dpvHeader,
                 placements: placements,
                 components: components,
-                feeders: feeders
+                feeders: feeders,
+                optionalPanel: optionalPanel
         )
 
         generator.generate(outputStream)
