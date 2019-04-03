@@ -11,6 +11,7 @@ class PickSettings {
 
     boolean useVision = true
     boolean checkVacuum = true
+    boolean separateMount = false   // false = allow other components on other heads, true = pick then place this component only, other heads empty.  - useful when placing large or wobbly components so that picking/placing another part on the other heads does not affect the component on the other head.
 
     int head = 1                    // >= 1
 

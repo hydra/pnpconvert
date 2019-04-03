@@ -59,6 +59,7 @@ class Feeders {
         COMPONENT_NAME,
         NOTE,
         HEAD,
+        SEPARATE_MOUNT,
         X_OFFSET,
         Y_OFFSET,
         PLACE_SPEED,
@@ -96,6 +97,9 @@ class Feeders {
                 }
                 if (rowValues[columnIndex(context, FeederCSVColumn.HEAD)]) {
                     pickSettings.head = rowValues[columnIndex(context, FeederCSVColumn.HEAD)] as Integer
+                }
+                if (rowValues[columnIndex(context, FeederCSVColumn.SEPARATE_MOUNT)]) {
+                    pickSettings.separateMount = rowValues[columnIndex(context, FeederCSVColumn.SEPARATE_MOUNT)].toBoolean()
                 }
                 if (rowValues[columnIndex(context, FeederCSVColumn.CHECK_VACUUM)]) {
                     pickSettings.checkVacuum = rowValues[columnIndex(context, FeederCSVColumn.CHECK_VACUUM)].toBoolean()

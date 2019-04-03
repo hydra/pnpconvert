@@ -110,7 +110,7 @@ class DPVGeneratorSpec extends Specification {
             feeders.loadReel(1, 8, component1.name, slowPickSettings, "Cheap", leftHandSideReel)
             feeders.loadReel(36, 8, component2.name, fastPickSettings, "Expensive", rightHandSideReel)
 
-            feeders.loadReel(33, 12, component5.name, new PickSettings(), "Special", leftHandSideReel)
+            feeders.loadReel(33, 12, component5.name, new PickSettings(separateMount: true), "Special", leftHandSideReel)
 
         and:
             Tray tray1 = new Tray(
@@ -241,7 +241,7 @@ class DPVGeneratorSpec extends Specification {
         and:
             List<List<String>> expectedMaterials = [
                 ["Station","0","1","0","0","4","10K 0402 1%/RES_0402 - Cheap","0.5","100","6","1","3000","0","25","0"],
-                ["Station","1","33","0","0","4","Micro USB Socket - Special","3.5","100","6","800","500","0","0","0"],
+                ["Station","1","33","0","0","4","Micro USB Socket - Special","3.5","100","14","800","500","0","0","0"],
                 ["Station","2","36","0","0","4","100nF 6.3V 0402/CAP_0402 - Expensive","0.5","100","6","0","0","0","0","0"],
                 ["Station","3","91","0","0","4","MAX14851 - Back 1-4 Top-Left; Pin 1 Top-Left","0.5","100","6","0","0","0","25","0"],
                 ["Station","4","92","0","0","4","CAT24C32WI-GT3 - Back 6-7 Top-Left; Pin 1 Bottom-Right","0.5","100","6","0","0","0","0","0"],
@@ -251,7 +251,7 @@ class DPVGeneratorSpec extends Specification {
             List<List<String>> expectedComponents = [
                 ["EComponent","0","1","1","1","14.44","13.9","0","0.5","6","100","R1","10K 0402 1%/RES_0402","50"],
                 ["EComponent","1","2","1","1","15.72","25.2","-90","0.5","6","100","R2","10K 0402 1%/RES_0402","50"],
-                ["EComponent","2","3","1","33","50.83","23.97","0","3.5","6","100","J1","/Micro USB Socket","0"],
+                ["EComponent","2","3","1","33","50.83","23.97","0","3.5","14","100","J1","/Micro USB Socket","0"],
                 ["EComponent","3","4","1","36","24.89","21.64","45","0.5","6","100","C1","100nF 6.3V 0402/CAP_0402","0"],
                 ["EComponent","4","5","1","91","21.3","35.07","90","0.5","6","100","U1","/MAX14851","50"],
                 ["EComponent","5","6","1","91","21.5","19.5","157.5","0.5","6","100","U2","/MAX14851","50"],

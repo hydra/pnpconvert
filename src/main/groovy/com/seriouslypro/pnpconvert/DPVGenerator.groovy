@@ -390,6 +390,9 @@ class DPVGenerator {
         if (pickSettings.useVision) {
             statusFlags |= (1 << 2)
         }
+        if (pickSettings.separateMount) {
+            statusFlags |= (1 << 3)
+        }
         statusFlags
     }
 
