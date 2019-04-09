@@ -288,12 +288,14 @@ class DPVGenerator {
         String formattedDate = new SimpleDateFormat('yyyy/MM/dd').format(now)
         String formattedTime = new SimpleDateFormat('HH:mm:ss').format(now)
 
+        String panelTypeValue = optionalPanel.present ? "1" : "0" // Type 0 = batch of PCBs. Type 1 = panel of PCBs.
+
         String content = "separated" + lineEnding +
                 DPVFileHeaders.FILE + ",$dpvHeader.fileName" + lineEnding +
                 DPVFileHeaders.PCBFILE + ",$dpvHeader.pcbFileName" + lineEnding +
                 DPVFileHeaders.DATE + ",$formattedDate" + lineEnding +
                 DPVFileHeaders.TIME + ",$formattedTime" + lineEnding +
-                DPVFileHeaders.PANELTYPE + ",0" + lineEnding // Type 0 = batch of PCBs. Type 1 = panel of PCBs.
+                DPVFileHeaders.PANELTYPE + "," + panelTypeValue + lineEnding
 
         stream.print(content)
         stream.print(lineEnding)

@@ -413,6 +413,9 @@ class DPVGeneratorSpec extends Specification {
 
         then:
             String content = outputStream.toString()
+            content.contains("PANELYPE,0")
+
+        and:
             defaultPanelPresent(content)
     }
 
@@ -429,6 +432,9 @@ class DPVGeneratorSpec extends Specification {
 
         then:
             String content = outputStream.toString()
+            content.contains("PANELYPE,1")
+
+        and:
             panelArrayPresent(content, panel)
     }
 
