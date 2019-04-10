@@ -39,9 +39,8 @@ class DPVGenerator {
         materialNumberSequence = new NumberSequence(0)
         Map<ComponentPlacement, MaterialSelection> materialSelections = selectMaterials()
 
-        materialSelections = materialSelections.sort {a,  b ->
-            a.value.feederId <=> b.value.feederId
-        }
+        MaterialSelectionSorter materialSelectionSorter = new MaterialSelectionSorter()
+        materialSelections = materialSelectionSorter.sort(materialSelections)
 
         relocatePlacements(materialSelections)
 

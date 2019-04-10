@@ -13,4 +13,9 @@ class Component {
     ArrayList<String> aliases = []
     BigDecimal placementOffsetX = 0 // mm
     BigDecimal placementOffsetY = 0 // mm
+
+    BigDecimal area() {
+        return width * length
+    }
 }
+

@@ -3,7 +3,6 @@ package com.seriouslypro.pnpconvert
 import groovy.transform.EqualsAndHashCode
 
 @EqualsAndHashCode
-
 class Coordinate {
     BigDecimal x = 0.00G
     BigDecimal y = 0.00G
