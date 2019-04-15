@@ -423,10 +423,12 @@ class DPVGenerator {
     }
 
     void writePanel() {
+        DecimalFormat twoDigitDecimalFormat = new DecimalFormat("#0.##")
+
         if (optionalPanel.present) {
             Panel panel = optionalPanel.get()
             stream.print("Table,No.,ID,IntervalX,IntervalY,NumX,NumY" + tableLineEnding)
-            stream.print("Panel_Array,0,1,${panel.intervalX},${panel.intervalY},${panel.numberX},${panel.numberY}" + tableLineEnding)
+            stream.print("Panel_Array,0,1,${twoDigitDecimalFormat.format(panel.intervalX)},${twoDigitDecimalFormat.format(panel.intervalY)},${panel.numberX},${panel.numberY}" + tableLineEnding)
             stream.print(tableLineEnding)
         } else {
             stream.print("Table,No.,ID,DeltX,DeltY" + tableLineEnding)

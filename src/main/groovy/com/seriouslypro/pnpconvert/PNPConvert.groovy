@@ -122,8 +122,8 @@ class PNPConvert {
             }
 
             optionalPanel = Optional.of(new Panel(
-                intervalX: options.pix as int,
-                intervalY: options.piy as int,
+                intervalX: options.pix as BigDecimal,
+                intervalY: options.piy as BigDecimal,
                 numberX: options.pnx as int,
                 numberY: options.pny as int,
             ))

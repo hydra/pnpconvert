@@ -5,6 +5,8 @@ import spock.lang.Ignore
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import java.text.DecimalFormat
+
 class DPVGeneratorSpec extends Specification {
 
     private static final CRLF = "\r\n"
@@ -398,9 +400,11 @@ class DPVGeneratorSpec extends Specification {
     }
 
     void panelArrayPresent(String content, Panel panel) {
+        DecimalFormat twoDigitDecimalFormat = new DecimalFormat("#0.##")
+
         assert content.contains(
             "Table,No.,ID,IntervalX,IntervalY,NumX,NumY" + TEST_TABLE_LINE_ENDING +
-            "Panel_Array,0,1,${panel.intervalX},${panel.intervalY},${panel.numberX},${panel.numberY}" + TEST_TABLE_LINE_ENDING
+            "Panel_Array,0,1,${twoDigitDecimalFormat.format(panel.intervalX)},${twoDigitDecimalFormat.format(panel.intervalY)},${panel.numberX},${panel.numberY}" + TEST_TABLE_LINE_ENDING
         )
     }
 
@@ -424,7 +428,7 @@ class DPVGeneratorSpec extends Specification {
             // reference: https://github.com/sparkfunX/Desktop-PickAndPlace-CHMT36VA/blob/master/Eagle-Conversion/ConvertToCharm.ulp#L469-L498
 
             DPVGenerator generator = buildGenerator()
-            Panel panel = new Panel(intervalX: 1, intervalY: 2, numberX: 3, numberY: 4)
+            Panel panel = new Panel(intervalX: 1.501, intervalY: 2.759, numberX: 3, numberY: 4)
             generator.optionalPanel = Optional.of(panel)
 
         when:
