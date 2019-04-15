@@ -74,7 +74,7 @@ class DPVGeneratorSpec extends Specification {
                 name: "CAT24C32WI-GT3"
             )
             Component component5 = new Component(
-                name: "Micro USB Socket",
+                name: "Micro USB Socket With Very Long Name",
                 width: 8,
                 height: 3.5,
                 length: 5,
@@ -200,7 +200,7 @@ class DPVGeneratorSpec extends Specification {
                     side: PCBSide.TOP,
                     rotation: 90, // rotation also used for placement offset
                     value: "",
-                    name: "Micro USB Socket"
+                    name: "Micro USB Socket With Very Long Name"
                 )
             ]
 
@@ -229,7 +229,7 @@ class DPVGeneratorSpec extends Specification {
             boolean haveAngleWithFraction = componentPlacements.find { it.rotation.remainder(BigDecimal.ONE) != BigDecimal.ZERO }
             assert haveAngleWithFraction // for checking rotation
 
-            String nameOfComponentWithPlacementOffset = "Micro USB Socket"
+            String nameOfComponentWithPlacementOffset = "Micro USB Socket With Very Long Name"
             boolean haveComponentWithPlacementOffset = componentPlacements.find { it.name == nameOfComponentWithPlacementOffset && it.rotation != 0 && it.coordinate.x != it.coordinate.y}
             boolean havePlacementThatUsesComponentWithPlacementOffset = components.components.find { it.name == nameOfComponentWithPlacementOffset && it.placementOffsetX != 0 && it.placementOffsetY != 0 && it.placementOffsetX != it.placementOffsetY}
             assert haveComponentWithPlacementOffset && havePlacementThatUsesComponentWithPlacementOffset
@@ -240,7 +240,7 @@ class DPVGeneratorSpec extends Specification {
         and:
             List<List<String>> expectedMaterials = [
                 ["Station","0","1","0","0","4","10K 0402 1%/RES_0402 - Cheap","0.5","100","6","1","3000","0","25","0"],
-                ["Station","1","33","0","0","4","Micro USB Socket - Special","3.5","100","14","800","500","0","0","0"],
+                ["Station","1","33","0","0","4","Micro USB Socket With Very Long Name - Special","3.5","100","14","800","500","0","0","0"],
                 ["Station","2","36","0","0","4","100nF 6.3V 0402/CAP_0402 - Expensive","0.5","100","6","0","0","0","0","0"],
                 ["Station","3","91","0","0","4","MAX14851 - Back 1-4 Top-Left; Pin 1 Top-Left","0.5","100","6","0","0","0","25","0"],
                 ["Station","4","92","0","0","4","CAT24C32WI-GT3 - Back 6-7 Top-Left; Pin 1 Bottom-Right","0.5","100","6","0","0","0","0","0"],
@@ -254,7 +254,7 @@ class DPVGeneratorSpec extends Specification {
                 ["EComponent","3","4","1","92","16","45","90","0.5","6","100","U3","/CAT24C32WI-GT3","0"],
                 ["EComponent","4","5","1","1","14.44","13.9","0","0.5","6","100","R1","10K 0402 1%/RES_0402","50"],
                 ["EComponent","5","6","1","1","15.72","25.2","-90","0.5","6","100","R2","10K 0402 1%/RES_0402","50"],
-                ["EComponent","6","7","1","33","50.83","23.97","0","3.5","14","100","J1","/Micro USB Socket","0"],
+                ["EComponent","6","7","1","33","50.83","23.97","0","3.5","14","100","J1","/Micro USB Socket With Very Lon","0"],
             ]
 
         and:

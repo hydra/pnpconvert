@@ -183,7 +183,6 @@ class DPVGenerator {
          */
 
         // "Note" field is limited to 31 characters, e.g. "47uF 6.3V 1206 10% TANTALUM/CAP_1206" will be re-saved by the machine as "47uF 6.3V 1206 10% TANTALUM/CAP".
-        // Since the machine handles the import without imposing the limit here we choose NOT to truncate the field.  This does make comparing machine-saved files and generated files more difficult though.
 
 
         DecimalFormat twoDigitDecimalFormat = new DecimalFormat("#0.##")
@@ -216,7 +215,7 @@ class DPVGenerator {
                 buildStatus(materialSelection.feeder.enabled, pickSettings),
                 buildPlaceSpeed(pickSettings.placeSpeedPercentage),
                 componentPlacement.refdes,
-                componentPlacement.value + "/" + componentPlacement.name,
+                (componentPlacement.value + "/" + componentPlacement.name).take(31),
                 (pickSettings.placeDelay * 100) as Integer
             ]
 
