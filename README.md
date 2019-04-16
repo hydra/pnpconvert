@@ -130,7 +130,8 @@ Additionally, components in the design file that are matched to components using
 SVG file
 ========
 
-| Color | Usage |
+| Color | Usage  |
+| ----- | ------ |
 | Red | Starting Coordinate |
 | Blue | Coordinate after rotation |
 | Pink | Coordinate after rotation and rotation coordinate offset |
