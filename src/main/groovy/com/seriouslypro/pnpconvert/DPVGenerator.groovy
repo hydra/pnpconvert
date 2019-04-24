@@ -373,6 +373,8 @@ class DPVGenerator {
         int statusFlags = 0
 
         //76543210 bitmask
+        //3: 1 = Separate Mount (don't use other heads)
+        //3: 0 = Combine Mount (use other heads)
         //2: 1 = Use Vision
         //2: 0 = No Vision
         //1: 1 = Use Vacuum Detection
