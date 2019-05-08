@@ -24,6 +24,8 @@ usage: pnpconvert
  -c                      convert
  -cfg <config>           configuration file (in "key=value" format)
  -co <components>        components csv file/url
+ -dr <disableRefdes>     Disable components by refdes (comma separated
+                         list)
  -f <feeders>            feeders csv file/url
  -i <input>              input csv file/url
  -o <output>             output prefix
@@ -78,6 +80,10 @@ U1 is at the PCB origin but in the CSV file it's coordinates are relative to the
 * Rotate example1 270 degrees and add 5mm rails
 
 `pnpconvert -i examples/example1.csv -o example1-270-with-rails -r 270 -rx 70 -ry 0 -ox 105 -oy 75 -c`
+
+* Skip placement of some components
+
+`pnpconvert ... -dr J1,J2,C5,U7`
 
 Note: PCB width and height has to be added to offsets to avoid negative component origins.
 
