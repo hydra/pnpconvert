@@ -31,7 +31,9 @@ class PNPConvert {
         builder.pix(args:1, argName: 'panelIntervalX','Interval spacing on the X axis')
         builder.piy(args:1, argName: 'panelIntervalY','Interval spacing on the Y axis')
 
-        builder.cfg(args: 1, argName: 'config', 'configuration file (in "key=value" format)')
+        builder.cfg(args:1, argName: 'config', 'configuration file (in "key=value" format)')
+
+        builder.dr(args:1, argName: 'disableRefdes', 'Disable components by refdes (comma separated list)')
 
         builder.c('convert')
 
@@ -72,6 +74,7 @@ class PNPConvert {
         Coordinate offset = new Coordinate()
         PCBSideComponentPlacementFilter.SideInclusion sideInclusion = PCBSideComponentPlacementFilter.SideInclusion.ALL
         Optional<Panel> optionalPanel = Optional.empty()
+        Set<String> placementReferenceDesignatorsToDisable = []
 
         if (options.i) {
             inputFileName = options.i
@@ -113,6 +116,10 @@ class PNPConvert {
             offset.y = (options.oy as BigDecimal)
         }
 
+        if (options.dr) {
+            placementReferenceDesignatorsToDisable = (options.dr as String).split(',').collect { it.trim().toUpperCase() }.unique()
+        }
+
         boolean havePanelOption = (options.pix || options.piy || options.pnx || options.pny)
         if (havePanelOption) {
             boolean haveRequiredPanelOptions = options.pix && options.piy && options.pnx && options.pny
@@ -143,7 +150,8 @@ class PNPConvert {
                 boardRotation: boardRotation,
                 offset: offset,
                 sideInclusion: sideInclusion,
-                optionalPanel: optionalPanel
+                optionalPanel: optionalPanel,
+                placementReferenceDesignatorsToDisable: placementReferenceDesignatorsToDisable
             )
             converter.convert()
             System.exit(0);

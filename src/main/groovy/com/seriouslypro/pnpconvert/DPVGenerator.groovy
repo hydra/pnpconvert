@@ -212,7 +212,7 @@ class DPVGenerator {
                 twoDigitDecimalFormat.format(componentPlacement.coordinate.y),
                 twoDigitDecimalFormat.format(counterClockwiseMachineAngle),
                 twoDigitDecimalFormat.format(materialSelection.component.height),
-                buildStatus(materialSelection.feeder.enabled, pickSettings),
+                buildStatus(componentPlacement.enabled && materialSelection.feeder.enabled, pickSettings),
                 buildPlaceSpeed(pickSettings.placeSpeedPercentage),
                 componentPlacement.refdes,
                 (componentPlacement.value + "/" + componentPlacement.name).take(31),

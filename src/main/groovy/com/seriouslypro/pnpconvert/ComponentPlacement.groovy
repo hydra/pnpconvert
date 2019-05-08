@@ -11,6 +11,7 @@ enum PCBSide {
 @ToString(includeNames = true, includePackage = false)
 @EqualsAndHashCode
 class ComponentPlacement {
+    boolean enabled = true
     String refdes
     String name
     String value

@@ -18,6 +18,7 @@ class Converter {
 
     CSVProcessor csvProcessor
     Optional<Panel> optionalPanel
+    Set<String> placementReferenceDesignatorsToDisable
 
     private static final boolean append = false
 
@@ -43,6 +44,19 @@ class Converter {
         csvProcessor = new CSVProcessor(filter: filter, transformer: transformer, writer: dipTraceComponentPlacementWriter)
 
         List<ComponentPlacement> placements = csvProcessor.process(inputFileName)
+
+        //
+        // Disable components by refdes
+        //
+        placementReferenceDesignatorsToDisable.each { String upperCaseRefdes ->
+            ComponentPlacement matchedPlacement = placements.find { placement ->
+                upperCaseRefdes == placement.refdes.toUpperCase()
+            }
+
+            if (matchedPlacement) {
+                matchedPlacement.enabled = false
+            }
+        }
 
         //
         // Load Components

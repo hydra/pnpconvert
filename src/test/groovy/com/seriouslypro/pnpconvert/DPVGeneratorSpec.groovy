@@ -194,6 +194,7 @@ class DPVGeneratorSpec extends Specification {
                     name: "CAT24C32WI-GT3"
                 ),
                 new ComponentPlacement(
+                    enabled: false,
                     refdes: "J1",
                     pattern: "USB/MICRO1",
                     coordinate: new Coordinate(x: 50.03, y: 25.07), // use non-zero second fraction digit to aid matching rotation calculations
@@ -254,7 +255,7 @@ class DPVGeneratorSpec extends Specification {
                 ["EComponent","3","4","1","92","16","45","90","0.5","6","100","U3","/CAT24C32WI-GT3","0"],
                 ["EComponent","4","5","1","1","14.44","13.9","0","0.5","6","100","R1","10K 0402 1%/RES_0402","50"],
                 ["EComponent","5","6","1","1","15.72","25.2","-90","0.5","6","100","R2","10K 0402 1%/RES_0402","50"],
-                ["EComponent","6","7","1","33","50.83","23.97","0","3.5","14","100","J1","/Micro USB Socket With Very Lon","0"],
+                ["EComponent","6","7","1","33","50.83","23.97","0","3.5","15","100","J1","/Micro USB Socket With Very Lon","0"],
             ]
 
         and:
