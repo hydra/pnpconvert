@@ -244,7 +244,7 @@ class DPVGenerator {
     }
 
     List<String[]> buildTrays(Map<ComponentPlacement, MaterialSelection> materialSelections) {
-        Map<Integer, String[]> trays = [:]
+        Map<Integer, MaterialSelection> trays = [:]
 
         NumberSequence trayNumberSequence = new NumberSequence(0)
 
@@ -259,7 +259,15 @@ class DPVGenerator {
                 return
             }
 
-            Tray tray = ((TrayFeeder)candidate).tray
+            trays[materialSelection.feederId] = materialSelection
+        }
+
+        trays = trays.sort { a, b ->
+            a.key <=> b.key
+        }
+
+        List<String[]> trayRows = trays.collect { Integer feederId, MaterialSelection materialSelection ->
+            Tray tray = ((TrayFeeder) materialSelection.feeder).tray
 
             String[] trayRow = [
                 "ICTray",
@@ -274,10 +282,10 @@ class DPVGenerator {
                 tray.firstComponentIndex,
             ]
 
-            trays[materialSelection.feederId] = trayRow
+            return trayRow
         }
 
-        trays.values() as List<String[]>
+        trayRows
     }
 
     void writeHeader(DPVHeader dpvHeader) {

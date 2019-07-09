@@ -305,6 +305,12 @@ class DPVGeneratorSpec extends Specification {
             false
     }
 
+    @Ignore
+    def 'trays should be sorted by id'() {
+        expect:
+            false
+    }
+
     @Unroll
     def 'placement angle - #designAngle, #pickAngle, #feederAngle'(BigDecimal designAngle, BigDecimal pickAngle, BigDecimal feederAngle, BigDecimal expectedMachineAngle) {
 
