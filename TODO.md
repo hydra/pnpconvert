@@ -32,8 +32,11 @@ Would-be-nice
 =============
 
 * Display origin in SVG
+* Display fiducials in SVG
 * Make SVG nicer.
 * Set units for SVG display
-* Filter TOP/BOTTOM components. Currently both sides are processed.
-* Exclude specific reference designators, from list in a file.
 * Replace specific components by reference designator.
+
+Technology updates
+==================
+* Grooby 2.5 cli builder - https://picocli.info/groovy-2.5-clibuilder-renewal.html
