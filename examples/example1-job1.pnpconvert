@@ -1,0 +1,15 @@
+-cfg examples/example1-google-sheets.config
+-i examples/example1.csv
+-o examples/example1-270-with-rails
+-c
+-r 270
+-rx 70
+-ry 0
+-ox 105
+-oy 75
+-fm RL,10,87 FR,105,3
+-pix 5
+-piy 10
+-pnx 3
+-pny 2
+-s TOP
