@@ -123,7 +123,7 @@ In the example above, `-fm` has two arguments, `RL,10,87` and `FR,105,3` which c
 
 Note: Currently only two fiducial markers are supported.
 
-Fiducial markers are useful when you gerbers files off to a PCB manufacturer who then produce a panel and add markers.  Ask them to send you the panel gerber files
+Fiducial markers are useful when you send gerbers files off to a PCB manufacturer who then produce a panel and add markers.  Ask them to send you the panel gerber files
 and extract the co-ordinates from the received gerber files.
 
 This is also particularly useful when you have one or more large component footprints in the corner of your PCB and/or cannot visually
