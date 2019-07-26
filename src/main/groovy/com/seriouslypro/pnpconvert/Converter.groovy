@@ -18,6 +18,7 @@ class Converter {
 
     CSVProcessor csvProcessor
     Optional<Panel> optionalPanel
+    Optional<List<Fiducial>> optionalFiducials
     Set<String> placementReferenceDesignatorsToDisable
 
     private static final boolean append = false
@@ -115,7 +116,8 @@ class Converter {
                 placements: placements,
                 components: components,
                 feeders: feeders,
-                optionalPanel: optionalPanel
+                optionalPanel: optionalPanel,
+                optionalFiducials: optionalFiducials
         )
 
         generator.generate(outputStream)

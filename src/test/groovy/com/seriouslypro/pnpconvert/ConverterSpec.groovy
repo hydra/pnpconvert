@@ -102,6 +102,7 @@ class ConverterSpec extends Specification implements TestResources {
         converter.feedersFileName = feedersFile.absolutePath
 
         converter.optionalPanel = Optional.empty()
+        converter.optionalFiducials = Optional.empty()
     }
 
     private static void dumpContent(String dpvContent) {

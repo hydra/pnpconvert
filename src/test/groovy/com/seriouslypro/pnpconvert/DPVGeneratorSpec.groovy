@@ -361,7 +361,8 @@ class DPVGeneratorSpec extends Specification {
                 placements: componentPlacements,
                 components: components,
                 feeders: feeders,
-                optionalPanel: Optional.empty()
+                optionalPanel: Optional.empty(),
+                optionalFiducials: Optional.empty()
         )
         generator
     }
@@ -447,6 +448,35 @@ class DPVGeneratorSpec extends Specification {
 
         and:
             panelArrayPresent(content, panel)
+    }
+
+    def 'generate fiducial markers'() {
+        given:
+            DPVGenerator generator = buildGenerator()
+            List<Fiducial> fiducialList = [
+                new Fiducial(note: "Mark1", coordinate: new Coordinate(x: 10, y: 3)),
+                new Fiducial(note: "Mark2", coordinate: new Coordinate(x: 90, y: 97)),
+            ]
+
+            generator.optionalFiducials = Optional.of(fiducialList)
+
+        when:
+            generator.generate(outputStream)
+
+        then:
+            String content = outputStream.toString()
+            content.contains(
+                "Table,No.,nType,nAlg,nFinished" + TEST_TABLE_LINE_ENDING +
+                "PcbCalib,0,1,0,0" + TEST_TABLE_LINE_ENDING
+            )
+
+        and:
+            content.contains(
+                "Table,No.,ID,offsetX,offsetY,Note" + TEST_TABLE_LINE_ENDING +
+                "CalibPoint,0,1,10,3,Mark1" + CRLF +
+                "CalibPoint,1,2,90,97,Mark2" + CRLF
+            )
+
     }
 
 }

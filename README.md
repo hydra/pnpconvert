@@ -27,6 +27,7 @@ usage: pnpconvert
  -dr <disableRefdes>     Disable components by refdes (comma separated
                          list)
  -f <feeders>            feeders csv file/url
+ -fm <fiducialMarkers>   Fiducial marker list (note,x,y[, ...])
  -i <input>              input csv file/url
  -o <output>             output prefix
  -ox <offsetX>           X offset, applied after rotation
@@ -111,6 +112,23 @@ pnpconvert @machine-settings.pnpconvert @projects/my-project.pnpconvert -s TOP -
 -ox 5
 -oy 5
 ```
+
+* Fiducial markers
+
+Fiducial marks can be used for calibration instead of components.
+
+`pnpconvert ... -fm RL,10,87 FR,105,3`
+
+In the example above, `-fm` has two arguments, `RL,10,87` and `FR,105,3` which correspond to Rear-Left and Front-Right markers, the numerical values being X/Y co-ordinates.
+
+Note: Currently only two fiducial markers are supported.
+
+Fiducial markers are useful when you gerbers files off to a PCB manufacturer who then produce a panel and add markers.  Ask them to send you the panel gerber files
+and extract the co-ordinates from the received gerber files.
+
+This is also particularly useful when you have one or more large component footprints in the corner of your PCB and/or cannot visually
+select the center of the pattern that the CharmHigh software selects.
+
 
 DPV Generation process
 ======================

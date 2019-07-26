@@ -24,6 +24,7 @@ class DPVGenerator {
 
     private PrintStream stream
     Optional<Panel> optionalPanel
+    Optional<List<Fiducial>> optionalFiducials
 
     void generate(OutputStream outputStream) {
 
@@ -91,6 +92,7 @@ class DPVGenerator {
         writePanel()
         writePlacements(placements)
         writeTrays(trays)
+        writeFiducials()
     }
 
     void relocatePlacements(Map<ComponentPlacement, MaterialSelection> materialSelections) {
@@ -443,6 +445,48 @@ class DPVGenerator {
             stream.print("Table,No.,ID,DeltX,DeltY" + tableLineEnding)
             stream.print("Panel_Coord,0,1,0,0" + tableLineEnding)
             stream.print(tableLineEnding)
+        }
+    }
+
+
+    void writeFiducials() {
+        DecimalFormat twoDigitDecimalFormat = new DecimalFormat("#0.##")
+
+        NumberSequence fiducialNumberSequence = new NumberSequence(0)
+        NumberSequence fiducialIDSequence = new NumberSequence(1)
+
+        if (optionalFiducials.present) {
+
+            //nType: 0 = use components, 1 = use marks
+            //nFinished: ? 0 = calibration pending, 1 = calibration completed
+
+            String calibationModeSectionHeader =
+                "Table,No.,nType,nAlg,nFinished"
+
+            stream.print(calibationModeSectionHeader + tableLineEnding)
+            stream.print("PcbCalib,0,1,0,0" + lineEnding) // Note: NOT tableLineEnding
+            stream.print(lineEnding) // Note: NOT tableLineEnding
+
+
+            String calibationMarksSectionHeader =
+                "Table,No.,ID,offsetX,offsetY,Note"
+
+            stream.print(calibationMarksSectionHeader + tableLineEnding)
+
+            List<Fiducial> fiducialList = optionalFiducials.get()
+
+            fiducialList.each { fiducial ->
+                String[] fiducialValues = [
+                    "CalibPoint",
+                    fiducialNumberSequence.next(),
+                    fiducialIDSequence.next(),
+                    twoDigitDecimalFormat.format(fiducial.coordinate.x),
+                    twoDigitDecimalFormat.format(fiducial.coordinate.y),
+                    fiducial.note
+                ]
+                stream.print(fiducialValues.collect { it.replace(',', ';') }.join(",") + lineEnding) // Note: NOT tableLineEnding
+            }
+            stream.print(lineEnding) // Note: NOT tableLineEnding
         }
     }
 

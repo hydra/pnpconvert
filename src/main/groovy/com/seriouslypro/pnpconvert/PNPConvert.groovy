@@ -3,6 +3,8 @@ package com.seriouslypro.pnpconvert
 import groovy.cli.commons.CliBuilder
 import groovy.cli.commons.OptionAccessor
 
+import java.text.DecimalFormat
+
 class PNPConvert {
 
     public static void main(String [] args) {
@@ -34,6 +36,8 @@ class PNPConvert {
         builder.cfg(args:1, argName: 'config', 'configuration file (in "key=value" format)')
 
         builder.dr(args:1, argName: 'disableRefdes', 'Disable components by refdes (comma separated list)')
+
+        builder.fm(args:'+', argName: 'fiducialMarkers','Fiducial marker list (note,x,y[, ...])')
 
         builder.c('convert')
 
@@ -74,6 +78,8 @@ class PNPConvert {
         Coordinate offset = new Coordinate()
         PCBSideComponentPlacementFilter.SideInclusion sideInclusion = PCBSideComponentPlacementFilter.SideInclusion.ALL
         Optional<Panel> optionalPanel = Optional.empty()
+        Optional<List<Fiducial>> optionalFiducials = Optional.empty()
+
         Set<String> placementReferenceDesignatorsToDisable = []
 
         if (options.i) {
@@ -136,6 +142,14 @@ class PNPConvert {
             ))
         }
 
+        if (options.fm) {
+            String[] fiducialMarkerValues = options.getCommandLine().getOptionValues("fm");
+            if (fiducialMarkerValues.size() == 2) {
+                optionalFiducials = parseFiducials(fiducialMarkerValues)
+            }
+        }
+
+
         if (options.s) {
             sideInclusion = parseSideInclusion(options.s)
         }
@@ -151,6 +165,7 @@ class PNPConvert {
                 offset: offset,
                 sideInclusion: sideInclusion,
                 optionalPanel: optionalPanel,
+                optionalFiducials: optionalFiducials,
                 placementReferenceDesignatorsToDisable: placementReferenceDesignatorsToDisable
             )
             converter.convert()
@@ -162,6 +177,21 @@ class PNPConvert {
         System.out.println('invalid parameter combinations')
         builder.usage()
         System.exit(-1);
+    }
+
+    static Optional<List<Fiducial>> parseFiducials(String[] fiducialsValues) {
+        List<Fiducial> fiducials = fiducialsValues.findResults { fiducialsValue ->
+            String[] fiducialValues = fiducialsValue.split(',')
+            if (fiducialValues.size() != 3) {
+                return null
+            }
+
+            DecimalFormat twoDigitDecimalFormat = new DecimalFormat("#0.##")
+
+            return new Fiducial(note: fiducialValues[0], coordinate: new Coordinate(x: twoDigitDecimalFormat.parse(fiducialValues[1]), y: twoDigitDecimalFormat.parse(fiducialValues[2])))
+        }
+
+        return fiducials
     }
 
     static PCBSideComponentPlacementFilter.SideInclusion parseSideInclusion(String arg) {
