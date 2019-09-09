@@ -27,7 +27,7 @@ usage: pnpconvert
  -dr <disableRefdes>     Disable components by refdes (comma separated
                          list)
  -f <feeders>            feeders csv file/url
- -fm <fiducialMarkers>   Fiducial marker list (note,x,y[, ...])
+ -fm <fiducialMarkers>   Fiducial marker list (note,x,y[ ...])
  -i <input>              input csv file/url
  -o <output>             output prefix
  -ox <offsetX>           X offset, applied after rotation
@@ -37,6 +37,8 @@ usage: pnpconvert
  -pnx <panelNumberX>     Number of PCBs on the X axis
  -pny <panelNumberY>     Number of PCBs on the Y axis
  -r <rotation>           rotation degrees (positive is clockwise)
+ -rr <replaceRefdes>     Replace components by refdes
+                         ("refdes,value,name"[ ...])
  -rx <rotationX>         rotation X origin
  -ry <rotationY>         rotation Y origin
  -s <side>               pcb side (top|bottom|all), default is all
@@ -128,6 +130,14 @@ and extract the co-ordinates from the received gerber files.
 
 This is also particularly useful when you have one or more large component footprints in the corner of your PCB and/or cannot visually
 select the center of the pattern that the CharmHigh software selects.
+
+* Disable components by refdes
+
+`pnpconvert ... -dr C36,R28`
+
+* Replace components by refdes
+
+`pnpconvert ... -rr "C54,CAP_1206,47uF 10V 1206 X5R 20%" "R25,RES_0402,44k2 0402 1%"`
 
 
 DPV Generation process
