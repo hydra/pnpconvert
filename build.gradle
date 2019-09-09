@@ -13,6 +13,7 @@ buildscript {
 
 plugins {
     id 'eclipse'
+    id 'idea'
     id 'groovy'
     id 'application'
     id 'com.gradle.build-scan' version '1.16'
@@ -49,7 +50,7 @@ classes {
 }
 
 dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.5.3'
+    compile 'org.codehaus.groovy:groovy-all:2.5.8'
     compile 'commons-codec:commons-codec:1.10'
     testCompile 'org.spockframework:spock-core:1.2-groovy-2.5'
     testCompile group: 'cglib', name: 'cglib-nodep', version: '2.2'
