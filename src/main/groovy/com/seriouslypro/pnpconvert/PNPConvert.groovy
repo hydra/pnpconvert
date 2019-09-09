@@ -36,8 +36,9 @@ class PNPConvert {
         builder.cfg(args:1, argName: 'config', 'configuration file (in "key=value" format)')
 
         builder.dr(args:1, argName: 'disableRefdes', 'Disable components by refdes (comma separated list)')
+        builder.rr(args:'+', argName: 'replaceRefdes', 'Replace components by refdes ("refdes,value,name"[ ...])')
 
-        builder.fm(args:'+', argName: 'fiducialMarkers','Fiducial marker list (note,x,y[, ...])')
+        builder.fm(args:'+', argName: 'fiducialMarkers','Fiducial marker list (note,x,y[ ...])')
 
         builder.c('convert')
 
@@ -79,6 +80,7 @@ class PNPConvert {
         PCBSideComponentPlacementFilter.SideInclusion sideInclusion = PCBSideComponentPlacementFilter.SideInclusion.ALL
         Optional<Panel> optionalPanel = Optional.empty()
         Optional<List<Fiducial>> optionalFiducials = Optional.empty()
+        List<RefdesReplacement> refdesReplacements = []
 
         Set<String> placementReferenceDesignatorsToDisable = []
 
@@ -149,6 +151,11 @@ class PNPConvert {
             }
         }
 
+        if (options.rr) {
+            String[] refdesReplacementValues = options.getCommandLine().getOptionValues("rr");
+            refdesReplacements = parseRefdesReplacements(refdesReplacementValues)
+        }
+
 
         if (options.s) {
             sideInclusion = parseSideInclusion(options.s)
@@ -166,6 +173,7 @@ class PNPConvert {
                 sideInclusion: sideInclusion,
                 optionalPanel: optionalPanel,
                 optionalFiducials: optionalFiducials,
+                refdesReplacements: refdesReplacements,
                 placementReferenceDesignatorsToDisable: placementReferenceDesignatorsToDisable
             )
             converter.convert()
@@ -177,6 +185,19 @@ class PNPConvert {
         System.out.println('invalid parameter combinations')
         builder.usage()
         System.exit(-1);
+    }
+
+    static List<RefdesReplacement> parseRefdesReplacements(String[] refdesReplacementsValues) {
+        List<RefdesReplacement> refdesReplacements = refdesReplacementsValues.findResults { refdesReplacementValue ->
+            String[] refdesReplacementValues = refdesReplacementValue.split(',')
+            if (refdesReplacementValues.size() != 3) {
+                return null
+            }
+
+            return new RefdesReplacement(refdes: refdesReplacementValues[0], name: refdesReplacementValues[1], value: refdesReplacementValues[2])
+        }
+
+        return refdesReplacements
     }
 
     static Optional<List<Fiducial>> parseFiducials(String[] fiducialsValues) {
@@ -191,7 +212,7 @@ class PNPConvert {
             return new Fiducial(note: fiducialValues[0], coordinate: new Coordinate(x: twoDigitDecimalFormat.parse(fiducialValues[1]), y: twoDigitDecimalFormat.parse(fiducialValues[2])))
         }
 
-        return fiducials
+        return Optional.of(fiducials)
     }
 
     static PCBSideComponentPlacementFilter.SideInclusion parseSideInclusion(String arg) {

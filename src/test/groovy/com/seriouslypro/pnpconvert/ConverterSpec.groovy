@@ -1,6 +1,7 @@
 package com.seriouslypro.pnpconvert
 
 import com.seriouslypro.pnpconvert.test.TestResources
+import spock.lang.Ignore
 import spock.lang.Specification
 
 class ConverterSpec extends Specification implements TestResources {
@@ -81,6 +82,18 @@ class ConverterSpec extends Specification implements TestResources {
         and:
             String svgContent = new File(expectedSVGFileName).text
             !svgContent.empty
+    }
+
+    @Ignore
+    def 'disable selected components by refdes'() {
+        expect:
+            false
+    }
+
+    @Ignore
+    def 'replace selected components by refdes'() {
+        expect:
+            false
     }
 
     private void configureConverter(String placements, String components, String trays, String feeders) {

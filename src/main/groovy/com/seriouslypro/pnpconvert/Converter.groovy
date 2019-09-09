@@ -19,6 +19,7 @@ class Converter {
     CSVProcessor csvProcessor
     Optional<Panel> optionalPanel
     Optional<List<Fiducial>> optionalFiducials
+    List<RefdesReplacement> refdesReplacements
     Set<String> placementReferenceDesignatorsToDisable
 
     private static final boolean append = false
@@ -56,6 +57,21 @@ class Converter {
 
             if (matchedPlacement) {
                 matchedPlacement.enabled = false
+            }
+        }
+
+        //
+        // Replace components by refdes
+        //
+        refdesReplacements.each { RefdesReplacement refdesReplacement ->
+            String upperCaseRefdes = refdesReplacement.refdes.toUpperCase()
+            ComponentPlacement matchedPlacement = placements.find { placement ->
+                upperCaseRefdes == placement.refdes.toUpperCase()
+            }
+
+            if (matchedPlacement) {
+                matchedPlacement.name = refdesReplacement.name
+                matchedPlacement.value = refdesReplacement.value
             }
         }
 
