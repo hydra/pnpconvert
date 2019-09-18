@@ -32,6 +32,8 @@ usage: pnpconvert
  -o <output>             output prefix
  -ox <offsetX>           X offset, applied after rotation
  -oy <offsetY>           Y offset, applied after rotation
+ -oz <offset>            Z offset, applied to all component heights -
+                         increase for thicker PCBs
  -pix <panelIntervalX>   Interval spacing on the X axis
  -piy <panelIntervalY>   Interval spacing on the Y axis
  -pnx <panelNumberX>     Number of PCBs on the X axis
@@ -83,6 +85,14 @@ U1 is at the PCB origin but in the CSV file it's coordinates are relative to the
 * Rotate example1 270 degrees and add 5mm rails
 
 `pnpconvert -i examples/example1.csv -o example1-270-with-rails -r 270 -rx 70 -ry 0 -ox 105 -oy 75 -c`
+
+* Apply a 0.5mm Z offset to when placing parts.
+
+`pnpconvert ... -z 0.5`
+
+Note for the CHMT machines: Using a Z offset simply adds the offset to the height of each component, so that when the
+head places the component it does't push it down so far, this can help if your PCBs flex when placing parts.  Ideally
+any good machine should have a setting for PCB thickness...
 
 * Skip placement of some components
 

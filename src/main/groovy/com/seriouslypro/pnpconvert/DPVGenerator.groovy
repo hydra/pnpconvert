@@ -11,6 +11,7 @@ class DPVGenerator {
     List<ComponentPlacement> placements
     Components components
     Feeders feeders
+    BigDecimal offsetZ
 
     NumberSequence materialNumberSequence
 
@@ -213,7 +214,7 @@ class DPVGenerator {
                 twoDigitDecimalFormat.format(componentPlacement.coordinate.x),
                 twoDigitDecimalFormat.format(componentPlacement.coordinate.y),
                 twoDigitDecimalFormat.format(counterClockwiseMachineAngle),
-                twoDigitDecimalFormat.format(materialSelection.component.height),
+                twoDigitDecimalFormat.format(materialSelection.component.height + offsetZ),
                 buildStatus(componentPlacement.enabled && materialSelection.feeder.enabled, pickSettings),
                 buildPlaceSpeed(pickSettings.placeSpeedPercentage),
                 componentPlacement.refdes,

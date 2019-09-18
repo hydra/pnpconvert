@@ -27,6 +27,7 @@ class PNPConvert {
 
         builder.ox(args:1, argName: 'offsetX', 'X offset, applied after rotation')
         builder.oy(args:1, argName: 'offsetY', 'Y offset, applied after rotation')
+        builder.oz(args:1, argName: 'offset', 'Z offset, applied to all component heights - increase for thicker PCBs')
 
         builder.pnx(args:1, argName: 'panelNumberX','Number of PCBs on the X axis')
         builder.pny(args:1, argName: 'panelNumberY','Number of PCBs on the Y axis')
@@ -39,6 +40,7 @@ class PNPConvert {
         builder.rr(args:'+', argName: 'replaceRefdes', 'Replace components by refdes ("refdes,value,name"[ ...])')
 
         builder.fm(args:'+', argName: 'fiducialMarkers','Fiducial marker list (note,x,y[ ...])')
+
 
         builder.c('convert')
 
@@ -76,7 +78,8 @@ class PNPConvert {
         String componentsFileName = config.getOrDefault("components","components.csv")
 
         BoardRotation boardRotation = new BoardRotation()
-        Coordinate offset = new Coordinate()
+        Coordinate offsetXY = new Coordinate()
+        BigDecimal offsetZ = 0
         PCBSideComponentPlacementFilter.SideInclusion sideInclusion = PCBSideComponentPlacementFilter.SideInclusion.ALL
         Optional<Panel> optionalPanel = Optional.empty()
         Optional<List<Fiducial>> optionalFiducials = Optional.empty()
@@ -117,11 +120,15 @@ class PNPConvert {
         }
 
         if (options.ox ) {
-            offset.x = (options.ox as BigDecimal)
+            offsetXY.x = (options.ox as BigDecimal)
         }
 
         if (options.oy) {
-            offset.y = (options.oy as BigDecimal)
+            offsetXY.y = (options.oy as BigDecimal)
+        }
+
+        if (options.oz ) {
+            offsetZ = (options.oz as BigDecimal)
         }
 
         if (options.dr) {
@@ -169,7 +176,8 @@ class PNPConvert {
                 componentsFileName: componentsFileName,
                 outputPrefix: outputPrefix,
                 boardRotation: boardRotation,
-                offset: offset,
+                offsetXY: offsetXY,
+                offsetZ: offsetZ,
                 sideInclusion: sideInclusion,
                 optionalPanel: optionalPanel,
                 optionalFiducials: optionalFiducials,

@@ -13,7 +13,8 @@ class Converter {
     String outputPrefix
 
     BoardRotation boardRotation = new BoardRotation()
-    Coordinate offset = new Coordinate()
+    Coordinate offsetXY = new Coordinate()
+    BigDecimal offsetZ = 0
     PCBSideComponentPlacementFilter.SideInclusion sideInclusion = PCBSideComponentPlacementFilter.SideInclusion.ALL
 
     CSVProcessor csvProcessor
@@ -37,7 +38,7 @@ class Converter {
 
         String transformFileName = outputPrefix + "-transformed.csv"
 
-        ComponentPlacementTransformer transformer = new DiptraceComponentPlacementTransformer(outputPrefix, boardRotation, offset)
+        ComponentPlacementTransformer transformer = new DiptraceComponentPlacementTransformer(outputPrefix, boardRotation, offsetXY)
         ComponentPlacementWriter dipTraceComponentPlacementWriter = new DipTraceComponentPlacementWriter(transformFileName)
 
 
@@ -133,7 +134,8 @@ class Converter {
                 components: components,
                 feeders: feeders,
                 optionalPanel: optionalPanel,
-                optionalFiducials: optionalFiducials
+                optionalFiducials: optionalFiducials,
+                offsetZ: offsetZ,
         )
 
         generator.generate(outputStream)

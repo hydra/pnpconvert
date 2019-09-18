@@ -362,7 +362,8 @@ class DPVGeneratorSpec extends Specification {
                 components: components,
                 feeders: feeders,
                 optionalPanel: Optional.empty(),
-                optionalFiducials: Optional.empty()
+                optionalFiducials: Optional.empty(),
+                offsetZ: 0,
         )
         generator
     }
