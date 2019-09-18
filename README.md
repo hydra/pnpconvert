@@ -5,12 +5,21 @@ by Dominic Clifton. (C) 2018/19
 
 [![Build Status](https://travis-ci.com/hydra/pnpconvert.svg?branch=master)](https://travis-ci.com/hydra/pnpconvert)
 
-Utility to process DipTrace "Pick and Place" export files.
+Utility to process DipTrace "Pick and Place" export files and generate DPV format files suitable for use with CharmHigh
+Technology pick-and-place SMT machines.
 
 Basic Features
 * Rotate board. Useful for boards panelled on the wrong axis.
 * Add X/Y offsets. Useful to add space for rails that were added in programs other than DipTrace.
 * Generates SVG images showing rotation and offset steps.
+
+Currently supported machines
+
+* CHMT48VB
+* CHMT48VA (*1)
+* CHMT36VA (*1)
+
+*1 Treated as CHMT47VB, so do not use right-hand side feeders with IDs 36-64.
 
 Usage
 =====
