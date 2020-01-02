@@ -1,6 +1,6 @@
 package com.seriouslypro.pnpconvert
 
-import com.seriouslypro.pnpconvert.machine.CHMT48VB
+import com.seriouslypro.pnpconvert.machine.Machine
 
 import static FileTools.*
 
@@ -11,6 +11,8 @@ class Converter {
     String feedersFileName
     String componentsFileName
     String outputPrefix
+
+    Machine machine
 
     BoardRotation boardRotation = new BoardRotation()
     Coordinate offsetXY = new Coordinate()
@@ -111,8 +113,8 @@ class Converter {
 
         System.out.println()
         System.out.println("defined feeders:")
-        feeders.feederMap.each { Integer id, Feeder feeder ->
-            System.out.println("id: $id, feeder: $feeder")
+        feeders.feederList.each { Feeder feeder ->
+            System.out.println("feeder: $feeder")
         }
 
         //
@@ -123,12 +125,13 @@ class Converter {
 
         OutputStream outputStream = new FileOutputStream(outputDPVFileName, append)
 
-                DPVHeader dpvHeader = new DPVHeader(
+        DPVHeader dpvHeader = new DPVHeader(
                 fileName: outputDPVFileName,
                 pcbFileName: inputFileName
         )
 
         DPVGenerator generator = new DPVGenerator(
+                machine: machine,
                 dpvHeader: dpvHeader,
                 placements: placements,
                 components: components,
@@ -156,7 +159,6 @@ class Converter {
         Reader reader = openFileOrUrl(feedersFileName)
 
         Feeders feeders = new Feeders(
-            machine: new CHMT48VB(),
             trays: trays
         )
 

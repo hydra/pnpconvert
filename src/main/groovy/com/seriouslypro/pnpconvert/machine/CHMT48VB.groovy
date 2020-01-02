@@ -3,6 +3,8 @@ package com.seriouslypro.pnpconvert.machine
 import com.seriouslypro.pnpconvert.FeederProperties
 
 class CHMT48VB extends Machine {
+    Range trayIds = 91..99
+
     FeederProperties leftFeederProperties = new FeederProperties(
             feederAngle: 270
     )

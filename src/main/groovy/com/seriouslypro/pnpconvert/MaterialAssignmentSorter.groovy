@@ -1,6 +1,6 @@
 package com.seriouslypro.pnpconvert
 
-class MaterialSelectionSorter {
+class MaterialAssignmentSorter {
     FeederIdComparator feederIdComparator = new FeederIdComparator()
     ComponentAreaComparator componentAreaComparator = new ComponentAreaComparator()
     ComponentHeightComparator componentHeightComparator = new ComponentHeightComparator()
@@ -16,7 +16,7 @@ class MaterialSelectionSorter {
         System.println(message)
     }
 
-    Map<ComponentPlacement, MaterialSelection> sort(Map<ComponentPlacement, MaterialSelection> materialSelections) {
+    Map<ComponentPlacement, MaterialAssignment> sort(Map<ComponentPlacement, MaterialAssignment> materialAssignments) {
 
         List<Comparator> comparators = [
             componentHeightComparator,
@@ -24,7 +24,7 @@ class MaterialSelectionSorter {
             feederIdComparator
         ]
 
-        Map<ComponentPlacement, MaterialSelection> sortedMaterialSelections = materialSelections.sort {a,  b ->
+        Map<ComponentPlacement, MaterialAssignment> sortedMaterialAssignments = materialAssignments.sort { a, b ->
             trace("sorter A-Refdes: ${a.key.refdes}, B-Refdes: ${b.key.refdes}")
             int result = comparators.inject(0) { int runningResult, Comparator comparator ->
                 trace("RR: $runningResult")
@@ -40,22 +40,22 @@ class MaterialSelectionSorter {
             return result
         }
 
-        return sortedMaterialSelections
+        return sortedMaterialAssignments
     }
 }
 
-class FeederIdComparator<MaterialSelection> implements Comparator<MaterialSelection> {
+class FeederIdComparator<MaterialAssignment> implements Comparator<MaterialAssignment> {
 
     @Override
-    int compare(MaterialSelection o1, MaterialSelection o2) {
+    int compare(MaterialAssignment o1, MaterialAssignment o2) {
         return o1.feederId <=> o2.feederId // lowest first
     }
 }
 
-class ComponentAreaComparator<MaterialSelection> implements Comparator<MaterialSelection> {
+class ComponentAreaComparator<MaterialAssignment> implements Comparator<MaterialAssignment> {
 
     @Override
-    int compare(MaterialSelection o1, MaterialSelection o2) {
+    int compare(MaterialAssignment o1, MaterialAssignment o2) {
         BigDecimal area1 = o1.component.area()
         BigDecimal area2 = o2.component.area()
 
@@ -63,10 +63,10 @@ class ComponentAreaComparator<MaterialSelection> implements Comparator<MaterialS
     }
 }
 
-class ComponentHeightComparator<MaterialSelection> implements Comparator<MaterialSelection> {
+class ComponentHeightComparator<MaterialAssignment> implements Comparator<MaterialAssignment> {
 
     @Override
-    int compare(MaterialSelection o1, MaterialSelection o2) {
+    int compare(MaterialAssignment o1, MaterialAssignment o2) {
         //System.out.println("CHC - o1: ${o1.component.height}, o2: ${o2.component.height}")
         return o1.component.height.compareTo(o2.component.height) // shortest first
     }

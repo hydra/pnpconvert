@@ -1,5 +1,7 @@
 package com.seriouslypro.pnpconvert
 
+import com.seriouslypro.pnpconvert.machine.DefaultMachine
+import com.seriouslypro.pnpconvert.machine.Machine
 import com.seriouslypro.pnpconvert.test.TestResources
 import spock.lang.Ignore
 import spock.lang.Specification
@@ -116,6 +118,8 @@ class ConverterSpec extends Specification implements TestResources {
 
         converter.optionalPanel = Optional.empty()
         converter.optionalFiducials = Optional.empty()
+
+        converter.machine = new TestMachine()
     }
 
     private static void dumpContent(String dpvContent) {
@@ -127,4 +131,14 @@ class ConverterSpec extends Specification implements TestResources {
     private static void dumpDividerLine() {
         println '*' * 80
     }
+
+    private class TestMachine extends Machine {
+
+        Range trayIds = 1001..1009
+        @Override
+        FeederProperties feederProperties(Integer id) {
+            return defaultFeederProperties
+        }
+    }
 }
+

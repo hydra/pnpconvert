@@ -1,5 +1,6 @@
 package com.seriouslypro.pnpconvert
 
+import com.seriouslypro.pnpconvert.machine.Machine
 import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream
 import spock.lang.Ignore
 import spock.lang.Specification
@@ -106,10 +107,10 @@ class DPVGeneratorSpec extends Specification {
                 feederAngle: 270
             )
 
-            feeders.loadReel(1, 8, component1.name, slowPickSettings, "Cheap", leftHandSideReel)
-            feeders.loadReel(36, 8, component2.name, fastPickSettings, "Expensive", rightHandSideReel)
+            feeders.loadFeeder(feeders.createReelFeeder(1, 8, component1.name, slowPickSettings, "Cheap"))
+            feeders.loadFeeder(feeders.createReelFeeder(36, 8, component2.name, fastPickSettings, "Expensive"))
 
-            feeders.loadReel(33, 12, component5.name, new PickSettings(separateMount: true), "Special", leftHandSideReel)
+            feeders.loadFeeder(feeders.createReelFeeder(33, 12, component5.name, new PickSettings(separateMount: true), "Special"))
 
         and:
             Tray tray1 = new Tray(
@@ -130,12 +131,8 @@ class DPVGeneratorSpec extends Specification {
                 firstComponentIndex: 0
             )
 
-            FeederProperties trayFeederProperties = new FeederProperties(
-                feederAngle: 0
-            )
-
-            feeders.loadTray(91, tray1, component3.name, slowPickSettings, "Back 1-4 Top-Left, Pin 1 Top-Left", trayFeederProperties)
-            feeders.loadTray(92, tray2, component4.name, fastPickSettings,"Back 6-7 Top-Left, Pin 1 Bottom-Right", trayFeederProperties)
+            feeders.loadFeeder(feeders.createTrayFeeder(91, tray1, component3.name, slowPickSettings, "Back 1-4 Top-Left, Pin 1 Top-Left"))
+            feeders.loadFeeder(feeders.createTrayFeeder(92, tray2, component4.name, fastPickSettings,"Back 6-7 Top-Left, Pin 1 Bottom-Right"))
 
         and:
             componentPlacements = [
@@ -243,16 +240,16 @@ class DPVGeneratorSpec extends Specification {
                 ["Station","0","1","0","0","4","10K 0402 1%/RES_0402 - Cheap","0.5","100","6","1","3000","0","25","0"],
                 ["Station","1","33","0","0","4","Micro USB Socket With Very Long Name - Special","3.5","100","14","800","500","0","0","0"],
                 ["Station","2","36","0","0","4","100nF 6.3V 0402/CAP_0402 - Expensive","0.5","100","6","0","0","0","0","0"],
-                ["Station","3","91","0","0","4","MAX14851 - Back 1-4 Top-Left; Pin 1 Top-Left","0.5","100","6","0","0","0","25","0"],
-                ["Station","4","92","0","0","4","CAT24C32WI-GT3 - Back 6-7 Top-Left; Pin 1 Bottom-Right","0.5","100","6","0","0","0","0","0"],
+                ["Station","3","1001","0","0","4","MAX14851 - Back 1-4 Top-Left; Pin 1 Top-Left","0.5","100","6","0","0","0","25","0"],
+                ["Station","4","1002","0","0","4","CAT24C32WI-GT3 - Back 6-7 Top-Left; Pin 1 Bottom-Right","0.5","100","6","0","0","0","0","0"],
             ]
 
         and:
             List<List<String>> expectedComponents = [
                 ["EComponent","0","1","1","36","24.89","21.64","45","0.5","6","100","C1","100nF 6.3V 0402/CAP_0402","0"],
-                ["EComponent","1","2","1","91","21.3","35.07","90","0.5","6","100","U1","/MAX14851","50"],
-                ["EComponent","2","3","1","91","21.5","19.5","157.5","0.5","6","100","U2","/MAX14851","50"],
-                ["EComponent","3","4","1","92","16","45","90","0.5","6","100","U3","/CAT24C32WI-GT3","0"],
+                ["EComponent","1","2","1","1001","21.3","35.07","90","0.5","6","100","U1","/MAX14851","50"],
+                ["EComponent","2","3","1","1001","21.5","19.5","157.5","0.5","6","100","U2","/MAX14851","50"],
+                ["EComponent","3","4","1","1002","16","45","90","0.5","6","100","U3","/CAT24C32WI-GT3","0"],
                 ["EComponent","4","5","1","1","14.44","13.9","0","0.5","6","100","R1","10K 0402 1%/RES_0402","50"],
                 ["EComponent","5","6","1","1","15.72","25.2","-90","0.5","6","100","R2","10K 0402 1%/RES_0402","50"],
                 ["EComponent","6","7","1","33","50.83","23.97","0","3.5","15","100","J1","/Micro USB Socket With Very Lon","0"],
@@ -260,8 +257,8 @@ class DPVGeneratorSpec extends Specification {
 
         and:
             List<List<String>> expectedTrays = [
-                ["ICTray","0","91","205.07","61.05","277.1","61.11","4","1","0"],
-                ["ICTray","1","92","327.5","58.57","351.51","58.57","2","1","0"],
+                ["ICTray","0","1001","205.07","61.05","277.1","61.11","4","1","0"],
+                ["ICTray","1","1002","327.5","58.57","351.51","58.57","2","1","0"],
             ]
 
         when:
@@ -357,6 +354,7 @@ class DPVGeneratorSpec extends Specification {
 
     private DPVGenerator buildGenerator() {
         DPVGenerator generator = new DPVGenerator(
+                machine: new TestMachine(),
                 dpvHeader: dpvHeader,
                 placements: componentPlacements,
                 components: components,
@@ -480,4 +478,36 @@ class DPVGeneratorSpec extends Specification {
 
     }
 
+    private class TestMachine extends Machine {
+
+        Range trayIds = 1001..1009
+
+        FeederProperties leftFeederProperties = new FeederProperties(
+            feederAngle: 90
+        )
+
+        FeederProperties rightFeederProperties = new FeederProperties(
+            feederAngle: 270
+        )
+
+        FeederProperties trayFeederProperties = new FeederProperties(
+            feederAngle: 0
+        )
+
+        @Override
+        FeederProperties feederProperties(Integer id) {
+            if (id >= 1 && id <= 35) {
+                return leftFeederProperties
+            }
+            if (id >= 36 && id <= 70) {
+                return rightFeederProperties
+            }
+            if (trayIds.contains(id)) {
+                return trayFeederProperties
+            }
+
+            return defaultFeederProperties
+        }
+    }
 }
+

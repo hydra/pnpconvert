@@ -1,4 +1,2 @@
 "ID","Enabled","Component Name","Tape Width","Note","Tape Spacing","X Offset","Y Offset","Head","Separate Mount","Package Angle","Use Vision","Check Vacuum", "Place Speed","Place Delay","Take Height","Take Delay","Tape Pull Speed","Tray Name","Flags"
-36,N,"10K 0402 1%/RES_0402",8,"RH",2,-0.07,0.35,1,Y,0,Y,N,100,50,1,.25,50,,""
-27,Y,"MicroUSB/001-01-0x06x",16,"LH",12,0,0,2,N,270,N,Y,50,25,2.5,0,25,,""
-91,Y," MAX14851 ",," Back 1-4 Top-Left ",,0,0,2,Y,0,Y,Y,33,66,3,3,," B-1-4-TL ",""
+92,Y,"STM32F303CCT6",,"",,0,0,0,N,0,N,N,10,20,0,75,,"B-1-4-TL","!"

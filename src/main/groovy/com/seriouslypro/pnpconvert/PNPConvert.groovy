@@ -1,5 +1,7 @@
 package com.seriouslypro.pnpconvert
 
+import com.seriouslypro.pnpconvert.machine.CHMT48VB
+import com.seriouslypro.pnpconvert.machine.Machine
 import groovy.cli.commons.CliBuilder
 import groovy.cli.commons.OptionAccessor
 
@@ -84,6 +86,7 @@ class PNPConvert {
         Optional<Panel> optionalPanel = Optional.empty()
         Optional<List<Fiducial>> optionalFiducials = Optional.empty()
         List<RefdesReplacement> refdesReplacements = []
+        Machine machine = new CHMT48VB()
 
         Set<String> placementReferenceDesignatorsToDisable = []
 
@@ -170,6 +173,7 @@ class PNPConvert {
 
         if (options.c) {
             Converter converter = new Converter(
+                machine: machine,
                 inputFileName: inputFileName,
                 traysFileName: traysFileName,
                 feedersFileName: feedersFileName,

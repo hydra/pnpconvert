@@ -5,7 +5,9 @@ import spock.lang.Specification
 class FeedersSpec extends Specification {
 
     private static final String TEST_COMPONENT_NAME = "TEST-COMPONENT"
-    public static final String TEST_FEEDERS_RESOURCE = "/feeders1.csv"
+    public static final String TEST_FEEDERS_RESOURCE_1 = "/feeders1.csv"
+    public static final String TEST_FEEDERS_RESOURCE_2 = "/feeders2.csv"
+    public static final String TEST_FEEDERS_RESOURCE_3 = "/feeders3.csv"
 
     Feeders feeders
 
@@ -34,21 +36,22 @@ class FeedersSpec extends Specification {
     def 'find by component - matching component'() {
         given:
             PickSettings mockPickSettings = Mock()
-            FeederProperties mockFeederProperties = Mock()
 
-            feeders.loadReel(1, 8, TEST_COMPONENT_NAME, mockPickSettings, "TEST-NOTE", mockFeederProperties)
+        and:
+            Feeder feeder = feeders.createReelFeeder(1, 8, TEST_COMPONENT_NAME, mockPickSettings, "TEST-NOTE")
+            feeders.loadFeeder(feeder)
 
         when:
-            FeederMapping result = feeders.findByComponent(TEST_COMPONENT_NAME)
+            Feeder result = feeders.findByComponent(TEST_COMPONENT_NAME)
 
         then:
-            result.id == 1
-            result.feeder
+            result
+            result.fixedId.get() == 1
     }
 
     def 'load'() {
         given:
-            InputStream inputStream = this.getClass().getResourceAsStream(TEST_FEEDERS_RESOURCE)
+            InputStream inputStream = this.getClass().getResourceAsStream(TEST_FEEDERS_RESOURCE_1)
             InputStreamReader inputStreamReader = new InputStreamReader(inputStream)
 
         and:
@@ -70,15 +73,13 @@ class FeedersSpec extends Specification {
                 pullSpeed: 50,
             )
 
-            FeederProperties feeder1Properties = feeders.machine.feederProperties(feeder1Id)
-
             Feeder feeder1 = new ReelFeeder(
+                fixedId: Optional.of(feeder1Id),
                 enabled: false,
                 componentName: "10K 0402 1%/RES_0402",
                 note: "RH",
                 pickSettings: feeder1PickSettings,
                 tapeWidth: 8,
-                properties: feeder1Properties,
             )
         and:
             Integer feeder2Id = 27
@@ -99,15 +100,13 @@ class FeedersSpec extends Specification {
                 pullSpeed: 25,
             )
 
-            FeederProperties feeder2Properties = feeders.machine.feederProperties(feeder2Id)
-
             Feeder feeder2 = new ReelFeeder(
+                fixedId: Optional.of(feeder2Id),
                 enabled: true,
                 componentName: "MicroUSB/001-01-0x06x",
                 note: "LH",
                 pickSettings: feeder2PickSettings,
                 tapeWidth: 16,
-                properties: feeder2Properties,
             )
 
         and:
@@ -127,9 +126,8 @@ class FeedersSpec extends Specification {
                 takeHeight: 3,
             )
 
-            FeederProperties feeder3Properties = feeders.machine.feederProperties(feeder3Id)
-
             Feeder feeder3 = new TrayFeeder(
+                fixedId: Optional.of(feeder3Id),
                 enabled: true,
                 tray: new Tray(
                     name: "B-1-4-TL",
@@ -143,14 +141,13 @@ class FeedersSpec extends Specification {
                 ),
                 componentName: "MAX14851",
                 note: "Back 1-4 Top-Left",
-                pickSettings: feeder3PickSettings,
-                properties: feeder3Properties
+                pickSettings: feeder3PickSettings
             )
 
-            Map<Integer, Feeder> expectedFeederMap = [
-                (feeder1Id): feeder1,
-                (feeder2Id): feeder2,
-                (feeder3Id): feeder3,
+            ArrayList<Feeder> expectedFeederList = [
+                feeder1,
+                feeder2,
+                feeder3,
             ]
 
         and:
@@ -158,14 +155,51 @@ class FeedersSpec extends Specification {
             allPropertiesDifferent(ReelFeeder, feeder1, feeder2)
 
         when:
-            feeders.loadFromCSV(TEST_FEEDERS_RESOURCE, inputStreamReader)
+            feeders.loadFromCSV(TEST_FEEDERS_RESOURCE_1, inputStreamReader)
 
         then:
             1 * mockTrays.findByName("B-1-4-TL") >> testTray
             0 * _
 
         and:
-            feeders.feederMap.sort() == expectedFeederMap.sort()
+            feeders.csvParseExceptions.empty
+            feeders.feederList.sort() == expectedFeederList.sort()
+    }
+
+    def 'ignore rows that have ignore flag'() {
+        given:
+            InputStream inputStream = this.getClass().getResourceAsStream(TEST_FEEDERS_RESOURCE_2)
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream)
+
+            List<Feeder> expectedFeederList = []
+
+        when:
+            feeders.loadFromCSV(TEST_FEEDERS_RESOURCE_2, inputStreamReader)
+
+        then:
+            1 * mockTrays.findByName('B-1-4-TL') >> testTray
+            0 * _
+
+        and:
+            feeders.csvParseExceptions.empty
+            feeders.feederList.empty
+    }
+
+    def 'allow rows with no fixed ID'() {
+        given:
+            InputStream inputStream = this.getClass().getResourceAsStream(TEST_FEEDERS_RESOURCE_3)
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream)
+
+        when:
+            feeders.loadFromCSV(TEST_FEEDERS_RESOURCE_3, inputStreamReader)
+
+        then:
+            mockTrays.findByName('B-1-4-TL') >> testTray
+            0 * _
+
+        and:
+            feeders.csvParseExceptions.empty
+            !feeders.feederList.empty
     }
 
     void allPropertiesDifferent(Class aClass, Object a, Object b) {

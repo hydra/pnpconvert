@@ -1,54 +1,53 @@
 package com.seriouslypro.pnpconvert
 
-import com.seriouslypro.pnpconvert.machine.DefaultMachine
-import com.seriouslypro.pnpconvert.machine.Machine
-
-class FeederMapping {
-    Integer id
-    Feeder feeder
-}
-
-
 class Feeders {
 
-    Machine machine = new DefaultMachine()
+    public static final String FLAG_IGNORE = "!"
     Trays trays
 
-    Map<Integer, Feeder> feederMap = [:]
+    ArrayList<Feeder> feederList = []
 
-    void loadReel(int id, int tapeWidth, String componentName, PickSettings pickSettings, String note, FeederProperties feederProperties) {
-        loadReel(id, new ReelFeeder(
+    List<Exception> csvParseExceptions = []
+
+    Feeder createReelFeeder(int id, int tapeWidth, String componentName, PickSettings pickSettings, String note) {
+        new ReelFeeder(
+            fixedId: Optional.of(id),
             tapeWidth: tapeWidth,
             componentName: componentName,
             pickSettings: pickSettings,
             note: note,
-            properties: feederProperties
-        ))
+        )
     }
 
-    void loadReel(int id, ReelFeeder reelFeeder) {
-        feederMap[id] = reelFeeder
+    Feeder loadReel(ReelFeeder reelFeeder) {
+        feederList.add(reelFeeder)
+
+        reelFeeder
     }
 
-    FeederMapping findByComponent(String name) {
-
-        return feederMap.findResult { Integer id, Feeder feeder ->
-            feeder.hasComponent(name) ? new FeederMapping(id: id, feeder: feeder) : null
+    Feeder findByComponent(String name) {
+        return feederList.findResult { Feeder feeder ->
+            feeder.hasComponent(name) ? feeder : null
         }
     }
 
-    void loadTray(int id, TrayFeeder trayFeeder) {
-        feederMap[id] = trayFeeder
+    Feeder loadTray(TrayFeeder trayFeeder) {
+        feederList.add(trayFeeder)
+
+        trayFeeder
     }
 
-    void loadTray(int id, Tray tray, String componentName, PickSettings pickSettings, String note, FeederProperties feederProperties) {
-        loadTray(id, new TrayFeeder(
+    void loadFeeder(Feeder feeder) {
+        feederList.add(feeder)
+    }
+
+    Feeder createTrayFeeder(int id, Tray tray, String componentName, PickSettings pickSettings, String note) {
+        new TrayFeeder(
             tray: tray,
             componentName: componentName,
             pickSettings: pickSettings,
             note: note,
-            properties: feederProperties
-        ))
+        )
     }
 
     static enum FeederCSVColumn {
@@ -76,18 +75,29 @@ class Feeders {
 
         // Tray Specific Columns
         TRAY_NAME,
+
+        // Optional Columns
+        FLAGS,
+    }
+
+    class FeederItem {
+        Optional<Feeder> feeder = Optional.empty()
+        Set<String> flags = []
     }
 
     void loadFromCSV(String reference, Reader reader) {
 
-        CSVLineParser<FeederMapping, FeederCSVColumn> lineParser = new CSVLineParserBase<FeederMapping, FeederCSVColumn>() {
+        CSVLineParser<FeederItem, FeederCSVColumn> lineParser = new CSVLineParserBase<FeederItem, FeederCSVColumn>() {
 
             @Override
-            FeederMapping parse(CSVInputContext context, String[] rowValues) {
+            FeederItem parse(CSVInputContext context, String[] rowValues) {
 
                 PickSettings pickSettings = new PickSettings()
 
-                Integer id = rowValues[columnIndex(context, FeederCSVColumn.ID)] as Integer
+                Optional<Integer> id = Optional.empty()
+                if (rowValues[columnIndex(context, FeederCSVColumn.ID)]) {
+                    id = Optional.of(rowValues[columnIndex(context, FeederCSVColumn.ID)] as Integer)
+                }
 
                 if (rowValues[columnIndex(context, FeederCSVColumn.X_OFFSET)]) {
                     pickSettings.xOffset = rowValues[columnIndex(context, FeederCSVColumn.X_OFFSET)] as BigDecimal
@@ -129,8 +139,6 @@ class Feeders {
                     note = rowValues[columnIndex(context, FeederCSVColumn.NOTE)].trim()
                 }
 
-                FeederProperties feederProperties = machine.feederProperties(id)
-
                 String trayName
 
                 if (hasColumn(FeederCSVColumn.TRAY_NAME)) {
@@ -140,6 +148,14 @@ class Feeders {
                 String componentName = rowValues[columnIndex(context, FeederCSVColumn.COMPONENT_NAME)].trim()
                 boolean enabled = rowValues[columnIndex(context, FeederCSVColumn.ENABLED)].toBoolean()
 
+                Set<String> flags = []
+                if (hasColumn(FeederCSVColumn.FLAGS) && rowValues[columnIndex(context, FeederCSVColumn.FLAGS)]) {
+                    String flagsString = rowValues[columnIndex(context, FeederCSVColumn.FLAGS)].trim()
+                    flags = flagsString.split(",")
+                }
+
+                Optional<Feeder> feeder = Optional.empty()
+
                 if (trayName) {
                     Tray tray = trays.findByName(trayName)
 
@@ -147,13 +163,13 @@ class Feeders {
                         throw new IllegalArgumentException("unknown tray. name: '$trayName', reference: $context.reference, line: $context.lineIndex")
                     }
 
-                    loadTray(id, new TrayFeeder(
+                    feeder = Optional.of(new TrayFeeder(
+                        fixedId: id,
                         enabled: enabled,
                         tray: tray,
                         componentName: componentName,
                         note: note,
-                        pickSettings: pickSettings,
-                        properties: feederProperties
+                        pickSettings: pickSettings
                     ))
                 } else {
                     if (hasColumn(FeederCSVColumn.TAPE_SPACING) && rowValues[columnIndex(context, FeederCSVColumn.TAPE_SPACING)]) {
@@ -163,16 +179,16 @@ class Feeders {
                         pickSettings.pullSpeed = rowValues[columnIndex(context, FeederCSVColumn.TAPE_PULL_SPEED)] as Integer
                     }
 
-                    loadReel(id, new ReelFeeder(
+                    feeder = Optional.of(new ReelFeeder(
+                        fixedId: id,
                         enabled: enabled,
                         componentName: componentName,
                         note: note,
                         tapeWidth: rowValues[columnIndex(context, FeederCSVColumn.TAPE_WIDTH)] as Integer,
-                        pickSettings: pickSettings,
-                        properties: feederProperties
+                        pickSettings: pickSettings
                     ))
                 }
-                return new FeederMapping(id: id, feeder: feederMap[id])
+                return new FeederItem(feeder: feeder, flags: flags)
             }
         }
 
@@ -183,12 +199,22 @@ class Feeders {
             }
         }
 
-        CSVInput<FeederMapping, FeederCSVColumn> csvInput = new CSVInput<FeederMapping, FeederCSVColumn>(reference, reader, componentHeaderParser, lineParser)
+        csvParseExceptions = []
+
+        CSVInput<FeederItem, FeederCSVColumn> csvInput = new CSVInput<FeederItem, FeederCSVColumn>(reference, reader, componentHeaderParser, lineParser)
         csvInput.parseHeader()
 
-        csvInput.parseLines { CSVInputContext context, FeederMapping feederMapping, String[] line ->
-            feederMap[feederMapping.id] = feederMapping.feeder
-        }
+        csvInput.parseLines({ CSVInputContext context, FeederItem feederItem, String[] line ->
+            if (feederItem.feeder.present) {
+                if (!feederItem.flags.contains(FLAG_IGNORE)) {
+
+                    Feeder feeder = feederItem.feeder.get()
+                    loadFeeder(feeder)
+                }
+            }
+        }, { CSVInputContext context, String[] line, Exception cause ->
+            csvParseExceptions << cause
+        })
 
         csvInput.close()
     }
