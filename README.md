@@ -158,6 +158,8 @@ select the center of the pattern that the CharmHigh software selects.
 
 `pnpconvert ... -rr "C54,CAP_1206,47uF 10V 1206 X5R 20%" "R25,RES_0402,44k2 0402 1%"`
 
+In the example above, `-rr` has two arguments the order of the values in quotes is RefDes, Name, Value
+
 
 DPV Generation process
 ======================
