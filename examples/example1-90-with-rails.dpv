@@ -1,13 +1,13 @@
 separated
 FILE,examples/example1-90-with-rails.dpv
 PCBFILE,examples/example1.csv
-DATE,2019/04/03
-TIME,20:49:36
+DATE,2020/01/03
+TIME,02:43:01
 PANELYPE,0
 
 Table,No.,ID,DeltX,DeltY,FeedRates,Note,Height,Speed,Status,SizeX,SizeY,HeightTake,DelayTake,nPullStripSpeed
 
-Station,0,88,0,0,4,STM32F030C8T,2,100,14,700,700,0,0,0
+Station,0,88,0,0,4,STM32F030C8T,2,100,14,700,700,0,20,0
 
 
 
