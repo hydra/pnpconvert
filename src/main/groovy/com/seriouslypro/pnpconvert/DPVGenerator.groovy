@@ -42,7 +42,8 @@ class DPVGenerator {
         inexactComponentMatches = [:]
 
         materialNumberSequence = new NumberSequence(0)
-        Map<ComponentPlacement, MaterialAssignment> materialAssignments = assignMaterials()
+        Map<ComponentPlacement, MaterialSelectionEntry> materialSelections = selectMaterials()
+        Map<ComponentPlacement, MaterialAssignment> materialAssignments = assignMaterials(materialSelections)
 
         MaterialAssignmentSorter materialAssignmentSorter = new MaterialAssignmentSorter()
         materialAssignments = materialAssignmentSorter.sort(materialAssignments)
@@ -87,16 +88,25 @@ class DPVGenerator {
 
         List<String[]> placements = buildPlacements(materialAssignments)
 
+        Map<Integer, String[]> materials = buildMaterials(materialAssignments)
         List<String[]> trays = buildTrays(materialAssignments)
 
         stream = new PrintStream(outputStream, false, StandardCharsets.UTF_8.toString())
 
         writeHeader(dpvHeader)
-        writeMaterials(materialAssignments)
+        writeMaterials(materials)
         writePanel()
         writePlacements(placements)
         writeTrays(trays)
         writeFiducials()
+    }
+
+    Map<Integer, String[]> buildMaterials(Map<ComponentPlacement, MaterialAssignment> materialAssignments) {
+        Map<Integer, String[]> materials = materialAssignments.collectEntries { ComponentPlacement placement, MaterialAssignment materialAssignment ->
+            [materialAssignment.feederId, buildMaterial(materialAssignment.feederId, materialAssignment.feeder, materialAssignment.component)]
+        }
+
+        materials
     }
 
     void relocatePlacements(Map<ComponentPlacement, MaterialAssignment> materialAssignments) {
@@ -106,11 +116,9 @@ class DPVGenerator {
         }
     }
 
-    Map<ComponentPlacement, MaterialAssignment> assignMaterials() {
+    Map<ComponentPlacement, MaterialSelectionEntry> selectMaterials() {
 
-        NumberSequence trayIdSequence = new NumberSequence(machine.trayIds.getFrom())
-
-        Map<ComponentPlacement, MaterialAssignment> materialAssignments = [:]
+        Map<ComponentPlacement, MaterialSelectionEntry> materialSelections = [:]
 
         placements.each { ComponentPlacement placement ->
             ComponentFindResult componentFindResult = components.findByPlacement(placement)
@@ -162,32 +170,74 @@ class DPVGenerator {
             }
             Feeder feeder = findResult
 
+            MaterialSelectionEntry materialSelection = new MaterialSelectionEntry(
+                component: component,
+                feeder: feeder,
+            )
+
+            materialSelections[placement] = materialSelection
+        }
+
+        return materialSelections
+    }
+
+    Integer assignFeederID(NumberSequence trayIdSequence, Set<Integer> usedIDs, Feeder feeder) {
+
+        // Assign Feeder ID if required, code assumes feeder is a tray.
+        // Trays may have a fixed id.  ID re-use needs to be avoided.
+
+        Integer feederId = feeder.fixedId.orElseGet( {
+            boolean found = false
+            while (!found) {
+                Integer candidateId = trayIdSequence.next()
+                if (!usedIDs.contains(candidateId)) {
+                    return candidateId
+                }
+            }
+        })
+
+        usedIDs.add(feederId)
+
+        return feederId
+    }
+
+    Map<ComponentPlacement, MaterialAssignment> assignMaterials(Map<ComponentPlacement, MaterialSelectionEntry> materialSelections) {
+
+        Set<Integer> usedIDs = materialSelections.findAll { ComponentPlacement placement, MaterialSelectionEntry materialSelectionEntry ->
+            materialSelectionEntry.feeder.fixedId.present
+        }.findResults { ComponentPlacement placement, MaterialSelectionEntry materialSelectionEntry ->
+            materialSelectionEntry.feeder.fixedId.get()
+        }.sort()
+
+        Map<ComponentPlacement, MaterialAssignment> materialAssignments = [:]
+
+        NumberSequence trayIdSequence = new NumberSequence(machine.trayIds.getFrom())
+
+        materialSelections.each { ComponentPlacement placement, MaterialSelectionEntry materialSelectionEntry ->
+
+            Feeder feeder = materialSelectionEntry.feeder
+
+            Component component = materialSelectionEntry.component
+
+
             MaterialAssignment existingMaterialAssignment = materialAssignments.values().find { MaterialAssignment candidate ->
-                candidate.feeder.is(findResult)
+                candidate.feeder.is(feeder)
             }
 
             if (existingMaterialAssignment) {
                 materialAssignments[placement] = existingMaterialAssignment
             } else {
 
-
-                // TODO EXTRACT THIS BLOCK, ASSIGN IDs AND BUILD MATERIALS LATER
-
-                // Assign Feeder ID if required, we assume feeder is a tray for now.
-                Integer feederId = feeder.fixedId.orElseGet( {
-                    // TODO use some provider that fails if there are no more tray feeder ids.
-                    trayIdSequence.next()
-                })
+                Integer feederId = assignFeederID(trayIdSequence, usedIDs, feeder)
 
                 MaterialAssignment materialAssignment = new MaterialAssignment(
-                        component: component,
-                        feederId: feederId,
-                        feeder: feeder,
-                        material: buildMaterial(feederId, feeder, component)
+                    component: component,
+                    feederId: feederId,
+                    feeder: feeder
                 )
-
                 materialAssignments[placement] = materialAssignment
             }
+
         }
 
         return materialAssignments
@@ -326,22 +376,19 @@ class DPVGenerator {
         stream.print(lineEnding)
     }
 
-    def writeMaterials(Map<ComponentPlacement, MaterialAssignment> materials) {
+    def writeMaterials(Map<Integer, String[]> materials) {
         String sectionHeader =
                 "Table,No.,ID,DeltX,DeltY,FeedRates,Note,Height,Speed,Status,SizeX,SizeY,HeightTake,DelayTake,nPullStripSpeed"
         stream.print(sectionHeader + tableLineEnding)
 
-
-        materials.values().toUnique { a ->
-            a.feederId
-        }.toSorted { a, b ->
-            a.feederId <=> b.feederId
-        }.each { materialAssignment ->
+        materials.toSorted { a, b ->
+            a.key <=> b.key
+        }.each { Integer feederId, String[] material ->
             String[] managedColumns = [
                 "Station",
                 materialNumberSequence.next()
             ]
-            stream.print((managedColumns + materialAssignment.material).collect { it.replace(',', ';') }.join(",") + tableLineEnding)
+            stream.print((managedColumns + material).collect { it.replace(',', ';') }.join(",") + tableLineEnding)
         }
         stream.print(tableLineEnding)
     }
@@ -523,9 +570,14 @@ class DPVGenerator {
 }
 
 @ToString(includeNames = true, includePackage = false)
+class MaterialSelectionEntry {
+    Component component
+    Feeder feeder
+}
+
+@ToString(includeNames = true, includePackage = false)
 class MaterialAssignment {
     Component component
     Integer feederId
     Feeder feeder
-    String[] material
 }

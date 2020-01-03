@@ -308,6 +308,12 @@ class DPVGeneratorSpec extends Specification {
             false
     }
 
+    @Ignore
+    def 'error should be generated if no more tray ids are available when assigning IDs to trays'() {
+        expect:
+            false
+    }
+
     @Unroll
     def 'placement angle - #designAngle, #pickAngle, #feederAngle'(BigDecimal designAngle, BigDecimal pickAngle, BigDecimal feederAngle, BigDecimal expectedMachineAngle) {
 
