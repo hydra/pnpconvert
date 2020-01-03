@@ -1,7 +1,7 @@
 PNPConvert
 ==========
 
-by Dominic Clifton. (C) 2018/19
+by Dominic Clifton. (C) 2018-2020
 
 [![Build Status](https://travis-ci.com/hydra/pnpconvert.svg?branch=master)](https://travis-ci.com/hydra/pnpconvert)
 
@@ -19,7 +19,7 @@ Currently supported machines
 * CHMT48VA (*1)
 * CHMT36VA (*1)
 
-*1 Treated as CHMT47VB, so do not use right-hand side feeders with IDs 36-64.
+*1 Treated as CHMT48VB, so do not use right-hand side feeders with IDs 36-64.
 
 Usage
 =====
@@ -205,6 +205,46 @@ Column headers are case-insensitive, non-alphanumeric characters are converted t
 Example Google Sheets spreadsheet with tabs for feeders, trays and components, can be found at the follow public URL:
 
 https://docs.google.com/spreadsheets/d/1-bZiPxQy2budCd0ny81PV6aGKu4q8ckkRBx3FWsMj-M/edit?usp=sharing
+
+Fields requiring additional documentation are as below.
+
+* If you can't work out what a field does after reviewing the fields and your machine documentation please create an issue on the issue tracker asking for more documentation.
+
+Feeders CSV file
+================
+
+Columns
+-------
+
+| Column | Unit | Notes                                                                                                                                 |
+| ------ | -----| ------------------------------------------------------------------------------------------------------------------------------------- |
+| FLAGS  | comma separated list | List of flags                                                                                                         |
+| ID     | Integer | Required for left/right/front/vibration feeders, optional for "IC tray" feeders.                                                   |
+| Enabled | Boolean | Allows the component to be skipped                                                                                                |
+| Tray Name | String | Value should correspond with the name of a tray in the Trays CSV file.  A feeder is a 'Tray Feeder' if this field is specified'  |
+| Tape Width | Integer, Centimeters | Ignored for Tray feeders.  Still useful for Tray Feeders when using cut-tape in tray feeders.                     |
+| Tape Spacing | Integer, Centimeters | Ignored for Tray feeders.  Still useful for Tray Feeders when using cut-tape in tray feeders.                   |
+| Place Speed | Integer, Percentage | 0 is invalid.                                                                                                     |
+| Place Delay | Milliseconds, Delay after extending head and before retracting head.                                                                    |
+| Take Delay | Milliseconds, Delay in milliseconds
+
+Values
+------
+
+| Flag | Meaning                                                                                                                |
+| !    | Ignore the row.  Use this flag to manage feeders/trays that are not currently in use without having to delete the row  |
+
+Feeder IDs for the CHMT48VB are as below, they are FIXED by the software in the CHMT48VB.
+
+| ID    | Purpose                               |
+| ----- | ------------------------------------- |  
+| 0-35  | left feeders                          |
+| 36-70 | right feeders                         |
+| 71-77 | rear left to rear right tray 1-7      |
+| 78-83 | front left to front right tray 1-6    |
+| 84    | right hand double tray 1/1            |
+| 85-90 | vibration feeder, front left.         |
+| 91-99 | ic tray                               |
 
 Why
 ===
