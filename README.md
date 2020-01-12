@@ -177,13 +177,18 @@ The order of the CSV fields does not matter, the column headers are used to find
 5. A trays CSV file containing tray definitions is read.
 6. A feeders CSV file containing feeder and pick settings is read.
 7. A components CSV file which contains component definitions is read.
+8. Component and Material selection begins.
+9. Materials are assigned.
+10. A summary of feeder and tray load-out is presented.
+11. Issues are presented (placements with unknown components, inexact components matches, feeders matched by component aliases, unloaded components)
+12. The DPV is generated.
 
 The process starts by reading the pick-and-place file cross-referencing each component name and value against
  entries in the components file, then it looks for feeders (reels or trays) that have the component.  When things match up the materials and components tables in the DPV file are generated.
 
-When things don't match up a list of unknown components and unloaded feeders is presented which should then be added to the appropriate input files.
+When components don't match a list of unknown components and unloaded feeders is presented which should then be added to the appropriate input files.
 
-Additionally, components in the design file that are matched to components using aliases, or to aliases of components already in feeders, are also displayed.  This is so that you can check to see if a substitution is acceptable. E.g. design specifies a capacitor with 10% tolerance, and a similar spec capacitor with 20% tolerance has an alias the same as the 10% one.
+Components in the design file that are matched to components using aliases, or to aliases of components already in feeders, are also displayed.  This is so that you can check to see if a substitution is acceptable. E.g. design specifies a capacitor with 10% tolerance, and a similar spec capacitor with 20% tolerance has an alias the same as the 10% one.
 
 
 SVG file
