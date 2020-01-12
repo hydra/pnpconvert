@@ -59,12 +59,48 @@ class DPVGenerator {
             "placement: $placement, materialAssignment: $materialAssignment"
         }.join('\n'))
 
-        List<Integer> usedFeeders = materialAssignments.collect { ComponentPlacement placement, MaterialAssignment materialAssignment ->
+        List<Integer> usedFeederIds = materialAssignments.collect { ComponentPlacement placement, MaterialAssignment materialAssignment ->
             materialAssignment.feederId
         }.unique().sort()
 
         System.out.println()
-        System.out.println("usedFeeders:\n" + usedFeeders.join(','))
+        System.out.println("usedFeeders:\n" + usedFeederIds.join(','))
+
+        ArrayList<FeederPrinter> feederPrinters = [
+            new TrayFeederPrinter(),
+            new ReelFeederPrinter()
+        ]
+
+        List<Map<String, String>> summaryItems = usedFeederIds.findResults { Integer feederId ->
+            Map.Entry<ComponentPlacement, MaterialAssignment> materialAssigment = materialAssignments.find { ComponentPlacement placement, MaterialAssignment materialAssignment ->
+                materialAssignment.feederId == feederId
+            }
+            Feeder feeder = materialAssigment.value.feeder
+            FeederPrinter feederPrinter = feederPrinters.find { it.canPrint(feeder) }
+
+            Map<ComponentPlacement, MaterialAssignment> materialAssigmentsUsingSameFeeder = materialAssignments.findAll { ComponentPlacement placement, MaterialAssignment materialAssignment ->
+                materialAssignment.feederId == feederId
+            }
+
+            List<String> refdesList = materialAssigmentsUsingSameFeeder.keySet().findResults { ComponentPlacement placement -> placement.refdes }
+
+            [
+                feederId : materialAssigment.value.feederId.toString(),
+                count    : refdesList.size(),
+                refdes   : refdesList.join(','),
+                feeder   : feederPrinter.print(feeder),
+                component: [
+                    name   : materialAssigment.value.component.name,
+                    aliases: materialAssigment.value.component.aliases,
+                ].toString(),
+            ]
+        }
+        if (!summaryItems.isEmpty()) {
+            System.out.println()
+            System.out.println("feederSummary:")
+            System.out.println(summaryItems.first().keySet().join(','))
+            System.out.println(summaryItems.collect { it.values().join(',') }.join('\n'))
+        }
 
         System.out.println()
         System.out.println('*** ISSUES *** - Components that did not match, need verification or loading')
