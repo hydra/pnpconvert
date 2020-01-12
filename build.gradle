@@ -27,7 +27,7 @@ version = "1.0.0"
 
 repositories {
     maven {
-        url "https://oss.sonatype.org/content/repositories/staging"
+        url "https://oss.sonatype.org/service/local/content/repositories/staging/"
     }
     mavenCentral()
     mavenLocal()
