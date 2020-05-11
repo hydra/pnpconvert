@@ -201,7 +201,7 @@ class PNPConvert {
 
     static List<RefdesReplacement> parseRefdesReplacements(String[] refdesReplacementsValues) {
         List<RefdesReplacement> refdesReplacements = refdesReplacementsValues.findResults { refdesReplacementValue ->
-            String[] refdesReplacementValues = refdesReplacementValue.split(',')
+            String[] refdesReplacementValues = refdesReplacementValue.split(',', 3)
             if (refdesReplacementValues.size() != 3) {
                 return null
             }
