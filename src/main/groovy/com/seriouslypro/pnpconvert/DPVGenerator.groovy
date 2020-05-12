@@ -82,7 +82,7 @@ class DPVGenerator {
                 materialAssignment.feederId == feederId
             }
 
-            List<String> refdesList = materialAssigmentsUsingSameFeeder.keySet().findResults { ComponentPlacement placement -> placement.refdes }
+            List<String> refdesList = materialAssigmentsUsingSameFeeder.keySet().findResults { ComponentPlacement placement -> placement.enabled ? placement.refdes : null }
 
             [
                 feederId : materialAssigment.value.feederId.toString(),
