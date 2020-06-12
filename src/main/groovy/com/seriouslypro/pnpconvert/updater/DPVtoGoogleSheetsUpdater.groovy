@@ -39,6 +39,12 @@ class DPVtoGoogleSheetsUpdater {
             throw new SheetNotFoundException(SHEET_TITLE_FEEDERS)
         }
 
+        FileInputStream dpvFileInputStream = new FileInputStream(inputFileName)
+        DPVFileParser dpvFileParser = new DPVFileParser()
+        DPVFile dpvFile = dpvFileParser.parse(dpvFileInputStream)
+
+        reporter.reportDPVSummary(dpvFile)
+
         int totalRowCount = 0
         int updatedRowCount = 0
         reporter.reportSummary(sheetTitle, totalRowCount, updatedRowCount)

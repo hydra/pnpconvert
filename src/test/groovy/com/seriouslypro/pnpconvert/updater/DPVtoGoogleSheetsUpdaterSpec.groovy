@@ -6,9 +6,10 @@ import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.Sheet
 import com.google.api.services.sheets.v4.model.Spreadsheet
 import com.google.api.services.sheets.v4.model.SpreadsheetProperties
+import com.seriouslypro.pnpconvert.test.TestResources
 import spock.lang.Specification
 
-class DPVtoGoogleSheetsUpdaterSpec extends Specification {
+class DPVtoGoogleSheetsUpdaterSpec extends Specification implements TestResources {
 
     private static final String CREDENTIALS_FILE_NAME = 'credentials.json'
     private static final String TEST_SPREADSHEET_TITLE = "TEST TITLE"
@@ -58,6 +59,10 @@ class DPVtoGoogleSheetsUpdaterSpec extends Specification {
             Sheet mockFeedersSheet = GroovyMock(Sheet)
 
         and:
+            File inputFile = createTemporaryFileFromResource(temporaryFolder, testResource("/input.dpv"))
+            updater.inputFileName = inputFile.absolutePath
+
+        and:
             def mockReporter = Mock(UpdaterReporter)
             updater.reporter = mockReporter
 
@@ -77,6 +82,9 @@ class DPVtoGoogleSheetsUpdaterSpec extends Specification {
 
         then:
             1 * mockSheetFinder.findByTitle(mockSpreadsheet, TEST_SHEET_TITLE_FEEDERS) >> mockFeedersSheet
+
+        then:
+            1 * mockReporter.reportDPVSummary(_ as DPVFile)
 
         then:
             1 * mockReporter.reportSummary(TEST_SPREADSHEET_TITLE, 0, 0)
