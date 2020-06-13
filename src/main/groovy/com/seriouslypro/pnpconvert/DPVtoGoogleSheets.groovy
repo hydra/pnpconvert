@@ -31,7 +31,7 @@ class DPVtoGoogleSheets {
     }
 
     static def processArgs(String[] args) {
-        CliBuilder builder = new CliBuilder(usage: 'dpbtogooglesheets')
+        CliBuilder builder = new CliBuilder(usage: 'dpvtogooglesheets')
         builder.v('version')
         builder.i(args:1, argName: 'input', 'input dpv file/url')
         builder.s(args:1, argName: 'sheet', 'sheet id')
