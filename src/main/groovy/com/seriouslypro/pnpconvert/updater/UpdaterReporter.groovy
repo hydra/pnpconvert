@@ -1,9 +1,9 @@
 package com.seriouslypro.pnpconvert.updater
 
 class UpdaterReporter {
-    void reportSummary(String sheetTitle, int totalRowCount, int updatedRowCount) {
+    void reportSummary(String sheetTitle, SheetProcessorResult sheetProcessorResult) {
         println("Sheet Title: ${sheetTitle}")
-        println("Rows, total: ${totalRowCount}, updated: ${updatedRowCount}")
+        println("Feeders, total: ${sheetProcessorResult.totalFeederCount}, updated: ${sheetProcessorResult.updatedFeederCount}")
     }
 
     void reportDPVSummary(DPVFile dpvFile) {

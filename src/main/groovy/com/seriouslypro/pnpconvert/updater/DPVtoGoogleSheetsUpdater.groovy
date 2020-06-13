@@ -8,7 +8,8 @@ import com.google.api.services.sheets.v4.model.SpreadsheetProperties
 
 class DPVtoGoogleSheetsUpdater {
 
-    public static final String SHEET_TITLE_FEEDERS = "Feeders"
+    public static final String SHEET_TITLE_FEEDERS = 'Feeders'
+    public static final String DPV_TABLE_STATION = 'Station'
 
     String inputFileName
     String sheetId
@@ -20,6 +21,7 @@ class DPVtoGoogleSheetsUpdater {
 
     SheetsBuilder sheetsBuilder = new SheetsBuilder()
     SheetFinder sheetFinder = new SheetFinder()
+    FeedersSheetProcessor feederSheetProcessor = new FeedersSheetProcessor()
 
     def update() {
         def transport = transportFactory.build()
@@ -45,9 +47,9 @@ class DPVtoGoogleSheetsUpdater {
 
         reporter.reportDPVSummary(dpvFile)
 
-        int totalRowCount = 0
-        int updatedRowCount = 0
-        reporter.reportSummary(sheetTitle, totalRowCount, updatedRowCount)
+        SheetProcessorResult result = feederSheetProcessor.process(service, spreadsheet, feedersSheet, dpvFile.tables[DPV_TABLE_STATION])
+
+        reporter.reportSummary(sheetTitle, result)
     }
 }
 

@@ -63,6 +63,12 @@ class DPVtoGoogleSheetsUpdaterSpec extends Specification implements TestResource
             updater.inputFileName = inputFile.absolutePath
 
         and:
+            FeedersSheetProcessor mockFeedersSheetProcessor = Mock(FeedersSheetProcessor)
+            updater.feederSheetProcessor = mockFeedersSheetProcessor
+
+            SheetProcessorResult mockSheetProcessorResult = Mock(SheetProcessorResult)
+
+        and:
             def mockReporter = Mock(UpdaterReporter)
             updater.reporter = mockReporter
 
@@ -87,7 +93,10 @@ class DPVtoGoogleSheetsUpdaterSpec extends Specification implements TestResource
             1 * mockReporter.reportDPVSummary(_ as DPVFile)
 
         then:
-            1 * mockReporter.reportSummary(TEST_SPREADSHEET_TITLE, 0, 0)
+            1 * mockFeedersSheetProcessor.process(mockSheetsService, mockSpreadsheet, mockFeedersSheet, _ as DPVTable) >> mockSheetProcessorResult
+
+        then:
+            1 * mockReporter.reportSummary(TEST_SPREADSHEET_TITLE, mockSheetProcessorResult)
 
         then:
             0 * _
