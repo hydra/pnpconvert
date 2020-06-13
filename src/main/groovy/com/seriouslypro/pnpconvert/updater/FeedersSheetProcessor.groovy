@@ -4,6 +4,7 @@ import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.GridRange
 import com.google.api.services.sheets.v4.model.Sheet
 import com.google.api.services.sheets.v4.model.Spreadsheet
+import com.google.api.services.sheets.v4.model.UpdateValuesResponse
 import com.google.api.services.sheets.v4.model.ValueRange
 import com.seriouslypro.pnpconvert.Feeders
 
@@ -15,7 +16,7 @@ class FeedersSheetProcessor {
     SheetProcessorResult process(Sheets service, Spreadsheet spreadsheet, Sheet sheet, DPVTable feedersTable) {
         SheetProcessorResult sheetProcessorResult = new SheetProcessorResult()
 
-        String speadsheetId = spreadsheet.getSpreadsheetId()
+        String spreadsheetId = spreadsheet.getSpreadsheetId()
         String sheetTitle = sheet.getProperties().getTitle()
 
         int columnCount = sheet.getProperties().getGridProperties().getColumnCount()
@@ -34,7 +35,7 @@ class FeedersSheetProcessor {
         gridRange.setEndRowIndex(HEADER_ROW_COUNT - 1)
 
         String headersRange = sheetTitle + '!' + GridRangeConverter.toString(gridRange)
-        ValueRange headersValuesRangeResponse = service.spreadsheets().values().get(speadsheetId, headersRange).execute()
+        ValueRange headersValuesRangeResponse = service.spreadsheets().values().get(spreadsheetId, headersRange).execute()
         List<List<Object>> headersValues = headersValuesRangeResponse.getValues()
         dumpRows(headersValues)
 
@@ -52,14 +53,24 @@ class FeedersSheetProcessor {
             gridRange.setEndRowIndex(nextStartRowIndex + rowsToRetrieve - 1) // -1 for inclusive
 
             String dataRange = sheetTitle + '!' + GridRangeConverter.toString(gridRange)
-            ValueRange dataValuesRangeResponse = service.spreadsheets().values().get(speadsheetId, dataRange).execute()
+            ValueRange dataValuesRangeResponse = service.spreadsheets().values().get(spreadsheetId, dataRange).execute()
 
             List<List<Object>> dataRowsValues = dataValuesRangeResponse.getValues()
             dumpRows(dataRowsValues)
 
-            dataRowsValues.each { feederRowValues ->
+            dataRowsValues.eachWithIndex { List<Object> feederRowValues, int index ->
                 feedersTable.entries.each { List<String> dpvFeederEntryValues ->
-                    processEntry(sheetToEntryHeaderMapping, feederRowValues as List<String>, dpvFeederEntryValues, sheetProcessorResult)
+
+                    int rowIndex = gridRange.getStartRowIndex() + index
+
+                    GridRange gridRangeForRow = gridRange.clone()
+                    gridRangeForRow.setStartRowIndex(rowIndex)
+                    gridRangeForRow.setEndRowIndex(rowIndex)
+
+                    String rangeForUpdate = sheetTitle + '!' + GridRangeConverter.toString(gridRangeForRow)
+                    processEntry(service, spreadsheetId, rangeForUpdate, sheetToEntryHeaderMapping, feederRowValues as List<String>, dpvFeederEntryValues, sheetProcessorResult)
+
+                    // TODO - Optimization; avoid processing each feedersTable.entries twice, once it's updated it's safe to ignore.
                 }
             }
 
@@ -77,7 +88,7 @@ class FeedersSheetProcessor {
         }
     }
 
-    void processEntry(SheetToDPVHeaderMapping sheetToEntryHeaderMapping, List<String> sheetFeederRowValues, List<String> dpvFeederEntryValues, SheetProcessorResult sheetProcessorResult) {
+    void processEntry(Sheets service, String spreadsheetId, String range, SheetToDPVHeaderMapping sheetToEntryHeaderMapping, List<String> sheetFeederRowValues, List<String> dpvFeederEntryValues, SheetProcessorResult sheetProcessorResult) {
         sheetProcessorResult.totalFeederCount++
 
         int dpvIdIndex = sheetToEntryHeaderMapping.dpvIndex(DPVStationTableColumn.ID)
@@ -96,7 +107,25 @@ class FeedersSheetProcessor {
             return
         }
 
-        // TODO update the sheet with the new values
-        sheetProcessorResult.updatedFeederCount++
+        // update the sheet with the new values, check the result
+
+        List<String> updatedRowValues = sheetFeederRowValues.collect()
+        updatedRowValues.set(sheetToEntryHeaderMapping.sheetIndex(Feeders.FeederCSVColumn.X_OFFSET), dpvFeederEntryValues[sheetToEntryHeaderMapping.dpvIndex(DPVStationTableColumn.DELTA_X)])
+        updatedRowValues.set(sheetToEntryHeaderMapping.sheetIndex(Feeders.FeederCSVColumn.Y_OFFSET), dpvFeederEntryValues[sheetToEntryHeaderMapping.dpvIndex(DPVStationTableColumn.DELTA_Y)])
+
+        ValueRange valueRange = new ValueRange()
+        List<List<Object>> updatedValues = [updatedRowValues]
+        valueRange.setValues(updatedValues)
+
+        if (updatedRowValues.containsAll(sheetFeederRowValues)) {
+            return
+        }
+
+        UpdateValuesResponse updateValuesResponse = service.spreadsheets().values().update(spreadsheetId, range, valueRange)
+            .setValueInputOption('USER_ENTERED') // TODO feels like there should be an enum for this value
+            .execute()
+
+
+        sheetProcessorResult.updatedFeederCount += updateValuesResponse.getUpdatedRows()
     }
 }

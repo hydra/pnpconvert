@@ -5,8 +5,8 @@ import com.google.api.services.sheets.v4.model.GridProperties
 import com.google.api.services.sheets.v4.model.Sheet
 import com.google.api.services.sheets.v4.model.SheetProperties
 import com.google.api.services.sheets.v4.model.Spreadsheet
+import com.google.api.services.sheets.v4.model.UpdateValuesResponse
 import com.google.api.services.sheets.v4.model.ValueRange
-import org.junit.internal.builders.IgnoredBuilder
 import spock.lang.Ignore
 import spock.lang.Specification
 
@@ -73,7 +73,7 @@ class FeedersSheetProcessorSpec extends Specification {
         and:
             DPVTable feedersTable = new DPVTable()
             feedersTable.headers = ["ID", "Note", "DeltX", "DeltY"]
-            feedersTable.entries = [['1', TEST_COMPONENT_NAME, '0.12', '0.62']]
+            feedersTable.entries = [['1', TEST_COMPONENT_NAME + ' A NOTE', '0.12', '0.62']]
 
         and:
             Sheets.Spreadsheets mockSpreadsheets = Mock(Sheets.Spreadsheets)
@@ -89,6 +89,17 @@ class FeedersSheetProcessorSpec extends Specification {
             ValueRange dataValueRangeResponse = new ValueRange()
             List<List<Object>> dataValues = [['0.23', '0.73', TEST_COMPONENT_NAME, '1']]
             dataValueRangeResponse.setValues(dataValues)
+
+        and: "use updated data for row to be updated"
+            Sheets.Spreadsheets.Values.Update mockUpdate = Mock(Sheets.Spreadsheets.Values.Update)
+            ValueRange expectedValueRange = new ValueRange()
+            List<List<Object>> updatedValues = [['0.12', '0.62', TEST_COMPONENT_NAME, '1']]
+            expectedValueRange.setValues(updatedValues)
+            UpdateValuesResponse updateValuesResponse = new UpdateValuesResponse()
+
+            // If the cell content is the same, the API still includes it in the count of updated cells.
+            updateValuesResponse.setUpdatedCells(4)
+            updateValuesResponse.setUpdatedRows(1)
 
         and:
             FeedersSheetProcessor processor = new FeedersSheetProcessor()
@@ -110,14 +121,26 @@ class FeedersSheetProcessorSpec extends Specification {
             1 * mockGet.execute() >> dataValueRangeResponse
             0 * _
 
-// TODO
-//        and: "sheet should contain updated values for X/Y offset"
+        then: "an updated matching row should be sent"
+            1 * mockSheetsService.spreadsheets() >> mockSpreadsheets
+            1 * mockSpreadsheets.values() >> mockValuesResponse
+            1 * mockValuesResponse.update(TEST_SPREADSHEET_ID, "SHEET_TITLE!A2:D2", expectedValueRange) >> mockUpdate
+
+            // See: https://developers.google.com/sheets/api/reference/rest/v4/ValueInputOption
+            // 'RAW' removes any existing formatting/justification.
+            1 * mockUpdate.setValueInputOption('USER_ENTERED') >> mockUpdate
+            1 * mockUpdate.execute() >> updateValuesResponse
+            0 * _
 
         then:
             result == new SheetProcessorResult(totalFeederCount: 1, updatedFeederCount: 1)
     }
 
     @Ignore
+    def "avoid updating rows that don't need updating"() {
+    }
+
+        @Ignore
     def "avoid errors when rate is limited"() {
         /*
             Requests must be batched to avoid rate limit, exception thrown is:
