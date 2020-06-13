@@ -50,7 +50,7 @@ class FeedersSheetProcessorSpec extends Specification {
             result == new SheetProcessorResult(totalFeederCount: 0, updatedFeederCount: 0)
     }
 
-    def "process table"() {
+    def "process table and update single row"() {
         given:
             Sheets mockSheetsService = GroovyMock(Sheets)
             Spreadsheet spreadsheet = new Spreadsheet()
@@ -137,10 +137,14 @@ class FeedersSheetProcessorSpec extends Specification {
     }
 
     @Ignore
-    def "avoid updating rows that don't need updating"() {
+    def "process table and update multiple rows"() {
     }
 
-        @Ignore
+    @Ignore
+    def "process table whilst avoiding updating of rows that don't need updating"() {
+    }
+
+    @Ignore
     def "avoid errors when rate is limited"() {
         /*
             Requests must be batched to avoid rate limit, exception thrown is:

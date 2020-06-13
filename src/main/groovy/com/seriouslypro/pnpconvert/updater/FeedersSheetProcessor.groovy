@@ -59,6 +59,8 @@ class FeedersSheetProcessor {
             dumpRows(dataRowsValues)
 
             dataRowsValues.eachWithIndex { List<Object> feederRowValues, int index ->
+                sheetProcessorResult.totalFeederCount++
+
                 feedersTable.entries.each { List<String> dpvFeederEntryValues ->
 
                     int rowIndex = gridRange.getStartRowIndex() + index
@@ -89,7 +91,6 @@ class FeedersSheetProcessor {
     }
 
     void processEntry(Sheets service, String spreadsheetId, String range, SheetToDPVHeaderMapping sheetToEntryHeaderMapping, List<String> sheetFeederRowValues, List<String> dpvFeederEntryValues, SheetProcessorResult sheetProcessorResult) {
-        sheetProcessorResult.totalFeederCount++
 
         int dpvIdIndex = sheetToEntryHeaderMapping.dpvIndex(DPVStationTableColumn.ID)
         int sheetIdIndex = sheetToEntryHeaderMapping.sheetIndex(Feeders.FeederCSVColumn.ID)
