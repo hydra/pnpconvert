@@ -36,6 +36,7 @@ class DPVtoGoogleSheets {
         builder.i(args:1, argName: 'input', 'input dpv file/url')
         builder.s(args:1, argName: 'sheet', 'sheet id')
         builder.c(args:1, argName: 'credentials', 'credentials json file/url')
+        builder.mo(args:'+', argName: 'match-options', 'match options')
 
         builder.cfg(args:1, argName: 'config', 'configuration file (in "key=value" format)')
 
@@ -72,6 +73,8 @@ class DPVtoGoogleSheets {
         String credentialsFileName = config.getOrDefault("credentials","credentials.json")
         String sheetId = config.getOrDefault("sheetId","")
 
+        Set<MatchOption> matchOptions = [MatchOption.FEEDER_ID, MatchOption.COMPONENT_NAME]
+
         if (options.i) {
             inputFileName = options.i
         }
@@ -84,6 +87,12 @@ class DPVtoGoogleSheets {
             credentialsFileName = options.c
         }
 
+
+        String[] matchOptionValues = options.getCommandLine().getOptionValues("mo");
+        if (matchOptionValues && matchOptionValues.size() > 0) {
+            matchOptions = parseMatchOptions(matchOptionValues)
+        }
+
         if (options.u) {
             boolean haveRequiredOptions = !sheetId.empty
 
@@ -92,6 +101,7 @@ class DPVtoGoogleSheets {
                     inputFileName: inputFileName,
                     sheetId: sheetId,
                     credentialsFileName: credentialsFileName,
+                    matchOptions: matchOptions,
                 )
                 updater.update()
                 System.exit(0);
@@ -103,6 +113,21 @@ class DPVtoGoogleSheets {
         System.out.println('invalid parameter combinations')
         builder.usage()
         System.exit(-1);
+    }
+
+    static Set<MatchOption> parseMatchOptions(String[] strings) {
+        Set<MatchOption> matchOptions = strings.collect { String arg ->
+            String uppercaseArg = arg.toUpperCase()
+
+            try {
+                MatchOption matchOption = MatchOption.valueOf(uppercaseArg)
+                return matchOption
+            } catch (Exception e) {
+                String[] candidates = MatchOption.values()
+                throw new IllegalArgumentException("Unknown match option: $arg, expected any of $candidates", e)
+            }
+        }
+        matchOptions
     }
 
     private static void about() {

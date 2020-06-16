@@ -6,6 +6,7 @@ import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.Sheet
 import com.google.api.services.sheets.v4.model.Spreadsheet
 import com.google.api.services.sheets.v4.model.SpreadsheetProperties
+import com.seriouslypro.pnpconvert.MatchOption
 import com.seriouslypro.pnpconvert.test.TestResources
 import spock.lang.Specification
 
@@ -28,6 +29,9 @@ class DPVtoGoogleSheetsUpdaterSpec extends Specification implements TestResource
 
             updater.credentialsFileName = CREDENTIALS_FILE_NAME
             updater.sheetId = TEST_SHEET_ID
+
+            Set<MatchOption> expectedMatchOptions = [MatchOption.FEEDER_ID]
+            updater.matchOptions = expectedMatchOptions
 
         and:
             CredentialFactory mockCredentialFactory = Mock(CredentialFactory)
@@ -93,7 +97,7 @@ class DPVtoGoogleSheetsUpdaterSpec extends Specification implements TestResource
             1 * mockReporter.reportDPVSummary(_ as DPVFile)
 
         then:
-            1 * mockFeedersSheetProcessor.process(mockSheetsService, mockSpreadsheet, mockFeedersSheet, _ as DPVTable) >> mockSheetProcessorResult
+            1 * mockFeedersSheetProcessor.process(mockSheetsService, mockSpreadsheet, mockFeedersSheet, _ as DPVTable, expectedMatchOptions) >> mockSheetProcessorResult
 
         then:
             1 * mockReporter.reportSummary(TEST_SPREADSHEET_TITLE, mockSheetProcessorResult)

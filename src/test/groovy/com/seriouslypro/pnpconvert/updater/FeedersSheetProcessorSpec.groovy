@@ -7,6 +7,7 @@ import com.google.api.services.sheets.v4.model.SheetProperties
 import com.google.api.services.sheets.v4.model.Spreadsheet
 import com.google.api.services.sheets.v4.model.UpdateValuesResponse
 import com.google.api.services.sheets.v4.model.ValueRange
+import com.seriouslypro.pnpconvert.MatchOption
 import spock.lang.Ignore
 import spock.lang.Specification
 
@@ -42,9 +43,10 @@ class FeedersSheetProcessorSpec extends Specification {
 
         and:
             FeedersSheetProcessor processor = new FeedersSheetProcessor()
+            Set<MatchOption> matchOptions = [MatchOption.FEEDER_ID, MatchOption.COMPONENT_NAME]
 
         when:
-            SheetProcessorResult result = processor.process(mockSheetsService, spreadsheet, sheet, feedersTable)
+            SheetProcessorResult result = processor.process(mockSheetsService, spreadsheet, sheet, feedersTable, matchOptions)
 
         then:
             result == new SheetProcessorResult(totalFeederCount: 0, updatedFeederCount: 0)
@@ -82,18 +84,18 @@ class FeedersSheetProcessorSpec extends Specification {
 
         and: "use headers in a different order to the values in the dpv file"
             ValueRange headersValueRangeResponse = new ValueRange()
-            List<List<Object>> headerValues = [["X Offset", "Y Offset", "Component Name", "ID"]]
+            List<List<Object>> headerValues = [["X Offset", "Y Offset", "Component Name", "ID", "Flags"]]
             headersValueRangeResponse.setValues(headerValues)
 
         and: "use data that corresponds to the a feeder, same component and feeder id, but with different x/y co-ordinates"
             ValueRange dataValueRangeResponse = new ValueRange()
-            List<List<Object>> dataValues = [['0.23', '0.73', TEST_COMPONENT_NAME, '1']]
+            List<List<Object>> dataValues = [['0.23', '0.73', TEST_COMPONENT_NAME, '1','']]
             dataValueRangeResponse.setValues(dataValues)
 
         and: "use updated data for row to be updated"
             Sheets.Spreadsheets.Values.Update mockUpdate = Mock(Sheets.Spreadsheets.Values.Update)
             ValueRange expectedValueRange = new ValueRange()
-            List<List<Object>> updatedValues = [['0.12', '0.62', TEST_COMPONENT_NAME, '1']]
+            List<List<Object>> updatedValues = [['0.12', '0.62', TEST_COMPONENT_NAME, '1','']]
             expectedValueRange.setValues(updatedValues)
             UpdateValuesResponse updateValuesResponse = new UpdateValuesResponse()
 
@@ -103,9 +105,10 @@ class FeedersSheetProcessorSpec extends Specification {
 
         and:
             FeedersSheetProcessor processor = new FeedersSheetProcessor()
+            Set<MatchOption> matchOptions = [MatchOption.FEEDER_ID, MatchOption.COMPONENT_NAME]
 
         when:
-            SheetProcessorResult result = processor.process(mockSheetsService, spreadsheet, sheet, feedersTable)
+            SheetProcessorResult result = processor.process(mockSheetsService, spreadsheet, sheet, feedersTable, matchOptions)
 
         then: "header row should be retrieved"
             1 * mockSheetsService.spreadsheets() >> mockSpreadsheets
@@ -150,5 +153,9 @@ class FeedersSheetProcessorSpec extends Specification {
             Requests must be batched to avoid rate limit, exception thrown is:
             "com.google.api.client.googleapis.json.GoogleJsonResponseException: 429 Too Many Requests"
          */
+    }
+
+    @Ignore
+    def "use specific match options"() {
     }
 }

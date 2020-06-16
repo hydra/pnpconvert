@@ -5,6 +5,7 @@ import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.Sheet
 import com.google.api.services.sheets.v4.model.Spreadsheet
 import com.google.api.services.sheets.v4.model.SpreadsheetProperties
+import com.seriouslypro.pnpconvert.MatchOption
 
 class DPVtoGoogleSheetsUpdater {
 
@@ -22,6 +23,7 @@ class DPVtoGoogleSheetsUpdater {
     SheetsBuilder sheetsBuilder = new SheetsBuilder()
     SheetFinder sheetFinder = new SheetFinder()
     FeedersSheetProcessor feederSheetProcessor = new FeedersSheetProcessor()
+    Set<MatchOption> matchOptions = []
 
     def update() {
         def transport = transportFactory.build()
@@ -47,7 +49,7 @@ class DPVtoGoogleSheetsUpdater {
 
         reporter.reportDPVSummary(dpvFile)
 
-        SheetProcessorResult result = feederSheetProcessor.process(service, spreadsheet, feedersSheet, dpvFile.tables[DPV_TABLE_STATION])
+        SheetProcessorResult result = feederSheetProcessor.process(service, spreadsheet, feedersSheet, dpvFile.tables[DPV_TABLE_STATION], matchOptions)
 
         reporter.reportSummary(sheetTitle, result)
     }
