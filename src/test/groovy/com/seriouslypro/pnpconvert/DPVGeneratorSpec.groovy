@@ -84,7 +84,6 @@ class DPVGeneratorSpec extends Specification {
                 // use offsets that will result it the first digit of the placement being different for X/Y
                 placementOffsetX: 1.10,
                 placementOffsetY: 0.80,
-
             )
             components.add(component5)
             components.add(component4)
@@ -110,7 +109,7 @@ class DPVGeneratorSpec extends Specification {
             feeders.loadFeeder(feeders.createReelFeeder(1, 8, component1.name, slowPickSettings, "Cheap"))
             feeders.loadFeeder(feeders.createReelFeeder(36, 8, component2.name, fastPickSettings, "Expensive"))
 
-            feeders.loadFeeder(feeders.createReelFeeder(33, 12, component5.name, new PickSettings(separateMount: true), "Special"))
+            feeders.loadFeeder(feeders.createReelFeeder(33, 12, component5.name, new PickSettings(separateMount: true, takeHeight: 2), "Special"))
 
         and:
             Tray tray1 = new Tray(
@@ -238,7 +237,7 @@ class DPVGeneratorSpec extends Specification {
         and:
             List<List<String>> expectedMaterials = [
                 ["Station","0","1","0","0","4","10K 0402 1%/RES_0402 - Cheap","0.5","100","6","1","3000","0","25","0"],
-                ["Station","1","33","0","0","4","Micro USB Socket With Very Long Name - Special","3.5","100","14","800","500","0","0","0"],
+                ["Station","1","33","0","0","4","Micro USB Socket With Very Long Name - Special","3.5","100","14","800","500","200","0","0"],
                 ["Station","2","36","0","0","4","100nF 6.3V 0402/CAP_0402 - Expensive","0.5","100","6","0","0","0","0","0"],
                 ["Station","3","1001","0","0","4","MAX14851 - Back 1-4 Top-Left; Pin 1 Top-Left","0.5","100","6","0","0","0","25","0"],
                 ["Station","4","1002","0","0","4","CAT24C32WI-GT3 - Back 6-7 Top-Left; Pin 1 Bottom-Right","0.5","100","6","0","0","0","0","0"],

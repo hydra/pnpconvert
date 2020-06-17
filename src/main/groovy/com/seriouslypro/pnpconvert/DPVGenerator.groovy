@@ -463,7 +463,7 @@ class DPVGenerator {
                 statusFlags & 0xFF,
                 zeroDigitDecimalFormat.format(component.width * 100),
                 zeroDigitDecimalFormat.format(component.length * 100),
-                twoDigitDecimalFormat.format(pickSettings.takeHeight),
+                zeroDigitDecimalFormat.format(pickSettings.takeHeight * 100),
                 zeroDigitDecimalFormat.format(pickSettings.takeDelay * 100),
                 pickSettings.pullSpeed
         ]

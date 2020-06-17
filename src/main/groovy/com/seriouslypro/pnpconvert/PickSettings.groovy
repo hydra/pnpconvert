@@ -18,7 +18,7 @@ class PickSettings {
     int placeSpeedPercentage = 100
     BigDecimal placeDelay = 0              // how long to wait after extending the pick nozzle when PLACING component, 0-5 seconds, resolution of 0.01 seconds
 
-    BigDecimal takeHeight = 0              // ??
+    BigDecimal takeHeight = 0              // 0-5mm (2.0 = 200 in DPV file)
 
     BigDecimal takeDelay = 0        // how long to wait after extending the pick nozzle when PICKING component, 0-3 seconds, resolution of 0.01 seconds.
                                     // using short takeDelay of around 0.25 seconds can prevent small components bouncing out of the tape.
