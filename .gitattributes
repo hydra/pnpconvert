@@ -2,4 +2,6 @@
 *.bat text eol=crlf
 *.csv text eol=lf
 gradlew text eol=lf
+*.groovy text eol=lf
+*.java text eol=lf
 
