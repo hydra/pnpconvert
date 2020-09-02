@@ -136,7 +136,12 @@ class FeedersSheetProcessor {
         List<List<Object>> updatedValues = [updatedRowValues]
         valueRange.setValues(updatedValues)
 
-        if (updatedRowValues.containsAll(sheetFeederRowValues)) {
+        boolean isIdentical = true
+        updatedRowValues.eachWithIndex { String entry, int i ->
+            isIdentical &= sheetFeederRowValues[i] == entry
+        }
+
+        if (isIdentical) {
             return
         }
 
