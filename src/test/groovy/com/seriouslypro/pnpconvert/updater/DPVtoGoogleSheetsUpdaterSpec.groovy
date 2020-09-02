@@ -8,6 +8,7 @@ import com.google.api.services.sheets.v4.model.Spreadsheet
 import com.google.api.services.sheets.v4.model.SpreadsheetProperties
 import com.seriouslypro.pnpconvert.MatchOption
 import com.seriouslypro.pnpconvert.test.TestResources
+import spock.lang.Ignore
 import spock.lang.Specification
 
 class DPVtoGoogleSheetsUpdaterSpec extends Specification implements TestResources {
@@ -104,6 +105,18 @@ class DPVtoGoogleSheetsUpdaterSpec extends Specification implements TestResource
 
         then:
             0 * _
+    }
+
+    @Ignore
+    def 'report when multiple rows for the same feeder are updated when using FEEDER_ID and FLAG_ENABLED matching'() {
+        given:
+            // two rows in the sheet with the same feeder id and no 'disabled' flag.
+            // a DPB file with a feeder id that matches the above two rows in the sheet.
+
+        expect:
+            false
+            // some warning output so the human reverts the sheet, checks the sheet for duplicate feeder ids, adds a disabled flag and retries.
+            // or better yet detect this situation and don't apply *any* changes and report an error, so the human doesn't need to revert the sheet.
     }
 
     /* Transport factory that builds Mock instances */
