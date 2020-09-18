@@ -286,6 +286,7 @@ class DPVGeneratorSpec extends Specification {
 
         and:
             String capturedOutput = capture.toString()
+            !capturedOutput.empty
             feederSummaryPresent(capturedOutput, expectedFeederSummary)
     }
 
@@ -441,10 +442,8 @@ class DPVGeneratorSpec extends Specification {
 
 
     void feederSummaryPresent(String content, List<List<String>> feederSummaryRows) {
-        assert content.contains(
-            'feederSummary:' + CRLF +
-            'feederId,componentsPerUnit,componentsPerPanel,refdes,feeder,component'
-        )
+        assert content.contains('feederSummary:')
+        assert content.contains('feederId,componentsPerUnit,componentsPerPanel,refdes,feeder,component')
 
         feederSummaryRows.each { List<String> feederSummaryRow ->
             assert (feederSummaryRow.size() == FEEDER_SUMMARY_COLUMN_COUNT)
