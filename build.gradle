@@ -55,6 +55,7 @@ dependencies {
     testCompile 'org.spockframework:spock-core:1.2-groovy-2.5'
     testCompile group: 'cglib', name: 'cglib-nodep', version: '2.2'
     testCompile group: 'org.objenesis', name: 'objenesis', version: '3.0.1'
+    testCompile 'org.springframework.boot:spring-boot:1.2.1.RELEASE' // For OutputCapture
 
     compile 'net.sf.opencsv:opencsv:2.3'
 
