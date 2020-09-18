@@ -8,7 +8,12 @@ import spock.lang.Unroll
 
 import java.text.DecimalFormat
 
+import org.springframework.boot.test.OutputCapture
+
 class DPVGeneratorSpec extends Specification {
+
+    @org.junit.Rule
+    OutputCapture capture = new OutputCapture()
 
     private static final CRLF = "\r\n"
     private static final TEST_TABLE_LINE_ENDING = CRLF * 2
@@ -260,6 +265,15 @@ class DPVGeneratorSpec extends Specification {
                 ["ICTray","1","1002","327.5","58.57","351.51","58.57","2","1","0"],
             ]
 
+        and:
+            List<List<String>> expectedFeederSummary = [
+                ['1','2','2','[R1, R2]','[id:1, note:Cheap]','[name:10K 0402 1%/RES_0402, aliases:[]]'],
+                ['33','0','0','[]','[id:33, note:Special]','[name:Micro USB Socket With Very Long Name, aliases:[]]'],
+                ['36','1','1','[C1]','[id:36, note:Expensive]','[name:100nF 6.3V 0402/CAP_0402, aliases:[]]'],
+                ['1001','2','2','[U1, U2]','[tray:B-1-4-TL, note:Back 1-4 Top-Left, Pin 1 Top-Left]','[name:MAX14851, aliases:[]]'],
+                ['1002','1','1','[U3]','[tray:B-6-7-TL, note:Back 6-7 Top-Left, Pin 1 Bottom-Right]','[name:CAT24C32WI-GT3, aliases:[]]']
+            ]
+
         when:
             generator.generate(outputStream)
 
@@ -269,6 +283,11 @@ class DPVGeneratorSpec extends Specification {
             componentsPresent(content, expectedComponents)
             traysPresent(content, expectedTrays)
             defaultPanelPresent(content)
+
+        and:
+            String capturedOutput = capture.toString()
+            !capturedOutput.empty
+            feederSummaryPresent(capturedOutput, expectedFeederSummary)
     }
 
     @Ignore
@@ -374,6 +393,7 @@ class DPVGeneratorSpec extends Specification {
     static final int MATERIAL_COLUMN_COUNT = 15
     static final int COMPONENT_COLUMN_COUNT = 14
     static final int TRAY_COLUMN_COUNT = 10
+    static final int FEEDER_SUMMARY_COLUMN_COUNT = 6
 
     void materialsPresent(String content, List<List<String>> materialRows) {
         assert content.contains("Table,No.,ID,DeltX,DeltY,FeedRates,Note,Height,Speed,Status,SizeX,SizeY,HeightTake,DelayTake,nPullStripSpeed")
@@ -395,7 +415,7 @@ class DPVGeneratorSpec extends Specification {
         }
     }
 
-    void traysPresent(String content, ArrayList<List<String>> trayRows) {
+    void traysPresent(String content, List<List<String>> trayRows) {
         assert content.contains("Table,No.,ID,CenterX,CenterY,IntervalX,IntervalY,NumX,NumY,Start")
         trayRows.each { List<String> trayRow ->
             assert (trayRow.size() == TRAY_COLUMN_COUNT)
@@ -419,6 +439,19 @@ class DPVGeneratorSpec extends Specification {
             "Panel_Array,0,1,${twoDigitDecimalFormat.format(panel.intervalX)},${twoDigitDecimalFormat.format(panel.intervalY)},${panel.numberX},${panel.numberY}" + TEST_TABLE_LINE_ENDING
         )
     }
+
+
+    void feederSummaryPresent(String content, List<List<String>> feederSummaryRows) {
+        assert content.contains('feederSummary:')
+        assert content.contains('feederId,componentsPerUnit,componentsPerPanel,refdes,feeder,component')
+
+        feederSummaryRows.each { List<String> feederSummaryRow ->
+            assert (feederSummaryRow.size() == FEEDER_SUMMARY_COLUMN_COUNT)
+            String row = feederSummaryRow.join(",")
+            assert content.contains(row)
+        }
+    }
+
 
     def 'generate default panel'() {
         given:

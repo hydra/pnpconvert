@@ -71,6 +71,8 @@ class DPVGenerator {
             new ReelFeederPrinter()
         ]
 
+        int countOfUnitsInPanel = optionalPanel.map { panel -> panel.numberX * panel.numberY }.orElseGet{ 1 }
+
         List<Map<String, String>> summaryItems = usedFeederIds.findResults { Integer feederId ->
             Map.Entry<ComponentPlacement, MaterialAssignment> materialAssigment = materialAssignments.find { ComponentPlacement placement, MaterialAssignment materialAssignment ->
                 materialAssignment.feederId == feederId
@@ -83,13 +85,15 @@ class DPVGenerator {
             }
 
             List<String> refdesList = materialAssigmentsUsingSameFeeder.keySet().findResults { ComponentPlacement placement -> placement.enabled ? placement.refdes : null }
-
+            int countOfComponentsUsed  = refdesList.size()
+            int totalComponentsUserPerPanel = countOfComponentsUsed * countOfUnitsInPanel
             [
-                feederId : materialAssigment.value.feederId.toString(),
-                count    : refdesList.size(),
-                refdes   : refdesList.join(','),
-                feeder   : feederPrinter.print(feeder),
-                component: [
+                feederId            : materialAssigment.value.feederId.toString(),
+                componentsPerUnit   : countOfComponentsUsed,
+                componentsPerPanel  : totalComponentsUserPerPanel,
+                refdes              : refdesList,
+                feeder              : feederPrinter.print(feeder),
+                component           : [
                     name   : materialAssigment.value.component.name,
                     aliases: materialAssigment.value.component.aliases,
                 ].toString(),
