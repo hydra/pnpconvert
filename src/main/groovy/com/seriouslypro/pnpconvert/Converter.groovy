@@ -66,6 +66,11 @@ class Converter {
         //
         // Replace components by refdes
         //
+        if (refdesReplacements) {
+            System.out.println()
+            System.out.println("replacing components:")
+        }
+        List<RefdesReplacement> unmatchedRefdesReplacements = []
         refdesReplacements.each { RefdesReplacement refdesReplacement ->
             String upperCaseRefdes = refdesReplacement.refdes.toUpperCase()
             ComponentPlacement matchedPlacement = placements.find { placement ->
@@ -73,9 +78,20 @@ class Converter {
             }
 
             if (matchedPlacement) {
+                System.out.println("replacing ${matchedPlacement} with ${refdesReplacement}")
                 matchedPlacement.name = refdesReplacement.name
                 matchedPlacement.value = refdesReplacement.value
+            } else {
+                unmatchedRefdesReplacements << refdesReplacement
             }
+        }
+
+        if (unmatchedRefdesReplacements) {
+            System.out.println("Unmatched refdes replacements")
+            unmatchedRefdesReplacements.each { refdesReplacement ->
+                System.out.println(refdesReplacement)
+            }
+            System.exit(-1)
         }
 
         //
