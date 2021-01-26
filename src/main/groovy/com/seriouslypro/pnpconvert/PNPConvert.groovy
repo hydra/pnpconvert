@@ -135,7 +135,8 @@ class PNPConvert {
         }
 
         if (options.dr) {
-            placementReferenceDesignatorsToDisable = (options.dr as String).split(',').collect { it.trim().toUpperCase() }.unique()
+            String allDRValues = options.getCommandLine().getOptionValues("dr").join(",")
+            placementReferenceDesignatorsToDisable = allDRValues.split(',').collect { it.trim().toUpperCase() }.unique()
         }
 
         boolean havePanelOption = (options.pix || options.piy || options.pnx || options.pny)
