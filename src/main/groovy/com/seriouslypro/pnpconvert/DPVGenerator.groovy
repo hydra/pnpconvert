@@ -111,9 +111,6 @@ class DPVGenerator {
         System.out.println('')
 
         System.out.println()
-        System.out.println("placementsWithUnknownComponents:\n" + placementsWithUnknownComponents.join('\n'))
-
-        System.out.println()
         System.out.println("inexactComponentsMatches:\n" + inexactComponentMatches.collect { ComponentPlacement placement, ComponentFindResult componentFindResult ->
             "placement: $placement, component: $componentFindResult.component, strategies: $componentFindResult.matchingStrategies"
         }.join('\n'))
@@ -122,6 +119,9 @@ class DPVGenerator {
         System.out.println("feedersMatchedByAlias:\n" + feedersMatchedByAlias.collect { Feeder feeder, Component component ->
             "feederComponent: $feeder.componentName, component: $component"
         }.join('\n'))
+
+        System.out.println()
+        System.out.println("placementsWithUnknownComponents:\n" + placementsWithUnknownComponents.join('\n'))
 
         System.out.println()
         System.out.println("unloadedComponents:\n" + unloadedComponents.join('\n'))
