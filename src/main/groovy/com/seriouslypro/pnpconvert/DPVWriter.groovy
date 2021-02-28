@@ -61,7 +61,7 @@ class DPVWriter {
         EComponent,0,1,1,16,24.89,21.64,90,0.5,5,0,C1,100nF 6.3V 0402/CAP_0402,0
          */
 
-        // "Note" field is limited to 31 characters, e.g. "47uF 6.3V 1206 10% TANTALUM/CAP_1206" will be re-saved by the machine as "47uF 6.3V 1206 10% TANTALUM/CAP".
+        // The "Note" field is limited to 31 characters when re-saving using the machine, e.g. "47uF 6.3V 1206 10% TANTALUM/CAP_1206" will be re-saved by the machine as "47uF 6.3V 1206 10% TANTALUM/CAP".
 
 
         DecimalFormat twoDigitDecimalFormat = new DecimalFormat("#0.##")

@@ -187,4 +187,54 @@ class DPVWriterSpec extends Specification implements DPVFileAssertions {
             90          | 90        | 270          | 90
     }
 
+
+    def 'write dpv for one component placed 2 times'() {
+        given:
+            DPVWriter writer = new DPVWriter()
+
+        and:
+            ComponentPlacement cp1 = new ComponentPlacement(enabled: true, refdes: "Z1", name: "Placement Name 1", value: "Value 1", pattern: "Pattern 1", coordinate: new Coordinate(x: 3, y: 4), side: PCBSide.TOP, rotation: 0)
+            ComponentPlacement cp2 = new ComponentPlacement(enabled: false, refdes: "Z2", name: "Placement Name 2", value: "Value 2", pattern: "Pattern 2", coordinate: new Coordinate(x: 5, y: 6), side: PCBSide.BOTTOM, rotation: 90)
+            Component c1 = new Component(name: "Component Name")
+            PickSettings pickSettings1 = new PickSettings()
+            FeederProperties feederProperties = new FeederProperties()
+            Optional<Integer> noFixedId = Optional.empty()
+            Feeder feeder1 = new Feeder(fixedId: noFixedId, enabled: true, note: "Feeder Note", componentName: "Feeder Component Name",  pickSettings: pickSettings1, properties: feederProperties)
+            MaterialAssignment ma1 = new MaterialAssignment(component: c1, feederId: 1, feeder: feeder1)
+            materialAssignments = [
+                (cp1): ma1,
+                (cp2): ma1
+            ]
+
+        and:
+            List<List<String>> expectedMaterials = [
+                ["Station","0","1","0","0","4","Component Name - Feeder Note","0.5","100","6","0","0","0","0","0"],
+            ]
+
+        and:
+            List<List<String>> expectedComponents = [
+                ["EComponent","0","1","1","1","3","4","180","0.5","6","100","Z1","Value 1/Placement Name 1","0"],
+                ["EComponent","1","2","1","1","5","6","90","0.5","7","100","Z2","Value 2/Placement Name 2","0"],
+            ]
+
+        when:
+            writer.write(outputStream, machine, offsetZ, dpvHeader, materialAssignments, optionalPanel, optionalFiducials)
+
+        then:
+            String content = outputStream.toString()
+            content.startsWith("separated")
+
+        and:
+            materialsPresent(content, expectedMaterials)
+
+        and:
+            componentsPresent(content, expectedComponents)
+
+        and:
+            traysPresent(content, [])
+
+        and:
+            defaultPanelPresent(content)
+    }
+
 }
