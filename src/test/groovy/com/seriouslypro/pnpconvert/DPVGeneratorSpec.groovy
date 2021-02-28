@@ -50,6 +50,11 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
     }
 
     def 'generate for components in feeders'() {
+        // This test is testing too much now.  Create separate tests for the following.
+        // * Feeder/Placement/Component Content to DPV file content.
+        // * Material selection
+        // * Material assignment
+
         given:
             Component component1 = new Component(
                 name: "10K 0402 1%/RES_0402",
@@ -310,50 +315,6 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
     def 'error should be generated if no more tray ids are available when assigning IDs to trays'() {
         expect:
             false
-    }
-
-    @Unroll
-    def 'placement angle - #designAngle, #pickAngle, #feederAngle'(BigDecimal designAngle, BigDecimal pickAngle, BigDecimal feederAngle, BigDecimal expectedMachineAngle) {
-
-        /*
-            Design, Feeder, Pick angles are positive clockwise, 0 to 360.
-            DipTrace EDA angles are negative clockwise, 0 to 360.  Also, Diptrace UI allows you to setting a component angle of -90, but when component is re-insepected in Diptrace UI the angle is converted to 270.
-            Machine angles are negative clockwise, -180 to +180.
-
-            Design angle = angle after conversion from EDA angle, this happens when component placements are loaded.
-            Pick angle = angle relative to pick head and feeder e.g. angle of component in tape to tape feed direction
-            Feeder angle = feeder angle relative to design
-
-            Example and Notes:
-            feeders on the left are 270 degrees out relative to the design (clockwise)
-            feeders on the right are 90 degrees out relative to the design (clockwise)
-            feeders on the left are 180 degrees out relative to the feeders on the right
-            components in a tape, e.g. usb connectors, can be different relative to the design.
-
-            IMPORTANT: Pick angles other than 0/90/180/270 will cause confusion for the vision system which will just assume
-            that the part has been picked at a strange angle and will correct to the nearest 90 degrees on the nozzle
-            during placement.
-
-            When vision is disabled the pick angle on the feeder needs to be correct.
-
-         */
-        expect:
-            expectedMachineAngle == buildGenerator().calculateMachineAngle(designAngle, pickAngle, feederAngle)
-
-        where:
-            designAngle | pickAngle | feederAngle  | expectedMachineAngle
-            180         | 0         | 270          | 90
-            270         | 0         | 270          | 0
-            0           | 0         | 270          | -90
-            90          | 0         | 270          | 180
-            180         | 0         | 90           | -90
-            270         | 0         | 90           | 180
-            0           | 0         | 90           | 90
-            90          | 0         | 90           | 0
-            45          | 0         | 270          | -135
-            315         | 0         | 270          | -45
-            0           | 90        | 270          | 180
-            90          | 90        | 270          | 90
     }
 
     private DPVGenerator buildGenerator() {
