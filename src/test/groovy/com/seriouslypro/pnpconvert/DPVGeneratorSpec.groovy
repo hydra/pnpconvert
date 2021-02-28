@@ -9,6 +9,7 @@ import java.text.DecimalFormat
 
 import org.springframework.boot.test.OutputCapture
 
+// reference: https://github.com/sparkfunX/Desktop-PickAndPlace-CHMT36VA/blob/master/Eagle-Conversion/ConvertToCharm.ulp#L469-L498
 
 class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
 
@@ -306,12 +307,6 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
     }
 
     @Ignore
-    def 'trays should be sorted by id'() {
-        expect:
-            false
-    }
-
-    @Ignore
     def 'error should be generated if no more tray ids are available when assigning IDs to trays'() {
         expect:
             false
@@ -373,69 +368,6 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
                 offsetZ: 0,
         )
         generator
-    }
-
-    def 'generate default panel'() {
-        given:
-            DPVGenerator generator = buildGenerator()
-
-        when:
-            generator.generate(outputStream)
-
-        then:
-            String content = outputStream.toString()
-            content.contains("PANELYPE,0")
-
-        and:
-            defaultPanelPresent(content)
-    }
-
-    def 'generate array panel'() {
-        given:
-            // reference: https://github.com/sparkfunX/Desktop-PickAndPlace-CHMT36VA/blob/master/Eagle-Conversion/ConvertToCharm.ulp#L469-L498
-
-            DPVGenerator generator = buildGenerator()
-            Panel panel = new Panel(intervalX: 1.501, intervalY: 2.759, numberX: 3, numberY: 4)
-            generator.optionalPanel = Optional.of(panel)
-
-        when:
-            generator.generate(outputStream)
-
-        then:
-            String content = outputStream.toString()
-            content.contains("PANELYPE,1")
-
-        and:
-            panelArrayPresent(content, panel)
-    }
-
-    def 'generate fiducial markers'() {
-        given:
-            DPVGenerator generator = buildGenerator()
-            List<Fiducial> fiducialList = [
-                new Fiducial(note: "Mark1", coordinate: new Coordinate(x: 10, y: 3)),
-                new Fiducial(note: "Mark2", coordinate: new Coordinate(x: 90, y: 97)),
-            ]
-
-            generator.optionalFiducials = Optional.of(fiducialList)
-
-        when:
-            generator.generate(outputStream)
-
-        then:
-            String content = outputStream.toString()
-            content.contains(
-                "Table,No.,nType,nAlg,nFinished" + TEST_TABLE_LINE_ENDING +
-                "PcbCalib,0,1,0,0" + TEST_TABLE_LINE_ENDING
-            )
-
-        and:
-            content.contains(
-                "Table,No.,ID,offsetX,offsetY,Note" + TEST_TABLE_LINE_ENDING +
-                "CalibPoint,0,1,10,3,Mark1" + CRLF +
-                "CalibPoint,1,2,90,97,Mark2" + CRLF
-            )
-
     }
 
     private class TestMachine extends Machine {
