@@ -1,7 +1,6 @@
 package com.seriouslypro.pnpconvert
 
 import com.seriouslypro.pnpconvert.machine.Machine
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream
 import spock.lang.Ignore
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -34,7 +33,7 @@ class DPVGeneratorSpec extends Specification {
         components = new Components()
         feeders = new Feeders()
 
-        outputStream = new ByteOutputStream()
+        outputStream = new ByteArrayOutputStream()
 
         System.out.flush()
     }
