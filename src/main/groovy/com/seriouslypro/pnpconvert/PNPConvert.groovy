@@ -48,7 +48,7 @@ class PNPConvert {
 
         OptionAccessor options = builder.parse(args)
 
-        if (!options || options.getCommandLine().options.size() == 0) {
+        if (!options || options.getParseResult().originalArgs.size() == 0) {
             about()
             builder.usage()
             System.exit(-1)
@@ -135,7 +135,7 @@ class PNPConvert {
         }
 
         if (options.dr) {
-            String allDRValues = options.getCommandLine().getOptionValues("dr").join(",")
+            String allDRValues = options.parseResult.matchedOption("dr").typedValues().join(",")
             placementReferenceDesignatorsToDisable = allDRValues.split(',').collect { it.trim().toUpperCase() }.unique()
         }
 
@@ -156,14 +156,14 @@ class PNPConvert {
         }
 
         if (options.fm) {
-            String[] fiducialMarkerValues = options.getCommandLine().getOptionValues("fm");
+            String[] fiducialMarkerValues = options.parseResult.matchedOption("fm").typedValues()
             if (fiducialMarkerValues.size() == 2) {
                 optionalFiducials = parseFiducials(fiducialMarkerValues)
             }
         }
 
         if (options.rr) {
-            String[] refdesReplacementValues = options.getCommandLine().getOptionValues("rr");
+            String[] refdesReplacementValues = options.parseResult.matchedOption("rr").typedValues()
             refdesReplacements = parseRefdesReplacements(refdesReplacementValues)
         }
 
