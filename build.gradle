@@ -6,9 +6,9 @@ buildscript {
         maven { url 'https://plugins.gradle.org/m2/' }
     }
 
-    dependencies {
-        classpath 'com.bmuschko:gradle-clover-plugin:2.2.1'
-    }
+//    dependencies {
+//        classpath 'com.bmuschko:gradle-clover-plugin:3.0.1'
+//    }
 }
 
 plugins {
@@ -16,8 +16,9 @@ plugins {
     id 'idea'
     id 'groovy'
     id 'application'
-    id 'com.gradle.build-scan' version '1.16'
-    id 'com.bmuschko.clover' version '2.2.1'
+//    id 'com.gradle.build-scan' version '1.16'
+//    id "com.gradle.enterprise" version "3.5.2"
+//    id 'com.bmuschko.clover' version '3.0.1'
 }
 
 
@@ -50,9 +51,11 @@ classes {
 }
 
 dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.5.8'
+    compile 'org.codehaus.groovy:groovy-all:3.0.7'
     compile 'commons-codec:commons-codec:1.10'
-    testCompile 'org.spockframework:spock-core:1.2-groovy-2.5'
+    testImplementation 'org.spockframework:spock-core:2.0-M4-groovy-3.0'
+    testImplementation 'org.spockframework:spock-junit4:2.0-M4-groovy-3.0'
+//    testCompile 'org.spockframework:spock-core:2.0-M4-groovy-3.0'
     testCompile group: 'cglib', name: 'cglib-nodep', version: '2.2'
     testCompile group: 'org.objenesis', name: 'objenesis', version: '3.0.1'
     testCompile 'org.springframework.boot:spring-boot:1.2.1.RELEASE' // For OutputCapture
@@ -71,19 +74,31 @@ dependencies {
     compile 'com.google.oauth-client:google-oauth-client-jetty:1.30.4'
     compile 'com.google.apis:google-api-services-sheets:v4-rev581-1.25.0'
 
-    clover 'org.openclover:clover:4.2.0'
+//    clover 'org.openclover:clover:4.2.0'
 }
 
-buildScan {
-    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
-    termsOfServiceAgree = 'yes'
-}
+test {
+    useJUnitPlatform()
 
-clover {
-    testIncludes = ['**/*Spec.groovy']
-
-    report {
-        html = true
-        xml = true
+    afterSuite { desc, result ->
+        if (!desc.parent) {
+            if (result.testCount == 0) {
+                throw new IllegalStateException("No tests were found. Failing the build")
+            }
+        }
     }
 }
+
+//buildScan {
+//    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+//    termsOfServiceAgree = 'yes'
+//}
+
+//clover {
+//    testIncludes = ['**/*Spec.groovy']
+//
+//    report {
+//        html = true
+//        xml = true
+//    }
+//}
