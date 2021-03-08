@@ -105,4 +105,28 @@ class ComponentsSpec extends Specification {
         expect:
             false
     }
+
+    def 'find by feeder name with no components'() {
+        when:
+            ComponentFindResult result = components.findByFeederName("feeder name")
+
+        then:
+            !result
+    }
+
+    def 'find by feeder name'() {
+        given:
+            Component component = new Component(name: TEST_COMPONENT_NAME)
+            components.add(component)
+
+        when:
+            ComponentFindResult result = components.findByFeederName(TEST_COMPONENT_NAME)
+
+        then:
+            result
+            result.component == component
+            result.matchingStrategies.size() == 1
+            result.matchingStrategies.find { it instanceof NameOnlyMatchingStrategy }
+    }
+
 }

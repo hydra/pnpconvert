@@ -117,8 +117,11 @@ class DPVGenerator {
         System.out.println()
         System.out.println("unloadedComponents:\n" + unloadedComponents.join('\n'))
 
-        writer = new DPVWriter()
-        writer.write(outputStream, machine, offsetZ, dpvHeader, materialAssignments, optionalPanel, optionalFiducials)
+        writer = new DPVWriter(outputStream, machine, offsetZ, dpvHeader)
+        writer.setPanel(optionalPanel)
+        writer.setFiducials(optionalFiducials)
+        writer.assignMaterials(materialAssignments)
+        writer.write()
     }
 
     void relocatePlacements(Map<ComponentPlacement, MaterialAssignment> materialAssignments) {

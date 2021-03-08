@@ -14,27 +14,56 @@ class DPVWriter {
     private PrintStream stream
     NumberSequence materialNumberSequence
 
-    public void write(
+    List<String[]> placements = []
+    Map<Integer, String[]> materials = [:]
+    List<String[]> trays = []
+
+    OutputStream outputStream
+    Machine machine
+    BigDecimal offsetZ
+    DPVHeader dpvHeader
+    Optional<Panel> optionalPanel = Optional<Panel>.empty()
+    Optional<List<Fiducial>> optionalFiducials = Optional<List<Fiducial>>.empty()
+
+    public DPVWriter(
         OutputStream outputStream,
         Machine machine,
         BigDecimal offsetZ,
-        DPVHeader dpvHeader,
-        Map<ComponentPlacement, MaterialAssignment> materialAssignments,
-        Optional<Panel> optionalPanel,
-        Optional<List<Fiducial>> optionalFiducials
+        DPVHeader dpvHeader
     ) {
+        this.outputStream = outputStream
+        this.machine = machine
+        this.offsetZ = offsetZ
+        this.dpvHeader = dpvHeader
 
+        materialNumberSequence = new NumberSequence(0)
+    }
+
+    public assignMaterials(Map<ComponentPlacement, MaterialAssignment> materialAssignments) {
+        placements = buildPlacements(machine, offsetZ, materialAssignments)
+
+        materials = buildMaterials(machine, materialAssignments)
+        trays = buildTrays(materialAssignments)
+
+    }
+
+    public setPanel(Optional<Panel> optionalPanel) {
+        this.optionalPanel = optionalPanel
+    }
+
+    public setFiducials(Optional<List<Fiducial>> optionalFiducials) {
+        this.optionalFiducials = optionalFiducials
+    }
+
+    public addMaterial(Integer feederId, Feeder feeder, Component component) {
+        String[] material = buildMaterial(feederId, feeder, component)
+        materials[feederId] = material
+    }
+
+    public write() {
         lineEnding = "\r\n"
 
         tableLineEnding = lineEnding * 2
-
-        materialNumberSequence = new NumberSequence(0)
-
-        List<String[]> placements = buildPlacements(machine, offsetZ, materialAssignments)
-
-        Map<Integer, String[]> materials = buildMaterials(machine, materialAssignments)
-        List<String[]> trays = buildTrays(materialAssignments)
-
 
         stream = new PrintStream(outputStream, false, StandardCharsets.UTF_8.toString())
 
@@ -112,7 +141,7 @@ class DPVWriter {
         return placeSpeedPercentage
     }
 
-    BigDecimal calculateMachineAngle(BigDecimal designAngle, BigDecimal pickAngle, BigDecimal feederAngle) {
+    public static BigDecimal calculateMachineAngle(BigDecimal designAngle, BigDecimal pickAngle, BigDecimal feederAngle) {
 
         BigDecimal machineAngle = (designAngle + feederAngle + pickAngle).remainder(360)
 

@@ -43,7 +43,7 @@ class PNPConvert {
 
         builder.fm(args:'+', argName: 'fiducialMarkers','Fiducial marker list (note,x,y[ ...])')
 
-
+        builder.ft('feederTest')
         builder.c('convert')
 
         OptionAccessor options = builder.parse(args)
@@ -190,6 +190,18 @@ class PNPConvert {
                 placementReferenceDesignatorsToDisable: placementReferenceDesignatorsToDisable
             )
             converter.convert()
+            System.exit(0);
+        }
+
+        if (options.ft) {
+            FeederTester feederTester = new FeederTester(
+                machine: machine,
+                traysFileName: traysFileName,
+                feedersFileName: feedersFileName,
+                componentsFileName: componentsFileName,
+                outputPrefix: outputPrefix,
+            )
+            feederTester.generateFeederTest()
             System.exit(0);
         }
 

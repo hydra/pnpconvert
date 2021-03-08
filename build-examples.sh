@@ -6,3 +6,5 @@ $PNPCONVERT -i examples/example1.csv -o examples/example1-90-with-rails -f examp
 $PNPCONVERT -i examples/example1.csv -o examples/example1-270-with-rails -f examples/feeders.csv -co examples/components.csv -t examples/trays.csv -r 270 -rx 70 -ry 0 -ox 105 -oy 75 -c
 $PNPCONVERT @examples/example1-job1.pnpconvert
 
+$PNPCONVERT -ft -o examples/feeders -f examples/feeders.csv -co examples/components.csv -t examples/trays.csv
+

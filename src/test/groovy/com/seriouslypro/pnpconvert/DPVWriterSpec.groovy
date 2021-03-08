@@ -2,7 +2,6 @@ package com.seriouslypro.pnpconvert
 
 import com.seriouslypro.pnpconvert.machine.DefaultMachine
 import com.seriouslypro.pnpconvert.machine.Machine
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream
 import spock.lang.Ignore
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -42,17 +41,17 @@ class DPVWriterSpec extends Specification implements DPVFileAssertions {
 
         offsetZ = 0
 
-        outputStream = new ByteOutputStream()
+        outputStream = new ByteArrayOutputStream()
 
         System.out.flush()
     }
 
     def 'generate empty dpv'() {
         given:
-            DPVWriter writer = new DPVWriter()
+            DPVWriter writer = new DPVWriter(outputStream, machine, offsetZ, dpvHeader)
 
         when:
-            writer.write(outputStream, machine, offsetZ, dpvHeader, materialAssignments, optionalPanel, optionalFiducials)
+            writer.write()
 
         then:
             String content = outputStream.toString()
@@ -73,10 +72,10 @@ class DPVWriterSpec extends Specification implements DPVFileAssertions {
 
     def 'generate default panel'() {
         given:
-            DPVWriter writer = new DPVWriter()
+            DPVWriter writer = new DPVWriter(outputStream, machine, offsetZ, dpvHeader)
 
         when:
-            writer.write(outputStream, machine, offsetZ, dpvHeader, materialAssignments, optionalPanel, optionalFiducials)
+            writer.write()
 
         then:
             String content = outputStream.toString()
@@ -88,14 +87,15 @@ class DPVWriterSpec extends Specification implements DPVFileAssertions {
 
     def 'generate array panel'() {
         given:
-            DPVWriter writer = new DPVWriter()
+            DPVWriter writer = new DPVWriter(outputStream, machine, offsetZ, dpvHeader)
 
         and:
             Panel panel = new Panel(intervalX: 1.501, intervalY: 2.759, numberX: 3, numberY: 4)
             optionalPanel = Optional.of(panel)
+            writer.setPanel(optionalPanel)
 
         when:
-            writer.write(outputStream, machine, offsetZ, dpvHeader, materialAssignments, optionalPanel, optionalFiducials)
+            writer.write()
 
         then:
             String content = outputStream.toString()
@@ -107,7 +107,7 @@ class DPVWriterSpec extends Specification implements DPVFileAssertions {
 
     def 'generate fiducial markers'() {
         given:
-            DPVWriter writer = new DPVWriter()
+            DPVWriter writer = new DPVWriter(outputStream, machine, offsetZ, dpvHeader)
 
         and:
             List<Fiducial> fiducialList = [
@@ -116,9 +116,10 @@ class DPVWriterSpec extends Specification implements DPVFileAssertions {
             ]
 
             optionalFiducials = Optional.of(fiducialList)
+            writer.setFiducials(optionalFiducials)
 
         when:
-            writer.write(outputStream, machine, offsetZ, dpvHeader, materialAssignments, optionalPanel, optionalFiducials)
+            writer.write()
 
         then:
             String content = outputStream.toString()
@@ -169,7 +170,7 @@ class DPVWriterSpec extends Specification implements DPVFileAssertions {
 
          */
         expect:
-            expectedMachineAngle == new DPVWriter().calculateMachineAngle(designAngle, pickAngle, feederAngle)
+            expectedMachineAngle == DPVWriter.calculateMachineAngle(designAngle, pickAngle, feederAngle)
 
         where:
             designAngle | pickAngle | feederAngle  | expectedMachineAngle
@@ -190,7 +191,7 @@ class DPVWriterSpec extends Specification implements DPVFileAssertions {
 
     def 'write dpv for one component placed 2 times'() {
         given:
-            DPVWriter writer = new DPVWriter()
+            DPVWriter writer = new DPVWriter(outputStream, machine, offsetZ, dpvHeader)
 
         and:
             ComponentPlacement cp1 = new ComponentPlacement(enabled: true, refdes: "Z1", name: "Placement Name 1", value: "Value 1", pattern: "Pattern 1", coordinate: new Coordinate(x: 3, y: 4), side: PCBSide.TOP, rotation: 0)
@@ -217,8 +218,11 @@ class DPVWriterSpec extends Specification implements DPVFileAssertions {
                 ["EComponent","1","2","1","1","5","6","90","0.5","7","100","Z2","Value 2/Placement Name 2","0"],
             ]
 
+        and:
+            writer.assignMaterials(materialAssignments)
+
         when:
-            writer.write(outputStream, machine, offsetZ, dpvHeader, materialAssignments, optionalPanel, optionalFiducials)
+            writer.write()
 
         then:
             String content = outputStream.toString()
