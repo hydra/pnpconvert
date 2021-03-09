@@ -159,8 +159,8 @@ class FeedersSheetProcessorSpec extends Specification {
     def "use specific match options"() {
     }
 
-    @org.junit.Ignore
-    def "ensure rows to be updated that contain empty strings (for x/y) are updated"() {
+    @Ignore
+    def "ensure rows to be updated that contain empty strings (for x,y) are updated"() {
         /*
             old: ["W25N01GVxxIG/IT", "", "62", "", "Y", "16", "8", "", "", "25", "0.1", "", "10", "YES", "180", "2", "Y", "Y", "Y"] <-- has "" for X/Y
             new: ["W25N01GVxxIG/IT", "", "62", "", "Y", "16", "8", "-4.38", "1.32", "25", "0.1", "", "10", "YES", "180", "2", "Y", "Y", "Y"]

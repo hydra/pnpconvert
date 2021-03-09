@@ -30,7 +30,7 @@ class GridRangeConverterSpec extends Specification {
     }
 
     @Ignore
-    def "toString with start row/column less than end row column"() {
+    def "toString with start row and column less than end row column"() {
         // Current implementation doesn't care
     }
 }
