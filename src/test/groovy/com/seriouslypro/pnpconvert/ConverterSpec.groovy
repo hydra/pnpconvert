@@ -10,10 +10,10 @@ class ConverterSpec extends Specification implements TestResources {
 
     Converter converter
 
-    final String noPlacements = 'none'
-    final String noComponents = 'none'
-    final String noTrays = 'none'
-    final String noFeeders = 'none'
+    final static String noPlacements = 'none'
+    final static String noComponents = 'none'
+    final static String noTrays = 'none'
+    final static String noFeeders = 'none'
 
     void setup() {
         converter = new Converter()

@@ -3,8 +3,8 @@ package com.seriouslypro.pnpconvert
 import com.seriouslypro.pnpconvert.machine.CHMT48VB
 import com.seriouslypro.pnpconvert.machine.Machine
 import com.seriouslypro.pnpconvert.updater.DPVtoGoogleSheetsUpdater
-import groovy.cli.commons.CliBuilder
-import groovy.cli.commons.OptionAccessor
+import groovy.cli.picocli.CliBuilder
+import groovy.cli.picocli.OptionAccessor
 
 import java.text.DecimalFormat
 

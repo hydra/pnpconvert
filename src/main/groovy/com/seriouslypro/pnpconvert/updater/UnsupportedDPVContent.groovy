@@ -1,11 +1,26 @@
 package com.seriouslypro.pnpconvert.updater
 
-class UnsupportedDPVContent extends RuntimeException {
-    UnsupportedDPVContent(String message, String line, int lineIndex, int position) {
-        String errorMessage = "Unsupported DPV file content, line: ${lineIndex}, offset ${position}\n"
-        +line
-        +(' ' * position) + "^  " + message
+import groovy.transform.InheritConstructors
 
-        new RuntimeException(errorMessage)
+@InheritConstructors
+class UnsupportedDPVContent extends RuntimeException {
+    String line
+    int lineIndex
+    int position
+    String errorMessage
+
+    UnsupportedDPVContent(String message, String line, int lineIndex, int position) {
+        super(message)
+        this.line = line
+        this.lineIndex = lineIndex
+        this.position = position
+
+        errorMessage = "Unsupported DPV file content, line: ${lineIndex}, offset ${position}\n" +
+            line + "\n" +
+            (' ' * position) + "^  " + message
+    }
+
+    String getMessage() {
+        return errorMessage
     }
 }
