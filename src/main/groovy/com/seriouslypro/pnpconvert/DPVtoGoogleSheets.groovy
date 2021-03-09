@@ -44,7 +44,7 @@ class DPVtoGoogleSheets {
 
         OptionAccessor options = builder.parse(args)
 
-        if (!options || options.getCommandLine().options.size() == 0) {
+        if (!options || options.getParseResult().originalArgs().size() == 0) {
             about()
             builder.usage()
             System.exit(-1)
