@@ -6,9 +6,9 @@ buildscript {
         maven { url 'https://plugins.gradle.org/m2/' }
     }
 
-//    dependencies {
-//        classpath 'com.bmuschko:gradle-clover-plugin:3.0.1'
-//    }
+    dependencies {
+        classpath 'com.bmuschko:gradle-clover-plugin:3.0.1'
+    }
 }
 
 plugins {
@@ -16,11 +16,9 @@ plugins {
     id 'idea'
     id 'groovy'
     id 'application'
-//    id 'com.gradle.build-scan' version '1.16'
-//    id "com.gradle.enterprise" version "3.5.2"
-//    id 'com.bmuschko.clover' version '3.0.1'
 }
 
+apply plugin: 'com.bmuschko.clover'
 
 mainClassName = 'com.seriouslypro.pnpconvert.PNPConvert'
 
@@ -55,7 +53,6 @@ dependencies {
     compile 'commons-codec:commons-codec:1.10'
     testImplementation 'org.spockframework:spock-core:2.0-M4-groovy-3.0'
     testImplementation 'org.spockframework:spock-junit4:2.0-M4-groovy-3.0'
-//    testCompile 'org.spockframework:spock-core:2.0-M4-groovy-3.0'
     testCompile group: 'cglib', name: 'cglib-nodep', version: '2.2'
     testCompile group: 'org.objenesis', name: 'objenesis', version: '3.0.1'
     testCompile 'org.springframework.boot:spring-boot:1.2.1.RELEASE' // For OutputCapture
@@ -76,7 +73,7 @@ dependencies {
     compile 'com.google.oauth-client:google-oauth-client-jetty:1.30.4'
     compile 'com.google.apis:google-api-services-sheets:v4-rev581-1.25.0'
 
-//    clover 'org.openclover:clover:4.2.0'
+    clover 'org.openclover:clover:4.4.1'
 }
 
 test {
@@ -91,11 +88,23 @@ test {
     }
 }
 
-//clover {
-//    testIncludes = ['**/*Spec.groovy']
-//
-//    report {
-//        html = true
-//        xml = true
-//    }
-//}
+clover {
+    // https://github.com/bmuschko/gradle-clover-plugin
+    testIncludes = ['**/*Spec.groovy']
+    excludes = [
+        // All the following cause: java.lang.UnsupportedOperationException: EmptyExpression.INSTANCE is immutable"
+        '**/CSVInput.groovy',
+        '**/Feeders.groovy',
+        '**/DipTraceLineParser.groovy',
+        '**/DPVFile.groovy',
+    ]
+    testExcludes = [
+            // All the following cause: java.lang.UnsupportedOperationException: EmptyExpression.INSTANCE is immutable"
+            '**/DPVFileParserSpec.groovy',
+    ]
+
+    report {
+        html = true
+        xml = true
+    }
+}
