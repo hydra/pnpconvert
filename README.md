@@ -277,7 +277,7 @@ Technology Stack
 * Groovy for production and test code.
 * Spock for automated unit tests.
 * Batik for SVG Generation.
-* Gradle build tool.  Install Gradle 4.10.x from https://gradle.org/releases/
+* Gradle build tool.  Use included gradle wrapper to install Gradle. via `./gradlew`
 
 Running Tests
 =============
