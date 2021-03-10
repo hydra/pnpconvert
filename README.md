@@ -37,7 +37,7 @@ Usage: pnpconvert
   -f=<feeders>              feeders csv file/url
       -fm=<fiducialMarkers>...
                             Fiducial marker list (note,x,y[ ...])
-      -ft                   feederTest
+      -ft                   Generate DPV containing all feeders
   -i=<input>                input csv file/url
   -o=<output>               output prefix
       -ox=<offsetX>         X offset, applied after rotation
@@ -161,6 +161,13 @@ select the center of the pattern that the CharmHigh software selects.
 `pnpconvert ... -rr "C54,CAP_1206,47uF 10V 1206 X5R 20%" "R25,RES_0402,44k2 0402 1%"`
 
 In the example above, `-rr` has two arguments the order of the values in quotes is RefDes, Name, Value
+
+* Feeder Tester
+
+`pnpcpnvert -ft -cfg machine1.config -o feedertest`
+
+Generates a DPV with all the feeders populated but no placements, this is useful when verifying the contents of all the feeders on the machine.
+No placement input file is required.  The names of the feeders are also used to lookup components.
 
 
 DPV Generation process

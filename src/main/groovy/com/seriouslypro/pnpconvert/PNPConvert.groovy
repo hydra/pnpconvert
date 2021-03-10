@@ -43,7 +43,7 @@ class PNPConvert {
 
         builder.fm(args:'+', argName: 'fiducialMarkers','Fiducial marker list (note,x,y[ ...])')
 
-        builder.ft('feederTest')
+        builder.ft('Generate DPV containing all feeders')
         builder.c('convert')
 
         OptionAccessor options = builder.parse(args)
