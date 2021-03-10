@@ -135,7 +135,7 @@ class PNPConvert {
         }
 
         if (options.dr) {
-            String allDRValues = options.parseResult.matchedOption("dr").typedValues().join(",")
+            String allDRValues = options.parseResult.matchedOption("dr").typedValues().flatten().join(",")
             placementReferenceDesignatorsToDisable = allDRValues.split(',').collect { it.trim().toUpperCase() }.unique()
         }
 
@@ -156,14 +156,14 @@ class PNPConvert {
         }
 
         if (options.fm) {
-            String[] fiducialMarkerValues = options.parseResult.matchedOption("fm").typedValues()
+            String[] fiducialMarkerValues = options.parseResult.matchedOption("fm").typedValues().flatten()
             if (fiducialMarkerValues.size() == 2) {
                 optionalFiducials = parseFiducials(fiducialMarkerValues)
             }
         }
 
         if (options.rr) {
-            String[] refdesReplacementValues = options.parseResult.matchedOption("rr").typedValues()
+            String[] refdesReplacementValues = options.parseResult.matchedOption("rr").typedValues().flatten()
             refdesReplacements = parseRefdesReplacements(refdesReplacementValues)
         }
 

@@ -88,7 +88,7 @@ class DPVtoGoogleSheets {
         }
 
 
-        String[] matchOptionValues = options.getCommandLine().getOptionValues("mo");
+        String[] matchOptionValues = options.parseResult.matchedOption("mo").typedValues().flatten();
         if (matchOptionValues && matchOptionValues.size() > 0) {
             matchOptions = parseMatchOptions(matchOptionValues)
         }
