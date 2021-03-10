@@ -3,6 +3,7 @@ package com.seriouslypro.pnpconvert
 
 interface MatchingStrategy {
     boolean matches(Component candidate, ComponentPlacement componentPlacement)
+    boolean matches(Component candidate, String name)
     boolean isExactMatch()
 }
 
@@ -17,6 +18,11 @@ class DiptraceMatchingStrategy implements MatchingStrategy {
     }
 
     @Override
+    boolean matches(Component candidate, String name) {
+        return false
+    }
+
+    @Override
     boolean isExactMatch() {
         return true
     }
@@ -27,6 +33,11 @@ class NameOnlyMatchingStrategy implements MatchingStrategy {
     @Override
     boolean matches(Component candidate, ComponentPlacement componentPlacement) {
         componentPlacement.name && candidate.name == componentPlacement.name
+    }
+
+    @Override
+    boolean matches(Component candidate, String name) {
+        name == candidate.name
     }
 
     @Override
@@ -46,6 +57,11 @@ class DiptraceAliasMatchingStrategy implements MatchingStrategy {
     }
 
     @Override
+    boolean matches(Component candidate, String name) {
+        return false
+    }
+
+    @Override
     boolean isExactMatch() {
         return false
     }
@@ -56,6 +72,11 @@ class AliasMatchingStrategy implements MatchingStrategy {
     @Override
     boolean matches(Component candidate, ComponentPlacement componentPlacement) {
         componentPlacement && candidate.aliases.contains(componentPlacement.name)
+    }
+
+    @Override
+    boolean matches(Component candidate, String name) {
+        candidate.aliases.contains(name)
     }
 
     @Override
@@ -89,6 +110,20 @@ class Components {
 
     void add(Component component) {
         components << component
+    }
+
+    ComponentFindResult findByFeederName(String feederName) {
+        components.findResult { Component candidate ->
+            List<MatchingStrategy> matchedMatchingStrategies = matchingStrategies.findAll { MatchingStrategy strategy ->
+                strategy.matches(candidate, feederName)
+            }
+
+            if (!matchedMatchingStrategies)  {
+                return null
+            }
+
+            new ComponentFindResult(component: candidate, matchingStrategies: matchedMatchingStrategies)
+        }
     }
 
     static enum ComponentCSVColumn implements CSVColumn<ComponentCSVColumn> {

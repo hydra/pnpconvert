@@ -23,7 +23,7 @@ class PickSettings {
     BigDecimal takeDelay = 0        // how long to wait after extending the pick nozzle when PICKING component, 0-3 seconds, resolution of 0.01 seconds.
                                     // using short takeDelay of around 0.25 seconds can prevent small components bouncing out of the tape.
 
-    BigDecimal packageAngle = 0            // degrees, >= 0 < 360 - CLOCKWISE, relative to feeder angle
+    BigDecimal packageAngle = 0.0            // degrees, >= 0 < 360 - CLOCKWISE, relative to feeder angle
 
     // tape settings
     BigDecimal tapeSpacing = 4             // mm

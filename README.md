@@ -29,32 +29,34 @@ Usage
 ```
 PNPConvert (C) 2018 Dominic Clifton
 Written by Dominic Clifton
-usage: pnpconvert
- -c                      convert
- -cfg <config>           configuration file (in "key=value" format)
- -co <components>        components csv file/url
- -dr <disableRefdes>     Disable components by refdes (comma separated
-                         list)
- -f <feeders>            feeders csv file/url
- -fm <fiducialMarkers>   Fiducial marker list (note,x,y[ ...])
- -i <input>              input csv file/url
- -o <output>             output prefix
- -ox <offsetX>           X offset, applied after rotation
- -oy <offsetY>           Y offset, applied after rotation
- -oz <offset>            Z offset, applied to all component heights -
-                         increase for thicker PCBs
- -pix <panelIntervalX>   Interval spacing on the X axis
- -piy <panelIntervalY>   Interval spacing on the Y axis
- -pnx <panelNumberX>     Number of PCBs on the X axis
- -pny <panelNumberY>     Number of PCBs on the Y axis
- -r <rotation>           rotation degrees (positive is clockwise)
- -rr <replaceRefdes>     Replace components by refdes
-                         ("refdes,value,name"[ ...])
- -rx <rotationX>         rotation X origin
- -ry <rotationY>         rotation Y origin
- -s <side>               pcb side (top|bottom|all), default is all
- -t <trays>              trays csv file/url
- -v                      version
+Usage: pnpconvert
+  -c                        convert
+      -cfg=<config>         configuration file (in "key=value" format)
+      -co=<components>      components csv file/url
+      -dr=<disableRefdes>   Disable components by refdes (comma separated list)
+  -f=<feeders>              feeders csv file/url
+      -fm=<fiducialMarkers>...
+                            Fiducial marker list (note,x,y[ ...])
+      -ft                   Generate DPV containing all feeders
+  -i=<input>                input csv file/url
+  -o=<output>               output prefix
+      -ox=<offsetX>         X offset, applied after rotation
+      -oy=<offsetY>         Y offset, applied after rotation
+      -oz=<offset>          Z offset, applied to all component heights -
+                              increase for thicker PCBs
+      -pix=<panelIntervalX> Interval spacing on the X axis
+      -piy=<panelIntervalY> Interval spacing on the Y axis
+      -pnx=<panelNumberX>   Number of PCBs on the X axis
+      -pny=<panelNumberY>   Number of PCBs on the Y axis
+  -r=<rotation>             rotation degrees (positive is clockwise)
+      -rr=<replaceRefdes>...
+                            Replace components by refdes ("refdes,value,name"[
+                              ...])
+      -rx=<rotationX>       rotation X origin
+      -ry=<rotationY>       rotation Y origin
+  -s=<side>                 pcb side (top|bottom|all), default is all
+  -t=<trays>                trays csv file/url
+  -v                        version
 ```
 
 PnPConvert also supports reading one or more files containing arguments, prefix each filename with an @ symbol.
@@ -159,6 +161,13 @@ select the center of the pattern that the CharmHigh software selects.
 `pnpconvert ... -rr "C54,CAP_1206,47uF 10V 1206 X5R 20%" "R25,RES_0402,44k2 0402 1%"`
 
 In the example above, `-rr` has two arguments the order of the values in quotes is RefDes, Name, Value
+
+* Feeder Tester
+
+`pnpcpnvert -ft -cfg machine1.config -o feedertest`
+
+Generates a DPV with all the feeders populated but no placements, this is useful when verifying the contents of all the feeders on the machine.
+No placement input file is required.  The names of the feeders are also used to lookup components.
 
 
 DPV Generation process

@@ -9,13 +9,12 @@ import java.text.DecimalFormat
 
 import org.springframework.boot.test.OutputCapture
 
-class DPVGeneratorSpec extends Specification {
+// reference: https://github.com/sparkfunX/Desktop-PickAndPlace-CHMT36VA/blob/master/Eagle-Conversion/ConvertToCharm.ulp#L469-L498
+
+class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
 
     @org.junit.Rule
     OutputCapture capture = new OutputCapture()
-
-    private static final CRLF = "\r\n"
-    private static final TEST_TABLE_LINE_ENDING = CRLF * 2
 
     DPVHeader dpvHeader = new DPVHeader(
             fileName: "TEST-FILE",
@@ -47,22 +46,15 @@ class DPVGeneratorSpec extends Specification {
 
         then:
             String content = outputStream.toString()
-            content.startsWith("separated")
-
-        and:
-            materialsPresent(content, [])
-
-        and:
-            componentsPresent(content, [])
-
-        and:
-            traysPresent(content, [])
-
-        and:
-            defaultPanelPresent(content)
+            content
     }
 
     def 'generate for components in feeders'() {
+        // This test is testing too much now.  Create separate tests for the following.
+        // * Feeder/Placement/Component Content to DPV file content.
+        // * Material selection
+        // * Material assignment
+
         given:
             Component component1 = new Component(
                 name: "10K 0402 1%/RES_0402",
@@ -320,59 +312,9 @@ class DPVGeneratorSpec extends Specification {
     }
 
     @Ignore
-    def 'trays should be sorted by id'() {
-        expect:
-            false
-    }
-
-    @Ignore
     def 'error should be generated if no more tray ids are available when assigning IDs to trays'() {
         expect:
             false
-    }
-
-    @Unroll
-    def 'placement angle - #designAngle, #pickAngle, #feederAngle'(BigDecimal designAngle, BigDecimal pickAngle, BigDecimal feederAngle, BigDecimal expectedMachineAngle) {
-
-        /*
-            Design, Feeder, Pick angles are positive clockwise, 0 to 360.
-            DipTrace EDA angles are negative clockwise, 0 to 360.  Also, Diptrace UI allows you to setting a component angle of -90, but when component is re-insepected in Diptrace UI the angle is converted to 270.
-            Machine angles are negative clockwise, -180 to +180.
-
-            Design angle = angle after conversion from EDA angle, this happens when component placements are loaded.
-            Pick angle = angle relative to pick head and feeder e.g. angle of component in tape to tape feed direction
-            Feeder angle = feeder angle relative to design
-
-            Example and Notes:
-            feeders on the left are 270 degrees out relative to the design (clockwise)
-            feeders on the right are 90 degrees out relative to the design (clockwise)
-            feeders on the left are 180 degrees out relative to the feeders on the right
-            components in a tape, e.g. usb connectors, can be different relative to the design.
-
-            IMPORTANT: Pick angles other than 0/90/180/270 will cause confusion for the vision system which will just assume
-            that the part has been picked at a strange angle and will correct to the nearest 90 degrees on the nozzle
-            during placement.
-
-            When vision is disabled the pick angle on the feeder needs to be correct.
-
-         */
-        expect:
-            expectedMachineAngle == buildGenerator().calculateMachineAngle(designAngle, pickAngle, feederAngle)
-
-        where:
-            designAngle | pickAngle | feederAngle  | expectedMachineAngle
-            180         | 0         | 270          | 90
-            270         | 0         | 270          | 0
-            0           | 0         | 270          | -90
-            90          | 0         | 270          | 180
-            180         | 0         | 90           | -90
-            270         | 0         | 90           | 180
-            0           | 0         | 90           | 90
-            90          | 0         | 90           | 0
-            45          | 0         | 270          | -135
-            315         | 0         | 270          | -45
-            0           | 90        | 270          | 180
-            90          | 90        | 270          | 90
     }
 
     private DPVGenerator buildGenerator() {
@@ -387,132 +329,6 @@ class DPVGeneratorSpec extends Specification {
                 offsetZ: 0,
         )
         generator
-    }
-
-    static final int MATERIAL_COLUMN_COUNT = 15
-    static final int COMPONENT_COLUMN_COUNT = 14
-    static final int TRAY_COLUMN_COUNT = 10
-    static final int FEEDER_SUMMARY_COLUMN_COUNT = 6
-
-    void materialsPresent(String content, List<List<String>> materialRows) {
-        assert content.contains("Table,No.,ID,DeltX,DeltY,FeedRates,Note,Height,Speed,Status,SizeX,SizeY,HeightTake,DelayTake,nPullStripSpeed")
-
-        materialRows.each { List<String> materialRow ->
-            assert(materialRow.size() == MATERIAL_COLUMN_COUNT)
-            String row = materialRow.join(",")
-            assert content.contains(row)
-        }
-    }
-
-    void componentsPresent(String content, List<List<String>> componentRows) {
-        assert content.contains("Table,No.,ID,PHead,STNo.,DeltX,DeltY,Angle,Height,Skip,Speed,Explain,Note,Delay")
-
-        componentRows.each { List<String> componentRow ->
-            assert(componentRow.size() == COMPONENT_COLUMN_COUNT)
-            String row = componentRow.join(",")
-            assert content.contains(row)
-        }
-    }
-
-    void traysPresent(String content, List<List<String>> trayRows) {
-        assert content.contains("Table,No.,ID,CenterX,CenterY,IntervalX,IntervalY,NumX,NumY,Start")
-        trayRows.each { List<String> trayRow ->
-            assert (trayRow.size() == TRAY_COLUMN_COUNT)
-            String row = trayRow.join(",")
-            assert content.contains(row)
-        }
-    }
-
-    void defaultPanelPresent(String content) {
-        assert content.contains(
-            "Table,No.,ID,DeltX,DeltY" + TEST_TABLE_LINE_ENDING +
-            "Panel_Coord,0,1,0,0" + TEST_TABLE_LINE_ENDING
-        )
-    }
-
-    void panelArrayPresent(String content, Panel panel) {
-        DecimalFormat twoDigitDecimalFormat = new DecimalFormat("#0.##")
-
-        assert content.contains(
-            "Table,No.,ID,IntervalX,IntervalY,NumX,NumY" + TEST_TABLE_LINE_ENDING +
-            "Panel_Array,0,1,${twoDigitDecimalFormat.format(panel.intervalX)},${twoDigitDecimalFormat.format(panel.intervalY)},${panel.numberX},${panel.numberY}" + TEST_TABLE_LINE_ENDING
-        )
-    }
-
-
-    void feederSummaryPresent(String content, List<List<String>> feederSummaryRows) {
-        assert content.contains('feederSummary:')
-        assert content.contains('feederId,componentsPerUnit,componentsPerPanel,refdes,feeder,component')
-
-        feederSummaryRows.each { List<String> feederSummaryRow ->
-            assert (feederSummaryRow.size() == FEEDER_SUMMARY_COLUMN_COUNT)
-            String row = feederSummaryRow.join(",")
-            assert content.contains(row)
-        }
-    }
-
-
-    def 'generate default panel'() {
-        given:
-            DPVGenerator generator = buildGenerator()
-
-        when:
-            generator.generate(outputStream)
-
-        then:
-            String content = outputStream.toString()
-            content.contains("PANELYPE,0")
-
-        and:
-            defaultPanelPresent(content)
-    }
-
-    def 'generate array panel'() {
-        given:
-            // reference: https://github.com/sparkfunX/Desktop-PickAndPlace-CHMT36VA/blob/master/Eagle-Conversion/ConvertToCharm.ulp#L469-L498
-
-            DPVGenerator generator = buildGenerator()
-            Panel panel = new Panel(intervalX: 1.501, intervalY: 2.759, numberX: 3, numberY: 4)
-            generator.optionalPanel = Optional.of(panel)
-
-        when:
-            generator.generate(outputStream)
-
-        then:
-            String content = outputStream.toString()
-            content.contains("PANELYPE,1")
-
-        and:
-            panelArrayPresent(content, panel)
-    }
-
-    def 'generate fiducial markers'() {
-        given:
-            DPVGenerator generator = buildGenerator()
-            List<Fiducial> fiducialList = [
-                new Fiducial(note: "Mark1", coordinate: new Coordinate(x: 10, y: 3)),
-                new Fiducial(note: "Mark2", coordinate: new Coordinate(x: 90, y: 97)),
-            ]
-
-            generator.optionalFiducials = Optional.of(fiducialList)
-
-        when:
-            generator.generate(outputStream)
-
-        then:
-            String content = outputStream.toString()
-            content.contains(
-                "Table,No.,nType,nAlg,nFinished" + TEST_TABLE_LINE_ENDING +
-                "PcbCalib,0,1,0,0" + TEST_TABLE_LINE_ENDING
-            )
-
-        and:
-            content.contains(
-                "Table,No.,ID,offsetX,offsetY,Note" + TEST_TABLE_LINE_ENDING +
-                "CalibPoint,0,1,10,3,Mark1" + CRLF +
-                "CalibPoint,1,2,90,97,Mark2" + CRLF
-            )
-
     }
 
     private class TestMachine extends Machine {
