@@ -128,7 +128,7 @@ class DPVTable {
         String tableName = values.pop()
         name = tableName
 
-        verifyValueCount(values)
+        verifyValueCount(values, line, lineIndex)
 
         entries << values
     }
@@ -141,22 +141,21 @@ class DPVTable {
             throw new UnsupportedDPVContent("Unexpected table name '${tableName}'", line, lineIndex, 0)
         }
 
-        verifyValueCount(values)
+        verifyValueCount(values, line, lineIndex)
 
         entries << values
     }
 
-    void verifyValueCount(List<String> values) {
+    void verifyValueCount(List<String> values, String line, int lineIndex) {
         int expectedCount = headers.size()
         int actualCount = values.size()
         if (actualCount != expectedCount) {
             throw new UnsupportedDPVContent("Value count mismatch, expected: ${expectedCount}, actual: ${actualCount}", line, lineIndex, 0)
         }
-
     }
 
     private List<String> parseValues(String line, lineIndex) {
-        List<String> values = line.split(',')
+        List<String> values = line.split(',', -1)
         if (values.size() == 0) {
             throw new UnsupportedDPVContent("No values to parse", line, lineIndex, 0)
         }
