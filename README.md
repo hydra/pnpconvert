@@ -39,6 +39,10 @@ Usage: pnpconvert
                             Fiducial marker list (note,x,y[ ...])
       -ft                   Generate DPV containing all feeders
   -i=<input>                input csv file/url
+  -m=<mirroring>            mirroring mode (horizontal/vertical/both/none),
+                              default is none
+      -mx=<mirroringX>      mirroring X origin
+      -my=<mirroringY>      mirroring Y origin
   -o=<output>               output prefix
       -ox=<offsetX>         X offset, applied after rotation
       -oy=<offsetY>         Y offset, applied after rotation
@@ -203,12 +207,13 @@ Components in the design file that are matched to components using aliases, or t
 SVG file
 ========
 
-| Color | Usage  |
-| ----- | ------ |
-| Red | Starting Coordinate |
-| Blue | Coordinate after rotation |
-| Pink | Coordinate after rotation and rotation coordinate offset |
-| Green | Final coordinate after rotation, rotation coordinate offset and origin offset |
+| Color  | Usage  |
+| ------ | ------ |
+| Red    | Starting Coordinate |
+| Yellow | Coordinate after mirroring |
+| Blue   | Coordinate after mirroring, rotation |
+| Pink   | Coordinate after mirroring, rotation and rotation coordinate offset |
+| Green  | Final coordinate after mirroring, rotation, rotation coordinate offset and origin offset |
 
 CSV files
 =========

@@ -27,6 +27,10 @@ class PNPConvert {
         builder.rx(args:1, argName: 'rotationX', 'rotation X origin')
         builder.ry(args:1, argName: 'rotationY', 'rotation Y origin')
 
+        builder.m(args:1, argName: 'mirroring', 'mirroring mode (horizontal/vertical/both/none), default is none')
+        builder.mx(args:1, argName: 'mirroringX', 'mirroring X origin')
+        builder.my(args:1, argName: 'mirroringY', 'mirroring Y origin')
+
         builder.ox(args:1, argName: 'offsetX', 'X offset, applied after rotation')
         builder.oy(args:1, argName: 'offsetY', 'Y offset, applied after rotation')
         builder.oz(args:1, argName: 'offset', 'Z offset, applied to all component heights - increase for thicker PCBs')
@@ -80,6 +84,7 @@ class PNPConvert {
         String componentsFileName = config.getOrDefault("components","components.csv")
 
         BoardRotation boardRotation = new BoardRotation()
+        BoardMirroring boardMirroring = new BoardMirroring()
         Coordinate offsetXY = new Coordinate()
         BigDecimal offsetZ = 0
         PCBSideComponentPlacementFilter.SideInclusion sideInclusion = PCBSideComponentPlacementFilter.SideInclusion.ALL
@@ -120,6 +125,18 @@ class PNPConvert {
 
         if (options.ry) {
             boardRotation.origin.y = (options.ry as BigDecimal)
+        }
+
+        if (options.m) {
+            boardMirroring.mode = parseMirroring(options.m)
+        }
+
+        if (options.mx ) {
+            boardMirroring.origin.x = (options.mx as BigDecimal)
+        }
+
+        if (options.my) {
+            boardMirroring.origin.y = (options.my as BigDecimal)
         }
 
         if (options.ox ) {
@@ -181,6 +198,7 @@ class PNPConvert {
                 componentsFileName: componentsFileName,
                 outputPrefix: outputPrefix,
                 boardRotation: boardRotation,
+                boardMirroring: boardMirroring,
                 offsetXY: offsetXY,
                 offsetZ: offsetZ,
                 sideInclusion: sideInclusion,
@@ -238,6 +256,17 @@ class PNPConvert {
         }
 
         return Optional.of(fiducials)
+    }
+
+    static Mirroring.Mode parseMirroring(String arg) {
+        String uppercaseArg = arg.toUpperCase()
+        try {
+            Mirroring.Mode mode = Mirroring.Mode.valueOf(uppercaseArg)
+            return mode
+        } catch (Exception e) {
+            String[] candidates = Mirroring.Mode.values()
+            throw new IllegalArgumentException("Unknown mode: $arg, expected $candidates", e)
+        }
     }
 
     static PCBSideComponentPlacementFilter.SideInclusion parseSideInclusion(String arg) {

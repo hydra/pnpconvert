@@ -15,6 +15,7 @@ class Converter {
     Machine machine
 
     BoardRotation boardRotation = new BoardRotation()
+    BoardMirroring boardMirroring = new BoardMirroring()
     Coordinate offsetXY = new Coordinate()
     BigDecimal offsetZ = 0
     PCBSideComponentPlacementFilter.SideInclusion sideInclusion = PCBSideComponentPlacementFilter.SideInclusion.ALL
@@ -40,7 +41,7 @@ class Converter {
 
         String transformFileName = outputPrefix + "-transformed.csv"
 
-        ComponentPlacementTransformer transformer = new DiptraceComponentPlacementTransformer(outputPrefix, boardRotation, offsetXY)
+        ComponentPlacementTransformer transformer = new DiptraceComponentPlacementTransformer(outputPrefix, boardRotation, boardMirroring, offsetXY)
         ComponentPlacementWriter dipTraceComponentPlacementWriter = new DipTraceComponentPlacementWriter(transformFileName)
 
 
