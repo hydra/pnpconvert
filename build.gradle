@@ -96,6 +96,8 @@ clover {
         '**/CSVInput.groovy',
         '**/Feeders.groovy',
         '**/FeederTester.groovy',
+        '**/BoardMirroring.groovy',
+        '**/DiptraceComponentPlacementTransformer.groovy',
         '**/DipTraceLineParser.groovy',
         '**/DPVFile.groovy',
     ]
