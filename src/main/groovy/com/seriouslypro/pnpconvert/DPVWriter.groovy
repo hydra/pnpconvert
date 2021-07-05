@@ -189,6 +189,8 @@ class DPVWriter {
                 tray.columns,
                 tray.rows,
                 tray.firstComponentIndex,
+                tray.name,
+                materialAssignment.component.name
             ]
 
             return trayRow
@@ -333,7 +335,7 @@ class DPVWriter {
     }
 
     void writeTrays(List<String[]> trays) {
-        String sectionHeader = "Table,No.,ID,CenterX,CenterY,IntervalX,IntervalY,NumX,NumY,Start"
+        String sectionHeader = "Table,No.,ID,CenterX,CenterY,IntervalX,IntervalY,NumX,NumY,Start,Name,Component"
 
         stream.print(sectionHeader + tableLineEnding)
 
