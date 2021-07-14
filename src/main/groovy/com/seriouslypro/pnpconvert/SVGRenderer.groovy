@@ -105,6 +105,23 @@ class SVGRenderer {
         svgGenerator.drawString(fiducial.note, x + pointSize, y - baseline + ((fiducialFontSize / 2) as int) - ((pointSize / 2) as int))
     }
 
+    void drawPanel(Optional<Panel> optionalPanel, Color color) {
+        if (!optionalPanel.present) {
+            return
+        }
+
+        Panel panel = optionalPanel.get()
+
+        //
+        // bounding box
+        //
+        svgGenerator.setColor(color)
+
+        int panelWidthScaled = (panel.intervalX * panel.numberX) * scale
+        int panelHeightScaled = (panel.intervalY * panel.numberY) * scale
+        svgGenerator.drawRect(0, 0 - panelHeightScaled, panelWidthScaled, panelHeightScaled)
+    }
+
     void save(String svgFileName) {
         Element root = svgGenerator.getRoot();
         List<Integer> viewBox = [-100,-100,200,200]
@@ -119,4 +136,5 @@ class SVGRenderer {
         svgGenerator.stream(root, svgFileWriter, useCSS, false)
         svgFileWriter.close()
     }
+
 }

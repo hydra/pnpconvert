@@ -56,6 +56,7 @@ class Converter {
         List<ComponentPlacement> placements = csvProcessor.process(inputFileName)
 
         svgRenderer.drawFiducials(optionalFiducials, Color.ORANGE)
+        svgRenderer.drawPanel(optionalPanel, Color.MAGENTA)
 
         String svgFileName = outputPrefix + ".svg"
         svgRenderer.save(svgFileName)
