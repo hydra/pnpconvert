@@ -46,8 +46,6 @@ class CSVProcessor {
 
         writer.close()
 
-        transformer.close()
-
         return placements
     }
 }

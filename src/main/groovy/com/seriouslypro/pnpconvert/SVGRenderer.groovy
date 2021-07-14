@@ -19,6 +19,9 @@ class SVGRenderer {
     int refdesFontSize = 4
     Font refdesFont
 
+    int fiducialFontSize = 4
+    Font fiducialFont
+
     SVGRenderer() {
 
         DOMImplementation domImpl =
@@ -32,6 +35,7 @@ class SVGRenderer {
 
         svgGenerator = new SVGGraphics2D(ctx, false)
         refdesFont = new Font(Font.MONOSPACED, Font.PLAIN, refdesFontSize)
+        fiducialFont = new Font(Font.MONOSPACED, Font.PLAIN, fiducialFontSize)
     }
 
     void drawPart(Color color, Coordinate coordinate, String refdes, BigDecimal rotation) {
@@ -67,9 +71,39 @@ class SVGRenderer {
         svgGenerator.setFont(refdesFont)
         int baseline = refdesFont.getBaselineFor(refdes.charAt(0))
         svgGenerator.drawString(refdes, x + pointSize, y - baseline + ((refdesFontSize / 2) as int) - ((pointSize / 2) as int))
-
     }
 
+    void drawFiducials(Optional<List<Fiducial>> optionalFiducials, Color color) {
+        if (!optionalFiducials.present) {
+            return
+        }
+
+        List<Fiducial> fiducialList = optionalFiducials.get()
+
+        fiducialList.each { fiducial ->
+            drawFiducial(fiducial, color)
+        }
+    }
+
+    void drawFiducial(Fiducial fiducial, Color color) {
+        int pointSize = 2
+        int x = (fiducial.coordinate.x * scale)
+        int y = - (fiducial.coordinate.y * scale)
+
+        //
+        // mark
+        //
+        svgGenerator.setColor(color)
+        svgGenerator.drawLine(x - (pointSize / 2) as int, y - (pointSize / 2) as int, x + (pointSize / 2) as int, y + (pointSize / 2) as int)
+        svgGenerator.drawLine(x + (pointSize / 2) as int, y - (pointSize / 2) as int, x - (pointSize / 2) as int, y + (pointSize / 2) as int)
+
+        //
+        // note
+        //
+        svgGenerator.setFont(fiducialFont)
+        int baseline = refdesFont.getBaselineFor(fiducial.note.charAt(0))
+        svgGenerator.drawString(fiducial.note, x + pointSize, y - baseline + ((fiducialFontSize / 2) as int) - ((pointSize / 2) as int))
+    }
 
     void save(String svgFileName) {
         Element root = svgGenerator.getRoot();
@@ -78,11 +112,11 @@ class SVGRenderer {
 
         root.setAttributeNS(null, "viewBox", viewBox.join(' '));
 
-        boolean useCSS = true; // we want to use CSS style attributes
+        boolean useCSS = true // we want to use CSS style attributes
 
-        Writer svgFileWriter = new OutputStreamWriter(new FileOutputStream(svgFileName), "UTF-8");
+        Writer svgFileWriter = new OutputStreamWriter(new FileOutputStream(svgFileName), "UTF-8")
 
-        svgGenerator.stream(root, svgFileWriter, useCSS, false);
+        svgGenerator.stream(root, svgFileWriter, useCSS, false)
         svgFileWriter.close()
     }
 }

@@ -2,6 +2,8 @@ package com.seriouslypro.pnpconvert
 
 import com.seriouslypro.pnpconvert.machine.Machine
 
+import java.awt.Color
+
 import static FileTools.*
 
 class Converter {
@@ -41,7 +43,9 @@ class Converter {
 
         String transformFileName = outputPrefix + "-transformed.csv"
 
-        ComponentPlacementTransformer transformer = new DiptraceComponentPlacementTransformer(outputPrefix, boardRotation, boardMirroring, offsetXY)
+        SVGRenderer svgRenderer = new SVGRenderer()
+
+        ComponentPlacementTransformer transformer = new DiptraceComponentPlacementTransformer(svgRenderer, boardRotation, boardMirroring, offsetXY)
         ComponentPlacementWriter dipTraceComponentPlacementWriter = new DipTraceComponentPlacementWriter(transformFileName)
 
 
@@ -50,6 +54,11 @@ class Converter {
         csvProcessor = new CSVProcessor(filter: filter, transformer: transformer, writer: dipTraceComponentPlacementWriter)
 
         List<ComponentPlacement> placements = csvProcessor.process(inputFileName)
+
+        svgRenderer.drawFiducials(optionalFiducials, Color.ORANGE)
+
+        String svgFileName = outputPrefix + ".svg"
+        svgRenderer.save(svgFileName)
 
         //
         // Disable components by refdes
