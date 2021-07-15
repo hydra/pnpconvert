@@ -214,6 +214,8 @@ SVG file
 | Blue   | Coordinate after mirroring, rotation |
 | Pink   | Coordinate after mirroring, rotation and rotation coordinate offset |
 | Green  | Final coordinate after mirroring, rotation, rotation coordinate offset and origin offset |
+| Orange | Fiducial Marker |
+| Magenta | Panel |
 
 CSV files
 =========

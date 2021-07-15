@@ -5,14 +5,13 @@ import java.awt.Color
 
 class DiptraceComponentPlacementTransformer implements ComponentPlacementTransformer {
 
-    SVGRenderer renderer = new SVGRenderer()
-    String outputPrefix
+    SVGRenderer renderer
     BoardRotation boardRotation
     BoardMirroring boardMirroring
     Coordinate offset
 
-    DiptraceComponentPlacementTransformer(String outputPrefix, BoardRotation boardRotation, BoardMirroring boardMirroring, Coordinate offset) {
-        this.outputPrefix = outputPrefix
+    DiptraceComponentPlacementTransformer(SVGRenderer renderer, BoardRotation boardRotation, BoardMirroring boardMirroring, Coordinate offset) {
+        this.renderer = renderer
         this.boardRotation = boardRotation
         this.boardMirroring = boardMirroring
         this.offset = offset
@@ -23,12 +22,6 @@ class DiptraceComponentPlacementTransformer implements ComponentPlacementTransfo
         ComponentPlacement transformedComponentPlacement = transformAndRender(renderer, componentPlacement)
 
         return transformedComponentPlacement
-    }
-
-    @Override
-    void close() {
-        String svgFileName = outputPrefix + ".svg"
-        renderer.save(svgFileName)
     }
 
     private ComponentPlacement transformAndRender(SVGRenderer renderer, ComponentPlacement componentPlacement) {
