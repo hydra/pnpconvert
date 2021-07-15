@@ -87,9 +87,10 @@ class DPVGenerator {
                 component           : [
                     name   : materialAssigment.value.component.name,
                     aliases: materialAssigment.value.component.aliases,
-                ].toString(),
+                ],
             ]
         }
+
         if (!summaryItems.isEmpty()) {
             System.out.println()
             System.out.println("feederSummary:")

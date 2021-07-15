@@ -8,11 +8,13 @@ class DiptraceComponentPlacementTransformer implements ComponentPlacementTransfo
     SVGRenderer renderer = new SVGRenderer()
     String outputPrefix
     BoardRotation boardRotation
+    BoardMirroring boardMirroring
     Coordinate offset
 
-    DiptraceComponentPlacementTransformer(String outputPrefix, BoardRotation boardRotation, Coordinate offset) {
+    DiptraceComponentPlacementTransformer(String outputPrefix, BoardRotation boardRotation, BoardMirroring boardMirroring, Coordinate offset) {
         this.outputPrefix = outputPrefix
         this.boardRotation = boardRotation
+        this.boardMirroring = boardMirroring
         this.offset = offset
     }
 
@@ -34,14 +36,25 @@ class DiptraceComponentPlacementTransformer implements ComponentPlacementTransfo
         // render original position
         renderer.drawPart(Color.RED, componentPlacement.coordinate, componentPlacement.refdes, componentPlacement.rotation)
 
+        // apply board mirroring
+        Coordinate mirroredCoordinate = boardMirroring.applyMirroring(componentPlacement.coordinate)
+        BigDecimal mirroredRotation
+        if (boardMirroring.mode != Mirroring.Mode.NONE) {
+            mirroredRotation = 360 - componentPlacement.rotation.remainder(360)
+        } else {
+            mirroredRotation = componentPlacement.rotation
+        }
+        renderer.drawPart(Color.YELLOW, mirroredCoordinate, componentPlacement.refdes, mirroredRotation)
+
         // apply board rotation
-        Coordinate rotatedCoordinate = boardRotation.applyRotation(componentPlacement.coordinate)
-        BigDecimal rotatedRotation = (componentPlacement.rotation + boardRotation.degrees).remainder(360)
+        Coordinate rotatedCoordinate = boardRotation.applyRotation(mirroredCoordinate)
+        BigDecimal rotatedRotation = (mirroredRotation + boardRotation.degrees).remainder(360)
         renderer.drawPart(Color.BLUE, rotatedCoordinate, componentPlacement.refdes, rotatedRotation)
+
 
         // apply board origin
         Coordinate relocatedCoordinate = rotatedCoordinate - boardRotation.origin
-        renderer.drawPart(Color.PINK, relocatedCoordinate, componentPlacement.refdes, rotatedRotation)
+        renderer.drawPart(Color.PINK, rotatedCoordinate, componentPlacement.refdes, rotatedRotation)
 
         // apply offset
         Coordinate relocatedCoordinateWithOffset = relocatedCoordinate + offset
