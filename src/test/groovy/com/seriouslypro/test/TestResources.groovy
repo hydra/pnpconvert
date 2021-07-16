@@ -1,4 +1,4 @@
-package com.seriouslypro.pnpconvert.test
+package com.seriouslypro.test
 
 import org.junit.After
 import org.junit.Before
