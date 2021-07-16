@@ -1,8 +1,8 @@
 separated
 FILE,examples/example1-90-with-rails.dpv
 PCBFILE,examples/example1.csv
-DATE,2020/01/12
-TIME,23:46:00
+DATE,2021/07/16
+TIME,21:26:34
 PANELYPE,0
 
 Table,No.,ID,DeltX,DeltY,FeedRates,Note,Height,Speed,Status,SizeX,SizeY,HeightTake,DelayTake,nPullStripSpeed
@@ -23,9 +23,9 @@ EComponent,0,1,2,88,55,40,90,2,14,100,U1,/STM32F030C8T,0
 
 
 
-Table,No.,ID,CenterX,CenterY,IntervalX,IntervalY,NumX,NumY,Start
+Table,No.,ID,CenterX,CenterY,IntervalX,IntervalY,NumX,NumY,Start,Name,Component
 
-ICTray,0,88,205.07,61.05,277.1,61.11,4,1,0
+ICTray,0,88,205.07,61.05,277.1,61.11,4,1,0,B-1-4-TL,STM32F030C8T
 
 
 

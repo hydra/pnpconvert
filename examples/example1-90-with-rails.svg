@@ -24,14 +24,18 @@
       /><text x="12" y="-97" style="font-size:4px; font-family:monospace; stroke:none;" xml:space="preserve"
       >D1</text
     ></g
-    ><g style="fill:blue; font-size:4px; font-family:monospace; stroke:blue;"
-    ><circle r="1" style="fill:none;" cx="238" cy="-130"
-      /><line y2="-130" style="fill:none;" x1="237" x2="236" y1="-130"
-      /><text x="240" xml:space="preserve" y="-129" style="stroke:none;"
+    ><g style="fill:yellow; font-size:4px; font-family:monospace; stroke:yellow;"
+    ><circle r="1" style="fill:none;" cx="10" cy="-98"
+      /><line y2="-96" style="fill:none;" x1="10" x2="10" y1="-97"
+      /><text x="12" xml:space="preserve" y="-97" style="stroke:none;"
       >D1</text
-      ><circle r="1" style="fill:none; stroke:rgb(255,175,175);" cx="98" cy="-130"
-      /><line x1="97" x2="96" y1="-130" style="fill:none; stroke:rgb(255,175,175);" y2="-130"
-      /><text x="100" xml:space="preserve" y="-129" style="fill:rgb(255,175,175); stroke:none;"
+      ><circle r="1" style="fill:none; stroke:blue;" cx="238" cy="-130"
+      /><line x1="237" x2="236" y1="-130" style="fill:none; stroke:blue;" y2="-130"
+      /><text x="240" xml:space="preserve" y="-129" style="fill:blue; stroke:none;"
+      >D1</text
+      ><circle r="1" style="fill:none; stroke:rgb(255,175,175);" cx="238" cy="-130"
+      /><line x1="237" x2="236" y1="-130" style="fill:none; stroke:rgb(255,175,175);" y2="-130"
+      /><text x="240" xml:space="preserve" y="-129" style="fill:rgb(255,175,175); stroke:none;"
       >D1</text
       ><circle r="1" style="fill:none; stroke:lime;" cx="108" cy="-140"
       /><line x1="107" x2="106" y1="-140" style="fill:none; stroke:lime;" y2="-140"
@@ -41,13 +45,17 @@
       /><line x1="130" x2="130" y1="-186" style="fill:none; stroke:red;" y2="-187"
       /><text x="132" xml:space="preserve" y="-184" style="fill:red; stroke:none;"
       >R3</text
-      ><circle r="1" style="fill:none;" cx="325" cy="-10"
-      /><line y2="-10" style="fill:none;" x1="326" x2="327" y1="-10"
-      /><text x="327" xml:space="preserve" y="-9" style="stroke:none;"
+      ><circle r="1" style="fill:none;" cx="130" cy="-185"
+      /><line y2="-187" style="fill:none;" x1="130" x2="130" y1="-186"
+      /><text x="132" xml:space="preserve" y="-184" style="stroke:none;"
       >R3</text
-      ><circle r="1" style="fill:none; stroke:rgb(255,175,175);" cx="185" cy="-10"
-      /><line x1="186" x2="187" y1="-10" style="fill:none; stroke:rgb(255,175,175);" y2="-10"
-      /><text x="187" xml:space="preserve" y="-9" style="fill:rgb(255,175,175); stroke:none;"
+      ><circle r="1" style="fill:none; stroke:blue;" cx="325" cy="-10"
+      /><line x1="326" x2="327" y1="-10" style="fill:none; stroke:blue;" y2="-10"
+      /><text x="327" xml:space="preserve" y="-9" style="fill:blue; stroke:none;"
+      >R3</text
+      ><circle r="1" style="fill:none; stroke:rgb(255,175,175);" cx="325" cy="-10"
+      /><line x1="326" x2="327" y1="-10" style="fill:none; stroke:rgb(255,175,175);" y2="-10"
+      /><text x="327" xml:space="preserve" y="-9" style="fill:rgb(255,175,175); stroke:none;"
       >R3</text
       ><circle r="1" style="fill:none; stroke:lime;" cx="195" cy="-20"
       /><line x1="196" x2="197" y1="-20" style="fill:none; stroke:lime;" y2="-20"
@@ -57,13 +65,17 @@
       /><line x1="123" x2="122" y1="-10" style="fill:none; stroke:red;" y2="-10"
       /><text x="126" xml:space="preserve" y="-9" style="fill:red; stroke:none;"
       >R4</text
-      ><circle r="1" style="fill:none;" cx="150" cy="-15"
-      /><line y2="-17" style="fill:none;" x1="150" x2="150" y1="-16"
-      /><text x="152" xml:space="preserve" y="-14" style="stroke:none;"
+      ><circle r="1" style="fill:none;" cx="124" cy="-10"
+      /><line y2="-10" style="fill:none;" x1="123" x2="122" y1="-10"
+      /><text x="126" xml:space="preserve" y="-9" style="stroke:none;"
       >R4</text
-      ><circle r="1" style="fill:none; stroke:rgb(255,175,175);" cx="10" cy="-15"
-      /><line x1="10" x2="10" y1="-16" style="fill:none; stroke:rgb(255,175,175);" y2="-17"
-      /><text x="12" xml:space="preserve" y="-14" style="fill:rgb(255,175,175); stroke:none;"
+      ><circle r="1" style="fill:none; stroke:blue;" cx="150" cy="-15"
+      /><line x1="150" x2="150" y1="-16" style="fill:none; stroke:blue;" y2="-17"
+      /><text x="152" xml:space="preserve" y="-14" style="fill:blue; stroke:none;"
+      >R4</text
+      ><circle r="1" style="fill:none; stroke:rgb(255,175,175);" cx="150" cy="-15"
+      /><line x1="150" x2="150" y1="-16" style="fill:none; stroke:rgb(255,175,175);" y2="-17"
+      /><text x="152" xml:space="preserve" y="-14" style="fill:rgb(255,175,175); stroke:none;"
       >R4</text
       ><circle r="1" style="fill:none; stroke:lime;" cx="20" cy="-25"
       /><line x1="20" x2="20" y1="-26" style="fill:none; stroke:lime;" y2="-27"
@@ -73,13 +85,17 @@
       /><line x1="10" x2="10" y1="-13" style="fill:none; stroke:red;" y2="-12"
       /><text x="12" xml:space="preserve" y="-13" style="fill:red; stroke:none;"
       >R5</text
-      ><circle r="1" style="fill:none;" cx="154" cy="-130"
-      /><line y2="-130" style="fill:none;" x1="153" x2="152" y1="-130"
-      /><text x="156" xml:space="preserve" y="-129" style="stroke:none;"
+      ><circle r="1" style="fill:none;" cx="10" cy="-14"
+      /><line y2="-12" style="fill:none;" x1="10" x2="10" y1="-13"
+      /><text x="12" xml:space="preserve" y="-13" style="stroke:none;"
       >R5</text
-      ><circle r="1" style="fill:none; stroke:rgb(255,175,175);" cx="14" cy="-130"
-      /><line x1="13" x2="12" y1="-130" style="fill:none; stroke:rgb(255,175,175);" y2="-130"
-      /><text x="16" xml:space="preserve" y="-129" style="fill:rgb(255,175,175); stroke:none;"
+      ><circle r="1" style="fill:none; stroke:blue;" cx="154" cy="-130"
+      /><line x1="153" x2="152" y1="-130" style="fill:none; stroke:blue;" y2="-130"
+      /><text x="156" xml:space="preserve" y="-129" style="fill:blue; stroke:none;"
+      >R5</text
+      ><circle r="1" style="fill:none; stroke:rgb(255,175,175);" cx="154" cy="-130"
+      /><line x1="153" x2="152" y1="-130" style="fill:none; stroke:rgb(255,175,175);" y2="-130"
+      /><text x="156" xml:space="preserve" y="-129" style="fill:rgb(255,175,175); stroke:none;"
       >R5</text
       ><circle r="1" style="fill:none; stroke:lime;" cx="24" cy="-140"
       /><line x1="23" x2="22" y1="-140" style="fill:none; stroke:lime;" y2="-140"
@@ -89,13 +105,17 @@
       /><line x1="67" x2="66" y1="-190" style="fill:none; stroke:red;" y2="-190"
       /><text x="70" xml:space="preserve" y="-189" style="fill:red; stroke:none;"
       >D2</text
-      ><circle r="1" style="fill:none;" cx="330" cy="-71"
-      /><line y2="-73" style="fill:none;" x1="330" x2="330" y1="-72"
-      /><text x="332" xml:space="preserve" y="-70" style="stroke:none;"
+      ><circle r="1" style="fill:none;" cx="68" cy="-190"
+      /><line y2="-190" style="fill:none;" x1="67" x2="66" y1="-190"
+      /><text x="70" xml:space="preserve" y="-189" style="stroke:none;"
       >D2</text
-      ><circle r="1" style="fill:none; stroke:rgb(255,175,175);" cx="190" cy="-71"
-      /><line x1="190" x2="190" y1="-72" style="fill:none; stroke:rgb(255,175,175);" y2="-73"
-      /><text x="192" xml:space="preserve" y="-70" style="fill:rgb(255,175,175); stroke:none;"
+      ><circle r="1" style="fill:none; stroke:blue;" cx="330" cy="-71"
+      /><line x1="330" x2="330" y1="-72" style="fill:none; stroke:blue;" y2="-73"
+      /><text x="332" xml:space="preserve" y="-70" style="fill:blue; stroke:none;"
+      >D2</text
+      ><circle r="1" style="fill:none; stroke:rgb(255,175,175);" cx="330" cy="-71"
+      /><line x1="330" x2="330" y1="-72" style="fill:none; stroke:rgb(255,175,175);" y2="-73"
+      /><text x="332" xml:space="preserve" y="-70" style="fill:rgb(255,175,175); stroke:none;"
       >D2</text
       ><circle r="1" style="fill:none; stroke:lime;" cx="200" cy="-81"
       /><line x1="200" x2="200" y1="-82" style="fill:none; stroke:lime;" y2="-83"
@@ -105,13 +125,17 @@
       /><line x1="130" x2="130" y1="-102" style="fill:none; stroke:red;" y2="-103"
       /><text x="132" xml:space="preserve" y="-100" style="fill:red; stroke:none;"
       >D3</text
-      ><circle r="1" style="fill:none;" cx="241" cy="-10"
-      /><line y2="-10" style="fill:none;" x1="242" x2="243" y1="-10"
-      /><text x="243" xml:space="preserve" y="-9" style="stroke:none;"
+      ><circle r="1" style="fill:none;" cx="130" cy="-101"
+      /><line y2="-103" style="fill:none;" x1="130" x2="130" y1="-102"
+      /><text x="132" xml:space="preserve" y="-100" style="stroke:none;"
       >D3</text
-      ><circle r="1" style="fill:none; stroke:rgb(255,175,175);" cx="101" cy="-10"
-      /><line x1="102" x2="103" y1="-10" style="fill:none; stroke:rgb(255,175,175);" y2="-10"
-      /><text x="103" xml:space="preserve" y="-9" style="fill:rgb(255,175,175); stroke:none;"
+      ><circle r="1" style="fill:none; stroke:blue;" cx="241" cy="-10"
+      /><line x1="242" x2="243" y1="-10" style="fill:none; stroke:blue;" y2="-10"
+      /><text x="243" xml:space="preserve" y="-9" style="fill:blue; stroke:none;"
+      >D3</text
+      ><circle r="1" style="fill:none; stroke:rgb(255,175,175);" cx="241" cy="-10"
+      /><line x1="242" x2="243" y1="-10" style="fill:none; stroke:rgb(255,175,175);" y2="-10"
+      /><text x="243" xml:space="preserve" y="-9" style="fill:rgb(255,175,175); stroke:none;"
       >D3</text
       ><circle r="1" style="fill:none; stroke:lime;" cx="111" cy="-20"
       /><line x1="112" x2="113" y1="-20" style="fill:none; stroke:lime;" y2="-20"
@@ -121,13 +145,17 @@
       /><line x1="72" x2="73" y1="-10" style="fill:none; stroke:red;" y2="-10"
       /><text x="73" xml:space="preserve" y="-9" style="fill:red; stroke:none;"
       >D4</text
-      ><circle r="1" style="fill:none;" cx="150" cy="-68"
-      /><line y2="-66" style="fill:none;" x1="150" x2="150" y1="-67"
-      /><text x="152" xml:space="preserve" y="-67" style="stroke:none;"
+      ><circle r="1" style="fill:none;" cx="71" cy="-10"
+      /><line y2="-10" style="fill:none;" x1="72" x2="73" y1="-10"
+      /><text x="73" xml:space="preserve" y="-9" style="stroke:none;"
       >D4</text
-      ><circle r="1" style="fill:none; stroke:rgb(255,175,175);" cx="10" cy="-68"
-      /><line x1="10" x2="10" y1="-67" style="fill:none; stroke:rgb(255,175,175);" y2="-66"
-      /><text x="12" xml:space="preserve" y="-67" style="fill:rgb(255,175,175); stroke:none;"
+      ><circle r="1" style="fill:none; stroke:blue;" cx="150" cy="-68"
+      /><line x1="150" x2="150" y1="-67" style="fill:none; stroke:blue;" y2="-66"
+      /><text x="152" xml:space="preserve" y="-67" style="fill:blue; stroke:none;"
+      >D4</text
+      ><circle r="1" style="fill:none; stroke:rgb(255,175,175);" cx="150" cy="-68"
+      /><line x1="150" x2="150" y1="-67" style="fill:none; stroke:rgb(255,175,175);" y2="-66"
+      /><text x="152" xml:space="preserve" y="-67" style="fill:rgb(255,175,175); stroke:none;"
       >D4</text
       ><circle r="1" style="fill:none; stroke:lime;" cx="20" cy="-78"
       /><line x1="20" x2="20" y1="-77" style="fill:none; stroke:lime;" y2="-76"
@@ -137,13 +165,17 @@
       /><line x1="71" x2="72" y1="-100" style="fill:none; stroke:red;" y2="-100"
       /><text x="72" xml:space="preserve" y="-99" style="fill:red; stroke:none;"
       >U1</text
-      ><circle r="1" style="fill:none;" cx="240" cy="-70"
-      /><line y2="-68" style="fill:none;" x1="240" x2="240" y1="-69"
-      /><text x="242" xml:space="preserve" y="-69" style="stroke:none;"
+      ><circle r="1" style="fill:none;" cx="70" cy="-100"
+      /><line y2="-100" style="fill:none;" x1="71" x2="72" y1="-100"
+      /><text x="72" xml:space="preserve" y="-99" style="stroke:none;"
       >U1</text
-      ><circle r="1" style="fill:none; stroke:rgb(255,175,175);" cx="100" cy="-70"
-      /><line x1="100" x2="100" y1="-69" style="fill:none; stroke:rgb(255,175,175);" y2="-68"
-      /><text x="102" xml:space="preserve" y="-69" style="fill:rgb(255,175,175); stroke:none;"
+      ><circle r="1" style="fill:none; stroke:blue;" cx="240" cy="-70"
+      /><line x1="240" x2="240" y1="-69" style="fill:none; stroke:blue;" y2="-68"
+      /><text x="242" xml:space="preserve" y="-69" style="fill:blue; stroke:none;"
+      >U1</text
+      ><circle r="1" style="fill:none; stroke:rgb(255,175,175);" cx="240" cy="-70"
+      /><line x1="240" x2="240" y1="-69" style="fill:none; stroke:rgb(255,175,175);" y2="-68"
+      /><text x="242" xml:space="preserve" y="-69" style="fill:rgb(255,175,175); stroke:none;"
       >U1</text
       ><circle r="1" style="fill:none; stroke:lime;" cx="110" cy="-80"
       /><line x1="110" x2="110" y1="-79" style="fill:none; stroke:lime;" y2="-78"
@@ -153,13 +185,17 @@
       /><line x1="16" x2="17" y1="-190" style="fill:none; stroke:red;" y2="-190"
       /><text x="17" xml:space="preserve" y="-189" style="fill:red; stroke:none;"
       >R1</text
-      ><circle r="1" style="fill:none;" cx="330" cy="-124"
-      /><line y2="-122" style="fill:none;" x1="330" x2="330" y1="-123"
-      /><text x="332" xml:space="preserve" y="-123" style="stroke:none;"
+      ><circle r="1" style="fill:none;" cx="15" cy="-190"
+      /><line y2="-190" style="fill:none;" x1="16" x2="17" y1="-190"
+      /><text x="17" xml:space="preserve" y="-189" style="stroke:none;"
       >R1</text
-      ><circle r="1" style="fill:none; stroke:rgb(255,175,175);" cx="190" cy="-124"
-      /><line x1="190" x2="190" y1="-123" style="fill:none; stroke:rgb(255,175,175);" y2="-122"
-      /><text x="192" xml:space="preserve" y="-123" style="fill:rgb(255,175,175); stroke:none;"
+      ><circle r="1" style="fill:none; stroke:blue;" cx="330" cy="-124"
+      /><line x1="330" x2="330" y1="-123" style="fill:none; stroke:blue;" y2="-122"
+      /><text x="332" xml:space="preserve" y="-123" style="fill:blue; stroke:none;"
+      >R1</text
+      ><circle r="1" style="fill:none; stroke:rgb(255,175,175);" cx="330" cy="-124"
+      /><line x1="330" x2="330" y1="-123" style="fill:none; stroke:rgb(255,175,175);" y2="-122"
+      /><text x="332" xml:space="preserve" y="-123" style="fill:rgb(255,175,175); stroke:none;"
       >R1</text
       ><circle r="1" style="fill:none; stroke:lime;" cx="200" cy="-134"
       /><line x1="200" x2="200" y1="-133" style="fill:none; stroke:lime;" y2="-132"
