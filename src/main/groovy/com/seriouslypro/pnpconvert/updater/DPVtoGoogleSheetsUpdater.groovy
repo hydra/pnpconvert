@@ -5,6 +5,12 @@ import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.Sheet
 import com.google.api.services.sheets.v4.model.Spreadsheet
 import com.google.api.services.sheets.v4.model.SpreadsheetProperties
+import com.seriouslypro.googlesheets.CredentialFactory
+import com.seriouslypro.googlesheets.GoogleSheetsTransportFactory
+import com.seriouslypro.googlesheets.SheetFinder
+import com.seriouslypro.googlesheets.SheetNotFoundException
+import com.seriouslypro.googlesheets.SheetsBuilder
+import com.seriouslypro.googlesheets.TransportFactory
 import com.seriouslypro.pnpconvert.MatchOption
 
 class DPVtoGoogleSheetsUpdater {
@@ -52,11 +58,5 @@ class DPVtoGoogleSheetsUpdater {
         SheetProcessorResult result = feederSheetProcessor.process(service, spreadsheet, feedersSheet, dpvFile.tables[DPV_TABLE_STATION], matchOptions)
 
         reporter.reportSummary(sheetTitle, result)
-    }
-}
-
-class SheetNotFoundException extends RuntimeException {
-    SheetNotFoundException(String title) {
-        new RuntimeException("Sheet not found, title: ${title}")
     }
 }

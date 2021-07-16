@@ -6,6 +6,10 @@ import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.Sheet
 import com.google.api.services.sheets.v4.model.Spreadsheet
 import com.google.api.services.sheets.v4.model.SpreadsheetProperties
+import com.seriouslypro.googlesheets.CredentialFactory
+import com.seriouslypro.googlesheets.SheetFinder
+import com.seriouslypro.googlesheets.SheetsBuilder
+import com.seriouslypro.googlesheets.TransportFactory
 import com.seriouslypro.pnpconvert.MatchOption
 import com.seriouslypro.test.TestResources
 import spock.lang.Ignore

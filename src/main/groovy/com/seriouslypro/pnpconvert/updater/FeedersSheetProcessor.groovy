@@ -6,6 +6,7 @@ import com.google.api.services.sheets.v4.model.Sheet
 import com.google.api.services.sheets.v4.model.Spreadsheet
 import com.google.api.services.sheets.v4.model.UpdateValuesResponse
 import com.google.api.services.sheets.v4.model.ValueRange
+import com.seriouslypro.googlesheets.GridRangeConverter
 import com.seriouslypro.pnpconvert.Feeders
 import com.seriouslypro.pnpconvert.MatchOption
 

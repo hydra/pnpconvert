@@ -1,6 +1,7 @@
-package com.seriouslypro.pnpconvert.updater
+package com.seriouslypro.googlesheets
 
 import com.google.api.services.sheets.v4.model.GridRange
+import com.seriouslypro.googlesheets.GridRangeConverter
 import org.junit.Ignore
 import spock.lang.Specification
 import spock.lang.Unroll

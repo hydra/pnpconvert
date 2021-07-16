@@ -1,5 +1,6 @@
-package com.seriouslypro.pnpconvert.updater
+package com.seriouslypro.googlesheets
 
+import com.seriouslypro.googlesheets.ColumnIdentifier
 import spock.lang.Specification
 import spock.lang.Unroll
 

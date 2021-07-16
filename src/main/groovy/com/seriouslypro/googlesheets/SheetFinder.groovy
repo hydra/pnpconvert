@@ -1,4 +1,4 @@
-package com.seriouslypro.pnpconvert.updater
+package com.seriouslypro.googlesheets
 
 import com.google.api.services.sheets.v4.model.Sheet
 import com.google.api.services.sheets.v4.model.Spreadsheet
