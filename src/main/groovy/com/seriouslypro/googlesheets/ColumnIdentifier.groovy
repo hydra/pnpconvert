@@ -1,4 +1,4 @@
-package com.seriouslypro.pnpconvert.updater
+package com.seriouslypro.googlesheets
 
 class ColumnIdentifier {
     static String fromInt(int n) {

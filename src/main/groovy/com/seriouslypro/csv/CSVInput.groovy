@@ -1,4 +1,4 @@
-package com.seriouslypro.pnpconvert
+package com.seriouslypro.csv
 
 import au.com.bytecode.opencsv.CSVReader
 import groovy.transform.InheritConstructors

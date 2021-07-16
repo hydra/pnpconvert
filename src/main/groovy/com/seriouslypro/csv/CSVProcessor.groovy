@@ -1,8 +1,11 @@
-package com.seriouslypro.pnpconvert
+package com.seriouslypro.csv
 
+import com.seriouslypro.pnpconvert.ComponentPlacement
+import com.seriouslypro.pnpconvert.ComponentPlacementFilter
+import com.seriouslypro.pnpconvert.ComponentPlacementTransformer
+import com.seriouslypro.pnpconvert.ComponentPlacementWriter
+import com.seriouslypro.pnpconvert.FileTools
 import com.seriouslypro.pnpconvert.diptrace.DipTraceCSVInput
-
-import static FileTools.*
 
 class CSVProcessor {
 
@@ -16,7 +19,7 @@ class CSVProcessor {
     ComponentPlacementTransformer transformer
 
     List<ComponentPlacement> process(String inputFileName) {
-        Reader reader = openFileOrUrl(inputFileName)
+        Reader reader = FileTools.openFileOrUrl(inputFileName)
         CSVInput csvInput = new DipTraceCSVInput(inputFileName, reader)
 
         csvInput.parseHeader()

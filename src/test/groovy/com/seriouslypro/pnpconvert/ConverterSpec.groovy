@@ -1,8 +1,8 @@
 package com.seriouslypro.pnpconvert
 
-import com.seriouslypro.pnpconvert.machine.DefaultMachine
+
 import com.seriouslypro.pnpconvert.machine.Machine
-import com.seriouslypro.pnpconvert.test.TestResources
+import com.seriouslypro.test.TestResources
 import spock.lang.Ignore
 import spock.lang.Specification
 

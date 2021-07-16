@@ -1,4 +1,4 @@
-package com.seriouslypro.pnpconvert.updater
+package com.seriouslypro.googlesheets
 
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.http.javanet.NetHttpTransport

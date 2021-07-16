@@ -1,4 +1,4 @@
-package com.seriouslypro.pnpconvert
+package com.seriouslypro.csv
 
 interface CSVHeaderParser<TColumn extends Enum> {
     Map<TColumn, CSVHeader> parseHeaders(CSVInputContext context, String[] headerValues)
@@ -17,7 +17,7 @@ class CSVHeaderParserBase<TColumn extends Enum> implements CSVHeaderParser<TColu
                 TColumn column = parseHeader(context, headerValue)
                 CSVHeader csvHeader = new CSVHeader(index: index - 1)
                 new MapEntry(column, csvHeader)
-            } catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException ignored) {
                 // ignore unknown headers
                 return null
             }

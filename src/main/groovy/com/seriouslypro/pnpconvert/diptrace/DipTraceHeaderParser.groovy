@@ -1,9 +1,9 @@
 package com.seriouslypro.pnpconvert.diptrace
 
-import com.seriouslypro.pnpconvert.CSVHeader
-import com.seriouslypro.pnpconvert.CSVHeaderParser
-import com.seriouslypro.pnpconvert.CSVInput
-import com.seriouslypro.pnpconvert.CSVInputContext
+import com.seriouslypro.csv.CSVHeader
+import com.seriouslypro.csv.CSVHeaderParser
+import com.seriouslypro.csv.CSVInput
+import com.seriouslypro.csv.CSVInputContext
 
 class DipTraceHeaderParser implements CSVHeaderParser<DipTraceCSVHeaders> {
 
@@ -15,7 +15,7 @@ class DipTraceHeaderParser implements CSVHeaderParser<DipTraceCSVHeaders> {
                 CSVHeader csvHeader = new CSVHeader()
                 csvHeader.index = index
                 headerMappings[dipTraceCSVHeader] = csvHeader
-            } catch (IllegalArgumentException) {
+            } catch (IllegalArgumentException ignored) {
                 // ignore unknown header
             }
         }
