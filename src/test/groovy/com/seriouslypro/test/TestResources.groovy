@@ -15,7 +15,7 @@ trait TestResources {
     }
 
     @After
-    void teardownTestResourced() {
+    void teardownTestResources() {
         temporaryFolder.delete()
     }
 
