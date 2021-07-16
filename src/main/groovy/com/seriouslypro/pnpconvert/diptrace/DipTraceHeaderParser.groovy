@@ -15,7 +15,7 @@ class DipTraceHeaderParser implements CSVHeaderParser<DipTraceCSVHeaders> {
                 CSVHeader csvHeader = new CSVHeader()
                 csvHeader.index = index
                 headerMappings[dipTraceCSVHeader] = csvHeader
-            } catch (IllegalArgumentException) {
+            } catch (IllegalArgumentException ignored) {
                 // ignore unknown header
             }
         }
