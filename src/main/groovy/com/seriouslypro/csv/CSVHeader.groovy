@@ -1,4 +1,4 @@
-package com.seriouslypro.pnpconvert
+package com.seriouslypro.csv
 
 class CSVHeader {
     int index;

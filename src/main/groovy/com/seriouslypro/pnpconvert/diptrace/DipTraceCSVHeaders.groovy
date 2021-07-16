@@ -1,6 +1,6 @@
 package com.seriouslypro.pnpconvert.diptrace
 
-import com.seriouslypro.pnpconvert.CSVColumn
+import com.seriouslypro.csv.CSVColumn
 
 enum DipTraceCSVHeaders implements CSVColumn<DipTraceCSVHeaders> {
     REFDES(["RefDes"]),

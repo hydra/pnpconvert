@@ -1,5 +1,12 @@
 package com.seriouslypro.pnpconvert
 
+import com.seriouslypro.csv.CSVHeaderParser
+import com.seriouslypro.csv.CSVHeaderParserBase
+import com.seriouslypro.csv.CSVInput
+import com.seriouslypro.csv.CSVInputContext
+import com.seriouslypro.csv.CSVLineParser
+import com.seriouslypro.csv.CSVLineParserBase
+
 class Feeders {
 
     public static final String FLAG_IGNORE = "!"

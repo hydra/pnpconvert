@@ -1,4 +1,4 @@
-package com.seriouslypro.pnpconvert
+package com.seriouslypro.csv
 
 interface CSVLineParser<TResult, TColumn> {
     TResult parse(CSVInputContext context, String[] rowValues)

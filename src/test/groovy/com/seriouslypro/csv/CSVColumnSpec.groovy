@@ -1,5 +1,6 @@
-package com.seriouslypro.pnpconvert
+package com.seriouslypro.csv
 
+import com.seriouslypro.csv.CSVColumn
 import spock.lang.Specification
 import spock.lang.Unroll
 

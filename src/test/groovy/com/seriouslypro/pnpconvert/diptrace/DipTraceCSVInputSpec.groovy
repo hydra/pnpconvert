@@ -1,7 +1,7 @@
 package com.seriouslypro.pnpconvert.diptrace
 
-import com.seriouslypro.pnpconvert.CSVInput
-import com.seriouslypro.pnpconvert.CSVInputContext
+import com.seriouslypro.csv.CSVInput
+import com.seriouslypro.csv.CSVInputContext
 import com.seriouslypro.pnpconvert.ComponentPlacement
 import com.seriouslypro.pnpconvert.Coordinate
 import com.seriouslypro.pnpconvert.PCBSide

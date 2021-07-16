@@ -1,4 +1,4 @@
-package com.seriouslypro.pnpconvert
+package com.seriouslypro.csv
 
 trait CSVColumn<T extends Enum> {
     List<String> aliases = []
