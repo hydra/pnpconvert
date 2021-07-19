@@ -1,4 +1,5 @@
-package com.seriouslypro.pnpconvert.diptrace
+package com.seriouslypro.eda.diptrace
+
 
 import spock.lang.Specification
 import spock.lang.Unroll

@@ -1,4 +1,4 @@
-package com.seriouslypro.pnpconvert.diptrace
+package com.seriouslypro.eda.diptrace.placement
 
 import com.seriouslypro.csv.CSVInput
 import com.seriouslypro.csv.CSVInputContext
@@ -7,7 +7,7 @@ import com.seriouslypro.pnpconvert.Coordinate
 import com.seriouslypro.pnpconvert.PCBSide
 import spock.lang.Specification
 
-class DipTraceCSVInputSpec extends Specification {
+class DipTracePlacementsCSVInputSpec extends Specification {
 
     def 'ensure diptrace to design rotation is applied'() {
         // Diptrace angles values are negative clockwise
@@ -30,7 +30,7 @@ class DipTraceCSVInputSpec extends Specification {
             ]
 
         and:
-            CSVInput csvInput = new DipTraceCSVInput(inputFileName, reader)
+            CSVInput csvInput = new DipTracePlacementsCSVInput(inputFileName, reader)
             ArrayList<ComponentPlacement> placements = []
 
         when:
@@ -65,7 +65,7 @@ class DipTraceCSVInputSpec extends Specification {
             ]
 
         and:
-            CSVInput csvInput = new DipTraceCSVInput(inputFileName, reader)
+            CSVInput csvInput = new DipTracePlacementsCSVInput(inputFileName, reader)
             ArrayList<ComponentPlacement> placements = []
 
         when:

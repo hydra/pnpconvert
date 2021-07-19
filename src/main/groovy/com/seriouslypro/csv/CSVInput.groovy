@@ -18,12 +18,12 @@ class CSVInput<TResult, TColumn extends Enum> {
     CSVReader inputCSVReader
     CSVInputContext context
 
-    CSVInput(String reference, Reader reader, CSVHeaderParser headerParser, CSVLineParser<TResult, TColumn> lineParser) {
+    CSVInput(String reference, Reader reader, CSVHeaderParser headerParser, CSVLineParser<TResult, TColumn> lineParser, char separator = ',') {
         this.headerParser = headerParser
         this.lineParser = lineParser
         this.reader = reader
 
-        inputCSVReader = new CSVReader(reader, ',' as char)
+        inputCSVReader = new CSVReader(reader, separator)
         context = new CSVInputContext(reference: reference)
     }
 

@@ -1,8 +1,8 @@
-package com.seriouslypro.pnpconvert.diptrace
+package com.seriouslypro.eda.diptrace.placement
 
 import com.seriouslypro.csv.CSVColumn
 
-enum DipTraceCSVHeaders implements CSVColumn<DipTraceCSVHeaders> {
+enum DipTracePlacementsCSVHeaders implements CSVColumn<DipTracePlacementsCSVHeaders> {
     REFDES(["RefDes"]),
     PATTERN(["Pattern"]),
     X(["X (mm)"]),
@@ -12,7 +12,7 @@ enum DipTraceCSVHeaders implements CSVColumn<DipTraceCSVHeaders> {
     VALUE(["Value"]),
     NAME(["Name"])
 
-    DipTraceCSVHeaders(List<String> aliases = []) {
+    DipTracePlacementsCSVHeaders(List<String> aliases = []) {
         this.aliases = aliases
     }
 }

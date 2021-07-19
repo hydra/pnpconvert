@@ -1,9 +1,9 @@
 package com.seriouslypro.pnpconvert
 
 import au.com.bytecode.opencsv.CSVWriter
-import com.seriouslypro.pnpconvert.diptrace.AngleConverter
-import com.seriouslypro.pnpconvert.diptrace.DipTraceCSVHeaders
-import com.seriouslypro.pnpconvert.diptrace.DiptraceAngleConverter
+import com.seriouslypro.eda.AngleConverter
+import com.seriouslypro.eda.diptrace.DiptraceAngleConverter
+import com.seriouslypro.eda.diptrace.placement.DipTracePlacementsCSVHeaders
 
 class DipTraceComponentPlacementWriter implements ComponentPlacementWriter {
 
@@ -19,14 +19,14 @@ class DipTraceComponentPlacementWriter implements ComponentPlacementWriter {
         transformCSVWriter = new CSVWriter(transformFileWriter, ',' as char)
 
         String[] outputHeaderRow = [
-            DipTraceCSVHeaders.REFDES.aliases.first(),
-            DipTraceCSVHeaders.PATTERN.aliases.first(),
-            DipTraceCSVHeaders.X.aliases.first(),
-            DipTraceCSVHeaders.Y.aliases.first(),
-            DipTraceCSVHeaders.SIDE.aliases.first(),
-            DipTraceCSVHeaders.ROTATE.aliases.first(),
-            DipTraceCSVHeaders.VALUE.aliases.first(),
-            DipTraceCSVHeaders.NAME.aliases.first(),
+            DipTracePlacementsCSVHeaders.REFDES.aliases.first(),
+            DipTracePlacementsCSVHeaders.PATTERN.aliases.first(),
+            DipTracePlacementsCSVHeaders.X.aliases.first(),
+            DipTracePlacementsCSVHeaders.Y.aliases.first(),
+            DipTracePlacementsCSVHeaders.SIDE.aliases.first(),
+            DipTracePlacementsCSVHeaders.ROTATE.aliases.first(),
+            DipTracePlacementsCSVHeaders.VALUE.aliases.first(),
+            DipTracePlacementsCSVHeaders.NAME.aliases.first(),
         ]
 
         transformCSVWriter.writeNext(outputHeaderRow)

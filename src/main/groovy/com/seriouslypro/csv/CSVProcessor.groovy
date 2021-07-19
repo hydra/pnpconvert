@@ -1,11 +1,11 @@
 package com.seriouslypro.csv
 
+import com.seriouslypro.eda.diptrace.placement.DipTracePlacementsCSVInput
 import com.seriouslypro.pnpconvert.ComponentPlacement
 import com.seriouslypro.pnpconvert.ComponentPlacementFilter
 import com.seriouslypro.pnpconvert.ComponentPlacementTransformer
 import com.seriouslypro.pnpconvert.ComponentPlacementWriter
 import com.seriouslypro.pnpconvert.FileTools
-import com.seriouslypro.pnpconvert.diptrace.DipTraceCSVInput
 
 class CSVProcessor {
 
@@ -20,7 +20,7 @@ class CSVProcessor {
 
     List<ComponentPlacement> process(String inputFileName) {
         Reader reader = FileTools.openFileOrUrl(inputFileName)
-        CSVInput csvInput = new DipTraceCSVInput(inputFileName, reader)
+        CSVInput csvInput = new DipTracePlacementsCSVInput(inputFileName, reader)
 
         csvInput.parseHeader()
 

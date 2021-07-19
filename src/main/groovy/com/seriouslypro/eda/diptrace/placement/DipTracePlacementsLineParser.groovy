@@ -1,24 +1,25 @@
-package com.seriouslypro.pnpconvert.diptrace
+package com.seriouslypro.eda.diptrace.placement
 
 import com.seriouslypro.csv.CSVInputContext
 import com.seriouslypro.csv.CSVLineParserBase
+import com.seriouslypro.eda.diptrace.DiptraceAngleConverter
 import com.seriouslypro.pnpconvert.ComponentPlacement
 import com.seriouslypro.pnpconvert.Coordinate
 import com.seriouslypro.pnpconvert.PCBSide
 
-class DipTraceLineParser extends CSVLineParserBase<ComponentPlacement, DipTraceCSVHeaders> {
+class DipTracePlacementsLineParser extends CSVLineParserBase<ComponentPlacement, DipTracePlacementsCSVHeaders> {
 
     DiptraceAngleConverter diptraceAngleConverter = new DiptraceAngleConverter()
 
     @Override
     ComponentPlacement parse(CSVInputContext context, String[] rowValues) {
 
-        BigDecimal x = rowValues[columnIndex(context, DipTraceCSVHeaders.X)] as BigDecimal
-        BigDecimal y = rowValues[columnIndex(context, DipTraceCSVHeaders.Y)] as BigDecimal
+        BigDecimal x = rowValues[columnIndex(context, DipTracePlacementsCSVHeaders.X)] as BigDecimal
+        BigDecimal y = rowValues[columnIndex(context, DipTracePlacementsCSVHeaders.Y)] as BigDecimal
         Coordinate coordinate = new Coordinate(x: x, y: y)
 
         PCBSide side
-        String sideValue = rowValues[columnIndex(context, DipTraceCSVHeaders.SIDE)]
+        String sideValue = rowValues[columnIndex(context, DipTracePlacementsCSVHeaders.SIDE)]
 
         try {
             side = pcbSideFromDiptraceSide(sideValue)
@@ -26,20 +27,20 @@ class DipTraceLineParser extends CSVLineParserBase<ComponentPlacement, DipTraceC
             throw new IllegalArgumentException("Row contains invalid 'side': $sideValue, reference: $context.reference, line: $context.lineIndex", e)
         }
 
-        BigDecimal diptraceRotation = rowValues[columnIndex(context, DipTraceCSVHeaders.ROTATE)] as BigDecimal
+        BigDecimal diptraceRotation = rowValues[columnIndex(context, DipTracePlacementsCSVHeaders.ROTATE)] as BigDecimal
         BigDecimal placementRotation = diptraceAngleConverter.edaToDesign(diptraceRotation)
 
-        String value = rowValues[columnIndex(context, DipTraceCSVHeaders.VALUE)].trim()
-        String name = rowValues[columnIndex(context, DipTraceCSVHeaders.NAME)].trim()
+        String value = rowValues[columnIndex(context, DipTracePlacementsCSVHeaders.VALUE)].trim()
+        String name = rowValues[columnIndex(context, DipTracePlacementsCSVHeaders.NAME)].trim()
 
         if (!(value || name)) {
             throw new IllegalArgumentException("Row requires one or both of the 'value' and 'name' fields, reference: $context.reference, line: $context.lineIndex")
         }
 
         ComponentPlacement c = new ComponentPlacement(
-            refdes: rowValues[columnIndex(context, DipTraceCSVHeaders.REFDES)],
+            refdes: rowValues[columnIndex(context, DipTracePlacementsCSVHeaders.REFDES)],
             coordinate: coordinate,
-            pattern: rowValues[columnIndex(context, DipTraceCSVHeaders.PATTERN)],
+            pattern: rowValues[columnIndex(context, DipTracePlacementsCSVHeaders.PATTERN)],
             side: side,
             rotation: placementRotation,
             value: value,

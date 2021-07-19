@@ -1,9 +1,6 @@
-package com.seriouslypro.pnpconvert.diptrace
+package com.seriouslypro.eda.diptrace
 
-interface AngleConverter {
-    BigDecimal edaToDesign(BigDecimal value)
-    BigDecimal designToEDA(BigDecimal value)
-}
+import com.seriouslypro.eda.AngleConverter
 
 class DiptraceAngleConverter implements AngleConverter {
     @Override

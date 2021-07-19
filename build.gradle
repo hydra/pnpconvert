@@ -98,7 +98,7 @@ clover {
         '**/FeederTester.groovy',
         '**/BoardMirroring.groovy',
         '**/DiptraceComponentPlacementTransformer.groovy',
-        '**/DipTraceLineParser.groovy',
+        '**/DipTracePlacementsLineParser.groovy',
         '**/DPVFile.groovy',
     ]
     testExcludes = [
