@@ -7,8 +7,7 @@ interface CSVHeaderParser<TColumn extends Enum> {
 
 class CSVHeaderParserBase<TColumn extends Enum> implements CSVHeaderParser<TColumn> {
 
-    @Override
-    Map<TColumn, CSVHeader> parseHeaders(CSVInputContext context, String[] headerValues) {
+    Map<TColumn, CSVHeader> createHeaderMappings(CSVInputContext context, String[] headerValues) {
         int index = 0
         Map<TColumn, CSVHeader> headerMappings = headerValues.findResults { String headerValue ->
 
@@ -24,6 +23,11 @@ class CSVHeaderParserBase<TColumn extends Enum> implements CSVHeaderParser<TColu
         }.collectEntries()
 
         return headerMappings
+    }
+
+    @Override
+    Map<TColumn, CSVHeader> parseHeaders(CSVInputContext context, String[] headerValues) {
+        createHeaderMappings(context, headerValues)
     }
 
     @Override
