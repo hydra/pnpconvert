@@ -18,7 +18,7 @@ class FileTools {
         }
 
         InputStream inputStream = new FileInputStream(fileName)
-        InputStreamReader inputStreamReader = new InputStreamReader(inputStream)
+        InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "UTF-8")
         inputStreamReader
     }
 }
