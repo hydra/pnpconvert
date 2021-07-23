@@ -267,6 +267,8 @@ Feeder IDs for the CHMT48VB are as below, they are FIXED by the software in the 
 | 85-90 | vibration feeder, front left.         |
 | 91-99 | ic tray                               |
 
+Feeder IDs over 100 are reserved for the machine and must NOT be used otherwise machine configuration is overwritten and head crashes can occur!
+
 Why
 ===
 * The existing tools don't support DipTrace.

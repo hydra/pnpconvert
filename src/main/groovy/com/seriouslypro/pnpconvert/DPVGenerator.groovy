@@ -197,7 +197,7 @@ class DPVGenerator {
         return materialSelections
     }
 
-    Integer assignFeederID(NumberSequence trayIdSequence, Set<Integer> usedIDs, Feeder feeder) {
+    Integer assignFeederID(NumberSequence trayIdSequence, Range trayIds, Set<Integer> usedIDs, Feeder feeder) throws IndexOutOfBoundsException {
 
         // Assign Feeder ID if required, code assumes feeder is a tray.
         // Trays may have a fixed id.  ID re-use needs to be avoided.
@@ -206,6 +206,9 @@ class DPVGenerator {
             boolean found = false
             while (!found) {
                 Integer candidateId = trayIdSequence.next()
+                if (candidateId > machine.trayIds.to) {
+                    throw new IndexOutOfBoundsException('No more tray IDs remaining, reduce the amount of trays required.')
+                }
                 if (!usedIDs.contains(candidateId)) {
                     return candidateId
                 }
@@ -244,7 +247,7 @@ class DPVGenerator {
                 materialAssignments[placement] = existingMaterialAssignment
             } else {
 
-                Integer feederId = assignFeederID(trayIdSequence, usedIDs, feeder)
+                Integer feederId = assignFeederID(trayIdSequence, machine.trayIds, usedIDs, feeder)
 
                 MaterialAssignment materialAssignment = new MaterialAssignment(
                     component: component,
