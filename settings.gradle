@@ -10,3 +10,5 @@ gradleEnterprise {
         publishOnFailure()
     }
 }
+
+startParameter.excludedTaskNames = ["compileJava", "compileTestJava"]
