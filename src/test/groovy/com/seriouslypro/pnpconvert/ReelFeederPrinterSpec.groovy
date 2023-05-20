@@ -1,17 +1,27 @@
 package com.seriouslypro.pnpconvert
 
-import org.junit.Ignore
 import spock.lang.Specification
 
 class ReelFeederPrinterSpec extends Specification {
 
-    @Ignore
-    def "print"() {
-        false
+    def "can print reel feeder"() {
+        given:
+            def feederPrinter = new ReelFeederPrinter()
+            def feeder = new ReelFeeder()
+
+        expect:
+            feederPrinter.canPrint(feeder)
     }
 
-    @Ignore
     def "print with missing id"() {
-        false
+        given:
+            def feederPrinter = new ReelFeederPrinter()
+            def feeder = new ReelFeeder()
+
+        when:
+            def result = feederPrinter.print(feeder)
+
+        then:
+            result == [id: "<None>", note: ""]
     }
 }

@@ -14,7 +14,7 @@ class TrayFeederPrinterSpec extends Specification {
 
         then:
             result == [
-                    tray: "Tray",
+                    tray: "Name",
                     note: "Note"
             ]
     }
