@@ -281,7 +281,7 @@ class PNPConvert {
     }
 
     private static void about() {
-        System.out.println('PNPConvert (C) 2018 Dominic Clifton')
+        System.out.println('PNPConvert (C) 2023 Dominic Clifton')
         System.out.println('Written by Dominic Clifton')
     }
 }

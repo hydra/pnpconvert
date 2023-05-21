@@ -131,7 +131,7 @@ class DPVtoGoogleSheets {
     }
 
     private static void about() {
-        System.out.println('DPVtoGoogleSheets (C) 2020 Dominic Clifton')
+        System.out.println('DPVtoGoogleSheets (C) 2023 Dominic Clifton')
         System.out.println('Written by Dominic Clifton')
     }
 }

@@ -1,7 +1,7 @@
 PNPConvert
 ==========
 
-by Dominic Clifton. (C) 2018-2021
+by Dominic Clifton. (C) 2018-2023
 
 [![Build Status](https://travis-ci.com/hydra/pnpconvert.svg?branch=master)](https://travis-ci.com/hydra/pnpconvert)
 
@@ -27,7 +27,7 @@ Usage
 `pnpconvert <args>`
 
 ```
-PNPConvert (C) 2018 Dominic Clifton
+PNPConvert (C) 2018-2023 Dominic Clifton
 Written by Dominic Clifton
 Usage: pnpconvert
   -c                        convert
