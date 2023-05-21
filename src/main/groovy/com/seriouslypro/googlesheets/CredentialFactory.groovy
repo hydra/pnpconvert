@@ -11,6 +11,23 @@ import com.google.api.client.json.gson.GsonFactory
 import com.google.api.client.util.store.FileDataStoreFactory
 import com.google.api.services.sheets.v4.SheetsScopes
 
+/**
+ * Get credentials from the Google API Console, see:
+ * 'APIs and Services' ->
+ * 'Credentials' ->
+ * 'OAuth 2.0 Client IDs'.
+ *
+ * Then create one, and download the 'Client secrets' `.json` file and store it as-required,
+ * e.g.
+ * `credentials\test-credentials.json`
+ * `credentials\secret-credentials.json`
+ * etc.
+ *
+ * Reference 1: https://developers.google.com/api-client-library/java/google-api-java-client/oauth2
+ * Reference 2: https://console.cloud.google.com/apis/credentials/oauthclient
+ *
+ * Example: https://console.cloud.google.com/welcome?pli=1&project=component-manager-319920
+ */
 class CredentialFactory {
 
     private static final JsonFactory JSON_FACTORY = new GsonFactory()
