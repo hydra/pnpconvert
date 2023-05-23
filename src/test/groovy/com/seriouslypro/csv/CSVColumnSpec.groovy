@@ -49,7 +49,4 @@ class CSVColumnSpec extends Specification {
             TestCSVColumn.LENGTH | "THE LENGTH" | true
             TestCSVColumn.LENGTH | "THE_LENGTH" | true
     }
-
-
-
 }
