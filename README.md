@@ -1,5 +1,4 @@
-PNPConvert
-==========
+# PNPConvert
 
 by Dominic Clifton. (C) 2018-2023
 
@@ -21,8 +20,7 @@ Currently supported machines
 
 *1 Treated as CHMT48VB, so do not use right-hand side feeders with IDs 36-64.
 
-Usage
-=====
+## Usage
 
 `pnpconvert <args>`
 
@@ -80,8 +78,7 @@ components=https://docs.google.com/spreadsheet/ccc?key=1-bZiPxQy2budCd0ny81PV6aG
 trays=https://docs.google.com/spreadsheet/ccc?key=1-bZiPxQy2budCd0ny81PV6aGKu4q8ckkRBx3FWsMj-M&gid=433487055&output=csv
 ```
 
-Examples
-========
+## Examples
 
 Example1 has board width of 70 and height of 100, PCB origin is the center.
 When exported "Use PCB origin" was NOT selected, so the bottom left component has a position is closest to 0,0.
@@ -168,14 +165,13 @@ In the example above, `-rr` has two arguments the order of the values in quotes 
 
 * Feeder Tester
 
-`pnpcpnvert -ft -cfg machine1.config -o feedertest`
+`pnpconvert -ft -cfg machine1.config -o feedertest`
 
 Generates a DPV with all the feeders populated but no placements, this is useful when verifying the contents of all the feeders on the machine.
 No placement input file is required.  The names of the feeders are also used to lookup components.
 
 
-DPV Generation process
-======================
+## DPV Generation process
 
 4 input files are required to generate a DPV file for your design.
 
@@ -204,8 +200,7 @@ When components don't match a list of unknown components and unloaded feeders is
 Components in the design file that are matched to components using aliases, or to aliases of components already in feeders, are also displayed.  This is so that you can check to see if a substitution is acceptable. E.g. design specifies a capacitor with 10% tolerance, and a similar spec capacitor with 20% tolerance has an alias the same as the 10% one.
 
 
-SVG file
-========
+## SVG file
 
 | Color  | Usage  |
 | ------ | ------ |
@@ -217,8 +212,7 @@ SVG file
 | Orange | Fiducial Marker |
 | Magenta | Panel |
 
-CSV files
-=========
+## CSV files
 
 The order of the CSV fields does not matter in input files, the column headers are used to find the data.  This allows you to choose you preferred column order in your CSV editing tools/spreadsheets.
 Column headers are case-insensitive, non-alphanumeric characters are converted to underscores before attempting a column header match.
@@ -231,11 +225,9 @@ Fields requiring additional documentation are as below.
 
 * If you can't work out what a field does after reviewing the fields and your machine documentation please create an issue on the issue tracker asking for more documentation.
 
-Feeders CSV file
-================
+## Feeders CSV file
 
-Columns
--------
+### Columns
 
 | Column | Unit | Notes                                                                                                                                 |
 | ------ | -----| ------------------------------------------------------------------------------------------------------------------------------------- |
@@ -249,8 +241,7 @@ Columns
 | Place Delay | Milliseconds, Delay after extending head and before retracting head.                                                                    |
 | Take Delay | Milliseconds, Delay in milliseconds
 
-Values
-------
+### Values
 
 | Flag | Meaning                                                                                                                |
 | !    | Ignore the row.  Use this flag to manage feeders/trays that are not currently in use without having to delete the row  |
@@ -269,8 +260,7 @@ Feeder IDs for the CHMT48VB are as below, they are FIXED by the software in the 
 
 Feeder IDs over 100 are reserved for the machine and must NOT be used otherwise machine configuration is overwritten and head crashes can occur!
 
-Why
-===
+## Why
 * The existing tools don't support DipTrace.
 * The existing tools seem only to support the one EDA package they were designed for, I wanted a codebase that was more flexible to allow support for other packages to be added later.
 * The existing tools and are not written in languages that I have tooling set-up for.
@@ -280,23 +270,20 @@ Why
 * I needed something to rotate (not just flip) the co-ordinates and angles in the diptrace files.  Useful when you have board edge components and only 2 rails.
 * I wanted to visualize the results of rotation and transform operations.
 
-Technology Stack
-================
+## Technology Stack
 * Java run-time environment - cross-platform.
 * Groovy for production and test code.
 * Spock for automated unit tests.
 * Batik for SVG Generation.
 * Gradle build tool.  Use included gradle wrapper to install Gradle. via `./gradlew`
 
-Running Tests
-=============
+## Running Tests
 
 Running tests:
 
 `gradle test`
 
-Building
-========
+## Building
 
 Use the gradle Application plugin's tasks
 
@@ -310,8 +297,46 @@ e.g.
 
 Reference: https://docs.gradle.org/current/userguide/application_plugin.html
 
-License
-=======
+# DPVToGoogleSheets
+
+DPVToGoogleSheets is a work-in-progress tool that will take an updated .dpv file from the PnP machine and update google sheets documents with the changes.
+
+## Usage
+
+`dpvtogooglesheets <args>`
+
+```
+DPVtoGoogleSheets (C) 2023 Dominic Clifton
+Written by Dominic Clifton
+Usage: dpvtogooglesheets
+  -c=<credentials>    credentials json file/url
+      -cfg=<config>   configuration file (in "key=value" format)
+  -i=<input>          input dpv file/url
+      -mo=<match-options>...
+                      match options
+  -s=<sheet>          sheet id
+  -u                  update
+  -v                  version
+```
+
+Example:
+```
+dpvtogooglesheets -mo FEEDER_ID FLAG_ENABLED -u -cfg machine1.config -i project.dpv
+```
+
+After running the tool, check it's output to see what it changed.
+
+You can also use the built-in version history of the google sheet by opening the sheet
+in google sheets, then file/version history, then checking the highlighted cells of the latest version
+
+## Common issues
+
+### Bad Request: 'invalid_grant'
+
+* Delete the `tokens/StoredCredential` file and login again.
+* Check the credentials json file is correct.
+
+# License
 
 GPLv3
 
