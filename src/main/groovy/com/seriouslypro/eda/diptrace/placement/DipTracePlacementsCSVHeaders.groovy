@@ -5,10 +5,10 @@ import com.seriouslypro.csv.CSVColumn
 enum DipTracePlacementsCSVHeaders implements CSVColumn<DipTracePlacementsCSVHeaders> {
     REFDES(["RefDes"]),
     PATTERN(["Pattern"]),
-    X(["X (mm)"]),
-    Y(["Y (mm)"]),
+    X(["X (mm)", "Center X (mm)"]),
+    Y(["Y (mm)", "Center Y (mm)"]),
     SIDE(["Side"]),
-    ROTATE(["Rotate"]),
+    ROTATE(["Rotate", "Rotation"]),
     VALUE(["Value"]),
     NAME(["Name"])
 
