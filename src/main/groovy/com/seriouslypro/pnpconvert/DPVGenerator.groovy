@@ -41,62 +41,8 @@ class DPVGenerator {
 
         relocatePlacements(materialAssignments)
 
-        System.out.println('')
-        System.out.println('*** MATERIAL ASSIGNMENTS *** - Components from the design that matched the components and feeders/trays')
-        System.out.println('')
-
-        System.out.println()
-        System.out.println("materialAssignments:\n" + materialAssignments.collect { ComponentPlacement placement, MaterialAssignment materialAssignment ->
-            "placement: $placement, materialAssignment: $materialAssignment"
-        }.join('\n'))
-
-        List<Integer> usedFeederIds = materialAssignments.collect { ComponentPlacement placement, MaterialAssignment materialAssignment ->
-            materialAssignment.feederId
-        }.unique().sort()
-
-        System.out.println()
-        System.out.println("usedFeeders:\n" + usedFeederIds.join(','))
-
-        ArrayList<FeederPrinter> feederPrinters = [
-            new TrayFeederPrinter(),
-            new ReelFeederPrinter()
-        ]
-
-        int countOfUnitsInPanel = optionalPanel.map { panel -> panel.numberX * panel.numberY }.orElseGet{ 1 }
-
-        List<Map<String, String>> summaryItems = usedFeederIds.findResults { Integer feederId ->
-            Map.Entry<ComponentPlacement, MaterialAssignment> materialAssigment = materialAssignments.find { ComponentPlacement placement, MaterialAssignment materialAssignment ->
-                materialAssignment.feederId == feederId
-            }
-            Feeder feeder = materialAssigment.value.feeder
-            FeederPrinter feederPrinter = feederPrinters.find { it.canPrint(feeder) }
-
-            Map<ComponentPlacement, MaterialAssignment> materialAssigmentsUsingSameFeeder = materialAssignments.findAll { ComponentPlacement placement, MaterialAssignment materialAssignment ->
-                materialAssignment.feederId == feederId
-            }
-
-            List<String> refdesList = materialAssigmentsUsingSameFeeder.keySet().findResults { ComponentPlacement placement -> placement.enabled ? placement.refdes : null }
-            int countOfComponentsUsed  = refdesList.size()
-            int totalComponentsUserPerPanel = countOfComponentsUsed * countOfUnitsInPanel
-            [
-                feederId            : materialAssigment.value.feederId.toString(),
-                componentsPerUnit   : countOfComponentsUsed,
-                componentsPerPanel  : totalComponentsUserPerPanel,
-                refdes              : refdesList,
-                feeder              : feederPrinter.print(feeder),
-                component           : [
-                    name   : materialAssigment.value.component.name,
-                    aliases: materialAssigment.value.component.aliases,
-                ],
-            ]
-        }
-
-        if (!summaryItems.isEmpty()) {
-            System.out.println()
-            System.out.println("feederSummary:")
-            System.out.println(summaryItems.first().keySet().join(','))
-            System.out.println(summaryItems.collect { it.values().join(',') }.join('\n'))
-        }
+        dumpMaterialAsignments(materialAssignments)
+        dumpSummary(optionalPanel, materialAssignments)
 
         System.out.println()
         System.out.println('*** ISSUES *** - Components that did not match, need verification or loading')
@@ -247,7 +193,14 @@ class DPVGenerator {
                 materialAssignments[placement] = existingMaterialAssignment
             } else {
 
-                Integer feederId = assignFeederID(trayIdSequence, machine.trayIds, usedIDs, feeder)
+                Integer feederId
+
+                try {
+                    feederId = assignFeederID(trayIdSequence, machine.trayIds, usedIDs, feeder)
+                } catch (IndexOutOfBoundsException e ) {
+                    dumpSummary(optionalPanel, materialAssignments)
+                    throw e
+                }
 
                 MaterialAssignment materialAssignment = new MaterialAssignment(
                     component: component,
@@ -260,6 +213,68 @@ class DPVGenerator {
         }
 
         return materialAssignments
+    }
+
+    static def dumpMaterialAsignments(Map<ComponentPlacement, MaterialAssignment> materialAssignments) {
+        System.out.println('')
+        System.out.println('*** MATERIAL ASSIGNMENTS *** - Components from the design that matched the components and feeders/trays')
+        System.out.println('')
+
+        System.out.println()
+        System.out.println("materialAssignments:\n" + materialAssignments.collect { ComponentPlacement placement, MaterialAssignment materialAssignment ->
+            "placement: $placement, materialAssignment: $materialAssignment"
+        }.join('\n'))
+    }
+
+    static def dumpSummary(Optional<Panel> optionalPanel, Map<ComponentPlacement, MaterialAssignment> materialAssignments) {
+
+        List<Integer> usedFeederIds = materialAssignments.collect { ComponentPlacement placement, MaterialAssignment materialAssignment ->
+            materialAssignment.feederId
+        }.unique().sort()
+
+        System.out.println()
+        System.out.println("usedFeeders:\n" + usedFeederIds.join(','))
+
+        ArrayList<FeederPrinter> feederPrinters = [
+                new TrayFeederPrinter(),
+                new ReelFeederPrinter()
+        ]
+
+        int countOfUnitsInPanel = optionalPanel.map { panel -> panel.numberX * panel.numberY }.orElseGet { 1 }
+
+        List<Map<String, String>> summaryItems = usedFeederIds.findResults { Integer feederId ->
+            Map.Entry<ComponentPlacement, MaterialAssignment> materialAssigment = materialAssignments.find { ComponentPlacement placement, MaterialAssignment materialAssignment ->
+                materialAssignment.feederId == feederId
+            }
+            Feeder feeder = materialAssigment.value.feeder
+            FeederPrinter feederPrinter = feederPrinters.find { it.canPrint(feeder) }
+
+            Map<ComponentPlacement, MaterialAssignment> materialAssigmentsUsingSameFeeder = materialAssignments.findAll { ComponentPlacement placement, MaterialAssignment materialAssignment ->
+                materialAssignment.feederId == feederId
+            }
+
+            List<String> refdesList = materialAssigmentsUsingSameFeeder.keySet().findResults { ComponentPlacement placement -> placement.enabled ? placement.refdes : null }
+            int countOfComponentsUsed = refdesList.size()
+            int totalComponentsUserPerPanel = countOfComponentsUsed * countOfUnitsInPanel
+            [
+                    feederId          : materialAssigment.value.feederId.toString(),
+                    componentsPerUnit : countOfComponentsUsed,
+                    componentsPerPanel: totalComponentsUserPerPanel,
+                    refdes            : refdesList,
+                    feeder            : feederPrinter.print(feeder),
+                    component         : [
+                            name   : materialAssigment.value.component.name,
+                            aliases: materialAssigment.value.component.aliases,
+                    ],
+            ]
+        }
+
+        if (!summaryItems.isEmpty()) {
+            System.out.println()
+            System.out.println("feederSummary:")
+            System.out.println(summaryItems.first().keySet().join(','))
+            System.out.println(summaryItems.collect { it.values().join(',') }.join('\n'))
+        }
     }
 
 }
