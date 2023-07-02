@@ -14,7 +14,7 @@ class CSVProcessor {
         String[] line
     }
 
-    ComponentPlacementFilter filter
+    List<ComponentPlacementFilter> filters
     ComponentPlacementWriter writer
     ComponentPlacementTransformer transformer
 
@@ -33,7 +33,9 @@ class CSVProcessor {
 
         List<ComponentPlacement> placements = csvItems.stream()
             .filter { csvItem ->
-                filter.shouldFilter(csvItem.componentPlacement)
+                !filters.any { filter ->
+                    !filter.shouldFilter(csvItem.componentPlacement)
+                }
             }
             .map { csvItem ->
                 new CSVItem(componentPlacement: transformer.process(csvItem.componentPlacement), line: csvItem.line)

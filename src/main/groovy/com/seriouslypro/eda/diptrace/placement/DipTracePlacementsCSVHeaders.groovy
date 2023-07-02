@@ -10,7 +10,10 @@ enum DipTracePlacementsCSVHeaders implements CSVColumn<DipTracePlacementsCSVHead
     SIDE(["Side"]),
     ROTATE(["Rotate", "Rotation"]),
     VALUE(["Value"]),
-    NAME(["Name"])
+    NAME(["Name"]),
+
+    // Optional: Can be added manually to allow filtering on job number
+    JOB(["Job"])
 
     DipTracePlacementsCSVHeaders(List<String> aliases = []) {
         this.aliases = aliases

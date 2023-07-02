@@ -153,7 +153,7 @@ class DPVGenerator {
             while (!found) {
                 Integer candidateId = trayIdSequence.next()
                 if (candidateId > machine.trayIds.to) {
-                    throw new IndexOutOfBoundsException('No more tray IDs remaining, reduce the amount of trays required.')
+                    throw new IndexOutOfBoundsException('No more tray IDs remaining, reduce the amount of trays required.  e.g. by splitting into multiple jobs.')
                 }
                 if (!usedIDs.contains(candidateId)) {
                     return candidateId

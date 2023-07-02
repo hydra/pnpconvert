@@ -24,6 +24,7 @@ class Converter {
     PCBSideComponentPlacementFilter.SideInclusion sideInclusion = PCBSideComponentPlacementFilter.SideInclusion.ALL
 
     CSVProcessor csvProcessor
+    Optional<Integer> optionalJob
     Optional<Panel> optionalPanel
     Optional<List<Fiducial>> optionalFiducials
     List<RefdesReplacement> refdesReplacements
@@ -50,9 +51,10 @@ class Converter {
         ComponentPlacementWriter dipTraceComponentPlacementWriter = new DipTraceComponentPlacementWriter(transformFileName)
 
 
-        PCBSideComponentPlacementFilter filter = new PCBSideComponentPlacementFilter(sideInclusion: sideInclusion)
+        PCBSideComponentPlacementFilter sideInclusionFilter = new PCBSideComponentPlacementFilter(sideInclusion: sideInclusion)
+        JobComponentPlacementFilter jobInclusionFilter = new JobComponentPlacementFilter(optionalJob: optionalJob)
 
-        csvProcessor = new CSVProcessor(filter: filter, transformer: transformer, writer: dipTraceComponentPlacementWriter)
+        csvProcessor = new CSVProcessor(filters: [sideInclusionFilter, jobInclusionFilter], transformer: transformer, writer: dipTraceComponentPlacementWriter)
 
         List<ComponentPlacement> placements = csvProcessor.process(inputFileName)
 

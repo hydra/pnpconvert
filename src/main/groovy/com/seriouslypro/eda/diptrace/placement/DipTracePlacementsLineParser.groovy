@@ -37,6 +37,12 @@ class DipTracePlacementsLineParser extends CSVLineParserBase<ComponentPlacement,
             throw new IllegalArgumentException("Row requires one or both of the 'value' and 'name' fields, reference: $context.reference, line: $context.lineIndex")
         }
 
+        Optional<Integer> optionalJob = Optional.empty()
+
+        if (hasColumn(DipTracePlacementsCSVHeaders.JOB) && rowValues[columnIndex(context, DipTracePlacementsCSVHeaders.JOB)]) {
+            optionalJob = Optional.of(rowValues[columnIndex(context, DipTracePlacementsCSVHeaders.JOB)] as Integer)
+        }
+
         ComponentPlacement c = new ComponentPlacement(
             refdes: rowValues[columnIndex(context, DipTracePlacementsCSVHeaders.REFDES)],
             coordinate: coordinate,
@@ -44,7 +50,8 @@ class DipTracePlacementsLineParser extends CSVLineParserBase<ComponentPlacement,
             side: side,
             rotation: placementRotation,
             value: value,
-            name: name
+            name: name,
+            optionalJob: optionalJob,
         )
 
         return c

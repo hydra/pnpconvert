@@ -19,4 +19,5 @@ class ComponentPlacement {
     Coordinate coordinate
     PCBSide side
     BigDecimal rotation
+    Optional<Integer> optionalJob
 }

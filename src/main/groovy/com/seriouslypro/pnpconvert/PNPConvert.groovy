@@ -40,6 +40,8 @@ class PNPConvert {
         builder.pix(args:1, argName: 'panelIntervalX','Interval spacing on the X axis')
         builder.piy(args:1, argName: 'panelIntervalY','Interval spacing on the Y axis')
 
+        builder.j(args:1, argName: 'job', 'job number')
+
         builder.cfg(args:1, argName: 'config', 'configuration file (in "key=value" format)')
 
         builder.dr(args:1, argName: 'disableRefdes', 'Disable components by refdes (comma separated list)')
@@ -87,6 +89,7 @@ class PNPConvert {
         BoardMirroring boardMirroring = new BoardMirroring()
         Coordinate offsetXY = new Coordinate()
         BigDecimal offsetZ = 0
+        Optional<Integer> optionalJob = Optional.empty()
         PCBSideComponentPlacementFilter.SideInclusion sideInclusion = PCBSideComponentPlacementFilter.SideInclusion.ALL
         Optional<Panel> optionalPanel = Optional.empty()
         Optional<List<Fiducial>> optionalFiducials = Optional.empty()
@@ -109,6 +112,10 @@ class PNPConvert {
 
         if (options.f) {
             feedersFileName = options.f
+        }
+
+        if (options.j) {
+            optionalJob = Optional.of(options.j as Integer)
         }
 
         if (options.co) {
@@ -205,7 +212,8 @@ class PNPConvert {
                 optionalPanel: optionalPanel,
                 optionalFiducials: optionalFiducials,
                 refdesReplacements: refdesReplacements,
-                placementReferenceDesignatorsToDisable: placementReferenceDesignatorsToDisable
+                placementReferenceDesignatorsToDisable: placementReferenceDesignatorsToDisable,
+                optionalJob: optionalJob,
             )
             converter.convert()
             System.exit(0);
