@@ -39,6 +39,11 @@ class Converter {
             outputPrefix += sidePostfix
         }
 
+        optionalJob.ifPresent {job ->
+            String jobPostfix = "-job$job"
+            outputPrefix += jobPostfix
+        }
+
         //
         // CSV processing
         //
