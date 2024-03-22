@@ -25,7 +25,6 @@ class ConverterSpec extends Specification implements TestResources {
 
     def 'converter generates expected output files - without placements, components, trays and feeders'() {
         given:
-
             configureConverter(noPlacements, noComponents, noTrays, noFeeders)
 
             String outputPrefix = converter.outputPrefix
@@ -120,6 +119,8 @@ class ConverterSpec extends Specification implements TestResources {
         converter.optionalFiducials = Optional.empty()
 
         converter.machine = new TestMachine()
+
+        converter.optionalJob = Optional.empty()
     }
 
     private static void dumpContent(String dpvContent) {

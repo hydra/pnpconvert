@@ -25,8 +25,8 @@ class DipTracePlacementsCSVInputSpec extends Specification {
 
         and:
             ArrayList<ComponentPlacement> expectedPlacements = [
-                new ComponentPlacement(refdes: "Q2", name: "MMBT4401LT1", value: "", pattern:"SOT23", coordinate: new Coordinate(x: 24, y: 52.25), side: PCBSide.TOP, rotation: 270),
-                new ComponentPlacement(refdes: "Q3", name: "MMBT4401LT1", value: "", pattern:"SOT23", coordinate: new Coordinate(x: 41, y: 52.25), side: PCBSide.TOP, rotation: 90)
+                new ComponentPlacement(refdes: "Q2", name: "MMBT4401LT1", value: "", pattern:"SOT23", coordinate: new Coordinate(x: 24, y: 52.25), side: PCBSide.TOP, rotation: 270, optionalJob: Optional.empty()),
+                new ComponentPlacement(refdes: "Q3", name: "MMBT4401LT1", value: "", pattern:"SOT23", coordinate: new Coordinate(x: 41, y: 52.25), side: PCBSide.TOP, rotation: 90, optionalJob: Optional.empty())
             ]
 
         and:
@@ -59,9 +59,9 @@ class DipTracePlacementsCSVInputSpec extends Specification {
 
         and:
             ArrayList<ComponentPlacement> expectedPlacements = [
-                new ComponentPlacement(refdes: "Q2", name: "NAME", value: "", pattern:"SOT23", coordinate: new Coordinate(x: 2, y: 2), side: PCBSide.TOP, rotation: 0),
-                new ComponentPlacement(refdes: "Q3", name: "", value: "VALUE", pattern:"SOT23", coordinate: new Coordinate(x: 3, y: 3), side: PCBSide.TOP, rotation: 0),
-                new ComponentPlacement(refdes: "Q4", name: "NAME", value: "VALUE", pattern:"SOT23", coordinate: new Coordinate(x: 4, y: 4), side: PCBSide.TOP, rotation: 0),
+                new ComponentPlacement(refdes: "Q2", name: "NAME", value: "", pattern:"SOT23", coordinate: new Coordinate(x: 2, y: 2), side: PCBSide.TOP, rotation: 0, optionalJob: Optional.empty()),
+                new ComponentPlacement(refdes: "Q3", name: "", value: "VALUE", pattern:"SOT23", coordinate: new Coordinate(x: 3, y: 3), side: PCBSide.TOP, rotation: 0, optionalJob: Optional.empty()),
+                new ComponentPlacement(refdes: "Q4", name: "NAME", value: "VALUE", pattern:"SOT23", coordinate: new Coordinate(x: 4, y: 4), side: PCBSide.TOP, rotation: 0, optionalJob: Optional.empty()),
             ]
 
         and:
