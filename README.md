@@ -1,6 +1,6 @@
 # PNPConvert
 
-by Dominic Clifton. (C) 2018-2023
+by Dominic Clifton. (C) 2018-2024
 
 [![Build Status](https://travis-ci.com/hydra/pnpconvert.svg?branch=master)](https://travis-ci.com/hydra/pnpconvert)
 
@@ -25,7 +25,7 @@ Currently supported machines
 `pnpconvert <args>`
 
 ```
-PNPConvert (C) 2018-2023 Dominic Clifton
+PNPConvert (C) 2018-2024 Dominic Clifton
 Written by Dominic Clifton
 Usage: pnpconvert
   -c                        convert
@@ -306,7 +306,7 @@ DPVToGoogleSheets is a work-in-progress tool that will take an updated .dpv file
 `dpvtogooglesheets <args>`
 
 ```
-DPVtoGoogleSheets (C) 2023 Dominic Clifton
+DPVtoGoogleSheets (C) 2024 Dominic Clifton
 Written by Dominic Clifton
 Usage: dpvtogooglesheets
   -c=<credentials>    credentials json file/url
