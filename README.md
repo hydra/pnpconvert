@@ -25,9 +25,25 @@ Currently supported machines
 `pnpconvert <args>`
 
 ```
-PNPConvert (C) 2018-2024 Dominic Clifton
+PNPConvert (C) 2023-2024 Dominic Clifton
 Written by Dominic Clifton
 Usage: pnpconvert
+      -bblox=<boardBottomLeftOffsetX>
+                            origin X - left extent coord (e.g. 0.0 - 5.0 = -5.0)
+      -bbloy=<boardBottomLeftOffsetY>
+                            origin Y - bottom extent coord (e.g. 0.0 - 5.0 = -5.
+                              0)
+      -bd=<boardDepth>      Board thickness
+      -beox=<boardExportOffsetX>
+                            EDA export X offset (e.g. 10.0)
+      -beoy=<boardExportOffsetY>
+                            EDA export Y offset (e.g. 10.0)
+      -bh=<boardHeight>     Board height (not panel height)
+      -box=<boardExportOffsetX>
+                            EDA origin X (usually 0.0)
+      -boy=<boardExportOffsetY>
+                            EDA origin Y (usually 0.0)
+      -bw=<boardWidth>      Board width (not panel width)
   -c                        convert
       -cfg=<config>         configuration file (in "key=value" format)
       -co=<components>      components csv file/url
@@ -37,29 +53,36 @@ Usage: pnpconvert
                             Fiducial marker list (note,x,y[ ...])
       -ft                   Generate DPV containing all feeders
   -i=<input>                input csv file/url
+  -j=<job>                  job number
   -m=<mirroring>            mirroring mode (horizontal/vertical/both/none),
                               default is none
-      -mx=<mirroringX>      mirroring X origin
-      -my=<mirroringY>      mirroring Y origin
   -o=<output>               output prefix
-      -ox=<offsetX>         X offset, applied after rotation
-      -oy=<offsetY>         Y offset, applied after rotation
+      -ox=<offsetX>         X offset, applied after all other transformations
+      -oy=<offsetY>         Y offset, applied after all other transformations
       -oz=<offset>          Z offset, applied to all component heights -
                               increase for thicker PCBs
       -pix=<panelIntervalX> Interval spacing on the X axis
       -piy=<panelIntervalY> Interval spacing on the Y axis
       -pnx=<panelNumberX>   Number of PCBs on the X axis
       -pny=<panelNumberY>   Number of PCBs on the Y axis
+      -poy=<panelNumberY>   Number of PCBs on the Y axis
+      -prwb=<panelRailBottomWidth>
+                            Bottom/Front rail width
+      -prwl=<panelRailBottomWidth>
+                            Left rail width
+      -prwr=<panelRailBottomWidth>
+                            Right rail width
+      -prwt=<panelRailBottomWidth>
+                            Top/Rear rail width
   -r=<rotation>             rotation degrees (positive is clockwise)
       -rr=<replaceRefdes>...
                             Replace components by refdes ("refdes,value,name"[
                               ...])
-      -rx=<rotationX>       rotation X origin
-      -ry=<rotationY>       rotation Y origin
   -s=<side>                 pcb side (top|bottom|all), default is all
+      -st                   Show transforms in SVG
   -t=<trays>                trays csv file/url
   -v                        version
-```
+  ```
 
 PnPConvert also supports reading one or more files containing arguments, prefix each filename with an @ symbol.
 
