@@ -150,22 +150,20 @@ class SVGRenderer {
         drawStringCentered(fiducial.coordinate, fiducial.note, color, fiducialFont, noteOffset)
     }
 
-    void drawPanel(Optional<Panel> optionalPanel, Board board, Color color) {
+    void drawPanel(Optional<Panel> optionalPanel, Color color) {
         if (!optionalPanel.present) {
             return
         }
 
         Panel panel = optionalPanel.get()
-        BigDecimal panelGapX = panel.gapX(board)
-        BigDecimal panelGapY = panel.gapY(board)
 
         //
         // bounding box, with rails
         //
         svgGenerator.setColor(color)
 
-        BigDecimal panelWidthScaled = (panel.railWidthL + (panel.intervalX * panel.numberX - panelGapX) + panel.railWidthR) * scale
-        BigDecimal panelHeightScaled = (panel.railWidthT + (panel.intervalY * panel.numberY - panelGapY) + panel.railWidthB) * scale
+        BigDecimal panelWidthScaled = (panel.railWidthL + (panel.intervalX * panel.numberX - panel.gapX) + panel.railWidthR) * scale
+        BigDecimal panelHeightScaled = (panel.railWidthT + (panel.intervalY * panel.numberY - panel.gapY) + panel.railWidthB) * scale
         svgGenerator.drawRect(0, 0 - panelHeightScaled as int, panelWidthScaled as int, panelHeightScaled as int)
 
         //
@@ -173,8 +171,8 @@ class SVGRenderer {
         //
         svgGenerator.setColor(color)
 
-        BigDecimal innerWidthScaled = (panel.intervalX * panel.numberX - panelGapX) * scale
-        BigDecimal innerHeightScaled = (panel.intervalY * panel.numberY - panelGapY) * scale
+        BigDecimal innerWidthScaled = (panel.intervalX * panel.numberX - panel.gapX) * scale
+        BigDecimal innerHeightScaled = (panel.intervalY * panel.numberY - panel.gapY) * scale
         svgGenerator.drawRect(panel.railWidthL * scale as int, 0 - innerHeightScaled - (panel.railWidthB * scale) as int, innerWidthScaled as int, innerHeightScaled as int)
     }
 

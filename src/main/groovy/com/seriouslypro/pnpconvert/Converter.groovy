@@ -71,7 +71,7 @@ class Converter {
 
         if (showTransforms) svgRenderer.drawBoard(board, theme.original_board)
 
-        svgRenderer.drawPanel(optionalPanel, board, theme.panel)
+        svgRenderer.drawPanel(optionalPanel, theme.panel)
         svgRenderer.drawPancelBoards(optionalPanel, board, theme.panel_board)
         svgRenderer.drawFiducials(optionalFiducials, theme.fiducials)
 

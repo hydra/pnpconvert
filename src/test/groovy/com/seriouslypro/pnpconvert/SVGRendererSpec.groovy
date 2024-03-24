@@ -4,7 +4,7 @@ import spock.lang.Specification
 
 class SVGRendererSpec extends Specification {
 
-    // FUTURE currently requires visual inspection of artifacts
+    // FUTURE more assertions! - currently requires visual inspection of artifacts
     def draw() {
         given:
             Theme theme = new DarkTheme()
@@ -34,10 +34,11 @@ class SVGRendererSpec extends Specification {
                 railWidthR: 3,
                 railWidthT: 8,
                 railWidthB: 4,
-
-                width: 163.0G, // 6 + 50 + 2 + 50 + 2 + 50 + 3
-                height: 66.0G, // 4 + 25 + 4 + 25 + 8
             )
+            panel.applyBoard(board)
+            assert panel.width == 163.0G // 6 + 50 + 2 + 50 + 2 + 50 + 3
+            assert panel.height == 66.0G // 4 + 25 + 4 + 25 + 8
+
             Optional<Panel> optionalPanel = Optional.of(panel)
 
         and:
@@ -59,7 +60,7 @@ class SVGRendererSpec extends Specification {
             Theme
             renderer.drawBoard(board, theme.original_board)
 
-            renderer.drawPanel(optionalPanel, board, theme.panel)
+            renderer.drawPanel(optionalPanel, theme.panel)
             renderer.drawPancelBoards(optionalPanel, board, theme.panel_board)
             renderer.drawFiducials(optionalFiducials, theme.fiducials)
             renderer.drawOrigin(origin, theme.origin)

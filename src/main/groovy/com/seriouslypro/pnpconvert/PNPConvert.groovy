@@ -213,7 +213,7 @@ class PNPConvert {
                 System.exit(-1)
             }
 
-            optionalPanel = Optional.of(new Panel(
+            Panel panel = new Panel(
                 intervalX: options.pix as BigDecimal,
                 intervalY: options.piy as BigDecimal,
                 numberX: options.pnx as int,
@@ -222,7 +222,11 @@ class PNPConvert {
                 railWidthB: options.prwb as BigDecimal,
                 railWidthL: options.prwl as BigDecimal,
                 railWidthR: options.prwr as BigDecimal,
-            ))
+            )
+
+            panel.applyBoard(board)
+
+            optionalPanel = Optional.of(panel)
         }
 
         if (options.fm) {
