@@ -7,13 +7,16 @@ class DiptraceComponentPlacementTransformer implements ComponentPlacementTransfo
 
     SVGRenderer renderer
     Board board
+    Theme theme
     BoardRotation boardRotation
     BoardMirroring boardMirroring
     Coordinate offset
     Optional<Panel> optionalPanel
+    boolean showTransforms = false
 
-    DiptraceComponentPlacementTransformer(SVGRenderer renderer, Board board, BoardRotation boardRotation, BoardMirroring boardMirroring, Coordinate offset, Optional<Panel> optionalPanel) {
+    DiptraceComponentPlacementTransformer(SVGRenderer renderer, Theme theme, Board board, BoardRotation boardRotation, BoardMirroring boardMirroring, Coordinate offset, Optional<Panel> optionalPanel) {
         this.renderer = renderer
+        this.theme = theme
         this.board = board
         this.optionalPanel = optionalPanel
         this.boardRotation = boardRotation
@@ -34,20 +37,20 @@ class DiptraceComponentPlacementTransformer implements ComponentPlacementTransfo
         BigDecimal rotation = componentPlacement.rotation
 
         // render original position
-        renderer.drawPart(coordinate, Color.RED, componentPlacement.refdes, rotation)
+        if (showTransforms) renderer.drawPart(coordinate, Color.RED, componentPlacement.refdes, rotation)
 
         // apply board to bottom left and EDA export offset
         coordinate = coordinate + board.bottomLeftOffset
         coordinate = coordinate - board.exportOffset
 
-        renderer.drawPart(coordinate, Color.LIGHT_GRAY, componentPlacement.refdes, rotation)
+        if (showTransforms) renderer.drawPart(coordinate, Color.LIGHT_GRAY, componentPlacement.refdes, rotation)
 
         Coordinate centerOffset = new Coordinate(
             x: board.bottomLeftOffset.x + board.width / 2,
             y: board.bottomLeftOffset.y + board.height / 2,
         )
         coordinate = coordinate - centerOffset
-        renderer.drawPart(coordinate, Color.DARK_GRAY, componentPlacement.refdes, rotation)
+        if (showTransforms) renderer.drawPart(coordinate, Color.DARK_GRAY, componentPlacement.refdes, rotation)
 
         // apply board mirroring
         coordinate = boardMirroring.applyMirroring(coordinate)
@@ -55,21 +58,21 @@ class DiptraceComponentPlacementTransformer implements ComponentPlacementTransfo
         if (boardMirroring.mode != Mirroring.Mode.NONE) {
             rotation = 360.0 - componentPlacement.rotation.remainder(360.0)
         }
-        renderer.drawPart(coordinate, Color.YELLOW, componentPlacement.refdes, rotation)
+        if (showTransforms) renderer.drawPart(coordinate, Color.YELLOW, componentPlacement.refdes, rotation)
 
         // apply board rotation
         coordinate = boardRotation.applyRotation(coordinate)
         rotation = (rotation + boardRotation.degrees).remainder(360.0)
-        renderer.drawPart(coordinate, Color.BLUE, componentPlacement.refdes, rotation)
+        if (showTransforms) renderer.drawPart(coordinate, Color.BLUE, componentPlacement.refdes, rotation)
 
         // apply board origin
         coordinate = coordinate - boardRotation.origin
-        renderer.drawPart(coordinate, Color.PINK, componentPlacement.refdes, rotation)
+        if (showTransforms) renderer.drawPart(coordinate, Color.PINK, componentPlacement.refdes, rotation)
 
         // undo board to bottom left and center offsets
         coordinate = coordinate + centerOffset
         coordinate = coordinate - board.bottomLeftOffset
-        renderer.drawPart(coordinate, Color.CYAN, componentPlacement.refdes, rotation)
+        if (showTransforms) renderer.drawPart(coordinate, Color.CYAN, componentPlacement.refdes, rotation)
 
         // apply panel offset
         if (optionalPanel.present) {
@@ -80,13 +83,13 @@ class DiptraceComponentPlacementTransformer implements ComponentPlacementTransfo
             )
 
             coordinate = coordinate + panelOffset
-            renderer.drawPart(coordinate, Color.MAGENTA, componentPlacement.refdes, rotation)
+            if (showTransforms) renderer.drawPart(coordinate, Color.MAGENTA, componentPlacement.refdes, rotation)
         }
 
 
         // apply offset
         coordinate = coordinate + offset
-        renderer.drawPart(coordinate, Color.GREEN, componentPlacement.refdes, rotation)
+        renderer.drawPart(coordinate, theme.component, componentPlacement.refdes, rotation)
 
         ComponentPlacement transformedComponentPlacement = new ComponentPlacement(
             refdes: componentPlacement.refdes,

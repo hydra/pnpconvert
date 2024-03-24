@@ -2,14 +2,15 @@ package com.seriouslypro.pnpconvert
 
 import spock.lang.Specification
 
-import java.awt.Color
-
 class SVGRendererSpec extends Specification {
 
     // FUTURE currently requires visual inspection of artifacts
     def draw() {
         given:
-            SVGRenderer renderer = new SVGRenderer()
+            Theme theme = new DarkTheme()
+
+        and:
+            SVGRenderer renderer = new SVGRenderer(theme.background)
 
         and:
             Board board = new Board(
@@ -55,22 +56,23 @@ class SVGRendererSpec extends Specification {
             new File(fileName).parentFile.mkdirs()
 
         when:
-            renderer.drawBoard(board, Color.DARK_GRAY)
+            Theme
+            renderer.drawBoard(board, theme.original_board)
 
-            renderer.drawPanel(optionalPanel, board, Color.MAGENTA)
-            renderer.drawPCBs(optionalPanel, board, Color.GREEN)
-            renderer.drawFiducials(optionalFiducials, Color.ORANGE)
-            renderer.drawOrigin(origin, Color.BLUE)
+            renderer.drawPanel(optionalPanel, board, theme.panel)
+            renderer.drawPancelBoards(optionalPanel, board, theme.panel_board)
+            renderer.drawFiducials(optionalFiducials, theme.fiducials)
+            renderer.drawOrigin(origin, theme.origin)
 
-            renderer.drawPart(new Coordinate(x: panel.railWidthL + 12.5G, y: panel.railWidthB + 6.25G), Color.RED, "D1", 135.0G)
-            renderer.drawPart(new Coordinate(x: panel.railWidthL + 25.0G, y: panel.railWidthB + 6.25G), Color.RED, "D2", 90.0G)
-            renderer.drawPart(new Coordinate(x: panel.railWidthL + 37.5G, y: panel.railWidthB + 6.25G), Color.RED, "D3", 45.0G)
-            renderer.drawPart(new Coordinate(x: panel.railWidthL + 12.5G, y: panel.railWidthB + 12.5G), Color.RED, "D4", 180.0G)
-            renderer.drawPart(new Coordinate(x: panel.railWidthL + 25.0G, y: panel.railWidthB + 12.5G), Color.RED, "D5", 0.0G)
-            renderer.drawPart(new Coordinate(x: panel.railWidthL + 37.5G, y: panel.railWidthB + 12.5G), Color.RED, "D6", 360.0G)
-            renderer.drawPart(new Coordinate(x: panel.railWidthL + 12.5G, y: panel.railWidthB + 18.75G), Color.RED, "D7", 225.0G)
-            renderer.drawPart(new Coordinate(x: panel.railWidthL + 25.0G, y: panel.railWidthB + 18.75G), Color.RED, "D8", 270.0G)
-            renderer.drawPart(new Coordinate(x: panel.railWidthL + 37.5G, y: panel.railWidthB + 18.75G), Color.RED, "D9", 315.0G)
+            renderer.drawPart(new Coordinate(x: panel.railWidthL + 12.5G, y: panel.railWidthB + 6.25G), theme.component, "D1", 135.0G)
+            renderer.drawPart(new Coordinate(x: panel.railWidthL + 25.0G, y: panel.railWidthB + 6.25G), theme.component, "D2", 90.0G)
+            renderer.drawPart(new Coordinate(x: panel.railWidthL + 37.5G, y: panel.railWidthB + 6.25G), theme.component, "D3", 45.0G)
+            renderer.drawPart(new Coordinate(x: panel.railWidthL + 12.5G, y: panel.railWidthB + 12.5G), theme.component, "D4", 180.0G)
+            renderer.drawPart(new Coordinate(x: panel.railWidthL + 25.0G, y: panel.railWidthB + 12.5G), theme.component, "D5", 0.0G)
+            renderer.drawPart(new Coordinate(x: panel.railWidthL + 37.5G, y: panel.railWidthB + 12.5G), theme.component, "D6", 360.0G)
+            renderer.drawPart(new Coordinate(x: panel.railWidthL + 12.5G, y: panel.railWidthB + 18.75G), theme.component, "D7", 225.0G)
+            renderer.drawPart(new Coordinate(x: panel.railWidthL + 25.0G, y: panel.railWidthB + 18.75G), theme.component, "D8", 270.0G)
+            renderer.drawPart(new Coordinate(x: panel.railWidthL + 37.5G, y: panel.railWidthB + 18.75G), theme.component, "D9", 315.0G)
             renderer.save(fileName)
 
         then:

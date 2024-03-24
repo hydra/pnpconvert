@@ -3,8 +3,6 @@ package com.seriouslypro.pnpconvert
 import com.seriouslypro.csv.CSVProcessor
 import com.seriouslypro.pnpconvert.machine.Machine
 
-import java.awt.Color
-
 import static FileTools.*
 
 class Converter {
@@ -31,6 +29,8 @@ class Converter {
     List<RefdesReplacement> refdesReplacements
     Set<String> placementReferenceDesignatorsToDisable
 
+    boolean showTransforms = false
+
     private static final boolean append = false
 
     void convert() {
@@ -51,9 +51,11 @@ class Converter {
 
         String transformFileName = outputPrefix + "-transformed.csv"
 
-        SVGRenderer svgRenderer = new SVGRenderer()
+        Theme theme = new DarkTheme()
+        SVGRenderer svgRenderer = new SVGRenderer(theme.background)
 
-        ComponentPlacementTransformer transformer = new DiptraceComponentPlacementTransformer(svgRenderer, board, boardRotation, boardMirroring, offsetXY, optionalPanel)
+        ComponentPlacementTransformer transformer = new DiptraceComponentPlacementTransformer(svgRenderer, theme, board, boardRotation, boardMirroring, offsetXY, optionalPanel)
+        transformer.showTransforms = showTransforms
         ComponentPlacementWriter dipTraceComponentPlacementWriter = new DipTraceComponentPlacementWriter(transformFileName)
 
 
@@ -65,13 +67,13 @@ class Converter {
         List<ComponentPlacement> placements = csvProcessor.process(inputFileName)
 
         Coordinate zeroZeroPoint = new Coordinate(x: 0, y: 0)
-        svgRenderer.drawOrigin(zeroZeroPoint, Color.BLACK)
+        svgRenderer.drawOrigin(zeroZeroPoint, theme.origin)
 
-        svgRenderer.drawBoard(board, Color.LIGHT_GRAY)
+        if (showTransforms) svgRenderer.drawBoard(board, theme.original_board)
 
-        svgRenderer.drawPanel(optionalPanel, board, Color.MAGENTA)
-        svgRenderer.drawPCBs(optionalPanel, board, Color.GREEN)
-        svgRenderer.drawFiducials(optionalFiducials, Color.ORANGE)
+        svgRenderer.drawPanel(optionalPanel, board, theme.panel)
+        svgRenderer.drawPancelBoards(optionalPanel, board, theme.panel_board)
+        svgRenderer.drawFiducials(optionalFiducials, theme.fiducials)
 
         String svgFileName = outputPrefix + ".svg"
         svgRenderer.save(svgFileName)

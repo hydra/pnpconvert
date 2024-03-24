@@ -58,6 +58,8 @@ class PNPConvert {
 
         builder.fm(args:'+', argName: 'fiducialMarkers','Fiducial marker list (note,x,y[ ...])')
 
+        builder.st('Show transforms in SVG')
+
         builder.ft('Generate DPV containing all feeders')
         builder.c('convert')
 
@@ -240,6 +242,8 @@ class PNPConvert {
             sideInclusion = parseSideInclusion(options.s)
         }
 
+        boolean showTransforms = (options.st)
+
         if (options.c) {
             Converter converter = new Converter(
                 machine: machine,
@@ -259,6 +263,7 @@ class PNPConvert {
                 refdesReplacements: refdesReplacements,
                 placementReferenceDesignatorsToDisable: placementReferenceDesignatorsToDisable,
                 optionalJob: optionalJob,
+                showTransforms: showTransforms,
             )
             converter.convert()
             System.exit(0);
