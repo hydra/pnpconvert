@@ -6,12 +6,16 @@ import java.awt.Color
 class DiptraceComponentPlacementTransformer implements ComponentPlacementTransformer {
 
     SVGRenderer renderer
+    Board board
     BoardRotation boardRotation
     BoardMirroring boardMirroring
     Coordinate offset
+    Optional<Panel> optionalPanel
 
-    DiptraceComponentPlacementTransformer(SVGRenderer renderer, BoardRotation boardRotation, BoardMirroring boardMirroring, Coordinate offset) {
+    DiptraceComponentPlacementTransformer(SVGRenderer renderer, Board board, BoardRotation boardRotation, BoardMirroring boardMirroring, Coordinate offset, Optional<Panel> optionalPanel) {
         this.renderer = renderer
+        this.board = board
+        this.optionalPanel = optionalPanel
         this.boardRotation = boardRotation
         this.boardMirroring = boardMirroring
         this.offset = offset
@@ -26,39 +30,70 @@ class DiptraceComponentPlacementTransformer implements ComponentPlacementTransfo
 
     private ComponentPlacement transformAndRender(SVGRenderer renderer, ComponentPlacement componentPlacement) {
 
+        Coordinate coordinate = componentPlacement.coordinate
+        BigDecimal rotation = componentPlacement.rotation
+
         // render original position
-        renderer.drawPart(Color.RED, componentPlacement.coordinate, componentPlacement.refdes, componentPlacement.rotation)
+        renderer.drawPart(coordinate, Color.RED, componentPlacement.refdes, rotation)
+
+        // apply board to bottom left and EDA export offset
+        coordinate = coordinate + board.bottomLeftOffset
+        coordinate = coordinate - board.exportOffset
+
+        renderer.drawPart(coordinate, Color.LIGHT_GRAY, componentPlacement.refdes, rotation)
+
+        Coordinate centerOffset = new Coordinate(
+            x: board.bottomLeftOffset.x + board.width / 2,
+            y: board.bottomLeftOffset.y + board.height / 2,
+        )
+        coordinate = coordinate - centerOffset
+        renderer.drawPart(coordinate, Color.DARK_GRAY, componentPlacement.refdes, rotation)
 
         // apply board mirroring
-        Coordinate mirroredCoordinate = boardMirroring.applyMirroring(componentPlacement.coordinate)
-        BigDecimal mirroredRotation
+        coordinate = boardMirroring.applyMirroring(coordinate)
+
         if (boardMirroring.mode != Mirroring.Mode.NONE) {
-            mirroredRotation = 360 - componentPlacement.rotation.remainder(360)
-        } else {
-            mirroredRotation = componentPlacement.rotation
+            rotation = 360.0 - componentPlacement.rotation.remainder(360.0)
         }
-        renderer.drawPart(Color.YELLOW, mirroredCoordinate, componentPlacement.refdes, mirroredRotation)
+        renderer.drawPart(coordinate, Color.YELLOW, componentPlacement.refdes, rotation)
 
         // apply board rotation
-        Coordinate rotatedCoordinate = boardRotation.applyRotation(mirroredCoordinate)
-        BigDecimal rotatedRotation = (mirroredRotation + boardRotation.degrees).remainder(360)
-        renderer.drawPart(Color.BLUE, rotatedCoordinate, componentPlacement.refdes, rotatedRotation)
-
+        coordinate = boardRotation.applyRotation(coordinate)
+        rotation = (rotation + boardRotation.degrees).remainder(360.0)
+        renderer.drawPart(coordinate, Color.BLUE, componentPlacement.refdes, rotation)
 
         // apply board origin
-        Coordinate relocatedCoordinate = rotatedCoordinate - boardRotation.origin
-        renderer.drawPart(Color.PINK, rotatedCoordinate, componentPlacement.refdes, rotatedRotation)
+        coordinate = coordinate - boardRotation.origin
+        renderer.drawPart(coordinate, Color.PINK, componentPlacement.refdes, rotation)
+
+        // undo board to bottom left and center offsets
+        coordinate = coordinate + centerOffset
+        coordinate = coordinate - board.bottomLeftOffset
+        renderer.drawPart(coordinate, Color.CYAN, componentPlacement.refdes, rotation)
+
+        // apply panel offset
+        if (optionalPanel.present) {
+            Panel panel = optionalPanel.get()
+            Coordinate panelOffset = new Coordinate(
+                x: panel.railWidthL,
+                y: panel.railWidthB,
+            )
+
+            coordinate = coordinate + panelOffset
+            renderer.drawPart(coordinate, Color.MAGENTA, componentPlacement.refdes, rotation)
+        }
+
 
         // apply offset
-        Coordinate relocatedCoordinateWithOffset = relocatedCoordinate + offset
-        renderer.drawPart(Color.GREEN, relocatedCoordinateWithOffset, componentPlacement.refdes, rotatedRotation)
+        coordinate = coordinate + offset
+        renderer.drawPart(coordinate, Color.GREEN, componentPlacement.refdes, rotation)
 
         ComponentPlacement transformedComponentPlacement = new ComponentPlacement(
             refdes: componentPlacement.refdes,
             pattern: componentPlacement.pattern,
-            coordinate: relocatedCoordinateWithOffset,
+            coordinate: coordinate,
             side: componentPlacement.side,
-            rotation: rotatedRotation,
+            rotation: rotation,
             value: componentPlacement.value,
             name: componentPlacement.name
         )

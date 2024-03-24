@@ -17,6 +17,7 @@ class Converter {
 
     Machine machine
 
+    Board board
     BoardRotation boardRotation = new BoardRotation()
     BoardMirroring boardMirroring = new BoardMirroring()
     Coordinate offsetXY = new Coordinate()
@@ -52,7 +53,7 @@ class Converter {
 
         SVGRenderer svgRenderer = new SVGRenderer()
 
-        ComponentPlacementTransformer transformer = new DiptraceComponentPlacementTransformer(svgRenderer, boardRotation, boardMirroring, offsetXY)
+        ComponentPlacementTransformer transformer = new DiptraceComponentPlacementTransformer(svgRenderer, board, boardRotation, boardMirroring, offsetXY, optionalPanel)
         ComponentPlacementWriter dipTraceComponentPlacementWriter = new DipTraceComponentPlacementWriter(transformFileName)
 
 
@@ -63,11 +64,20 @@ class Converter {
 
         List<ComponentPlacement> placements = csvProcessor.process(inputFileName)
 
+        Coordinate zeroZeroPoint = new Coordinate(x: 0, y: 0)
+        svgRenderer.drawOrigin(zeroZeroPoint, Color.BLACK)
+
+        svgRenderer.drawBoard(board, Color.LIGHT_GRAY)
+
+        svgRenderer.drawPanel(optionalPanel, board, Color.MAGENTA)
+        svgRenderer.drawPCBs(optionalPanel, board, Color.GREEN)
         svgRenderer.drawFiducials(optionalFiducials, Color.ORANGE)
-        svgRenderer.drawPanel(optionalPanel, Color.MAGENTA)
 
         String svgFileName = outputPrefix + ".svg"
         svgRenderer.save(svgFileName)
+
+        System.out.println()
+        System.out.println("rendered SVG, svgFileName: '$svgFileName'")
 
         //
         // Disable components by refdes

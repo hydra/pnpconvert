@@ -116,6 +116,7 @@ class ConverterSpec extends Specification implements TestResources {
         converter.feedersFileName = feedersFile.absolutePath
 
         converter.optionalPanel = Optional.empty()
+        converter.board = new Board()
         converter.optionalFiducials = Optional.empty()
 
         converter.machine = new TestMachine()

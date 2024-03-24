@@ -8,4 +8,19 @@ class Panel {
     BigDecimal intervalY // as above, but for Y axis.
     int numberX // number of designs on X axis.
     int numberY // as above, but for Y axis.
+    BigDecimal railWidthT // top/rear rail width
+    BigDecimal railWidthB // bottom/fromt rail width
+    BigDecimal railWidthL // left rail width
+    BigDecimal railWidthR // right rail width
+
+    BigDecimal width // X
+    BigDecimal height // Y
+
+    BigDecimal gapX(Board board) {
+        intervalX - board.width
+    }
+
+    BigDecimal gapY(Board board) {
+        intervalY - board.height
+    }
 }

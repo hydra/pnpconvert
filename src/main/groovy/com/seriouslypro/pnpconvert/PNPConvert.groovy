@@ -23,18 +23,27 @@ class PNPConvert {
         builder.co(args:1, argName: 'components', 'components csv file/url')
         builder.r(args:1, argName: 'rotation', 'rotation degrees (positive is clockwise)')
         builder.s(args:1, argName: 'side', 'pcb side (top|bottom|all), default is all')
-
-        builder.rx(args:1, argName: 'rotationX', 'rotation X origin')
-        builder.ry(args:1, argName: 'rotationY', 'rotation Y origin')
-
         builder.m(args:1, argName: 'mirroring', 'mirroring mode (horizontal/vertical/both/none), default is none')
-        builder.mx(args:1, argName: 'mirroringX', 'mirroring X origin')
-        builder.my(args:1, argName: 'mirroringY', 'mirroring Y origin')
 
-        builder.ox(args:1, argName: 'offsetX', 'X offset, applied after rotation')
-        builder.oy(args:1, argName: 'offsetY', 'Y offset, applied after rotation')
+        builder.ox(args:1, argName: 'offsetX', 'X offset, applied after all other transformations')
+        builder.oy(args:1, argName: 'offsetY', 'Y offset, applied after all other transformations')
         builder.oz(args:1, argName: 'offset', 'Z offset, applied to all component heights - increase for thicker PCBs')
 
+        builder.bw(args:1, argName: 'boardWidth','Board width (not panel width)')
+        builder.bh(args:1, argName: 'boardHeight','Board height (not panel height)')
+        builder.bd(args:1, argName: 'boardDepth','Board thickness')
+        builder.box(args:1, argName: 'boardExportOffsetX', 'EDA origin X (usually 0.0)')
+        builder.boy(args:1, argName: 'boardExportOffsetY', 'EDA origin Y (usually 0.0)')
+        builder.beox(args:1, argName: 'boardExportOffsetX', 'EDA export X offset (e.g. 10.0)')
+        builder.beoy(args:1, argName: 'boardExportOffsetY', 'EDA export Y offset (e.g. 10.0)')
+        builder.bblox(args:1, argName: 'boardBottomLeftOffsetX', 'origin X - left extent coord (e.g. 0.0 - 5.0 = -5.0)')
+        builder.bbloy(args:1, argName: 'boardBottomLeftOffsetY', 'origin Y - bottom extent coord (e.g. 0.0 - 5.0 = -5.0)')
+
+        builder.prwt(args:1, argName: 'panelRailBottomWidth','Top/Rear rail width')
+        builder.prwb(args:1, argName: 'panelRailBottomWidth','Bottom/Front rail width')
+        builder.prwl(args:1, argName: 'panelRailBottomWidth','Left rail width')
+        builder.prwr(args:1, argName: 'panelRailBottomWidth','Right rail width')
+        builder.poy(args:1, argName: 'panelNumberY','Number of PCBs on the Y axis')
         builder.pnx(args:1, argName: 'panelNumberX','Number of PCBs on the X axis')
         builder.pny(args:1, argName: 'panelNumberY','Number of PCBs on the Y axis')
         builder.pix(args:1, argName: 'panelIntervalX','Interval spacing on the X axis')
@@ -85,6 +94,7 @@ class PNPConvert {
         String feedersFileName = config.getOrDefault("feeders","feeders.csv")
         String componentsFileName = config.getOrDefault("components","components.csv")
 
+        Board board = new Board()
         BoardRotation boardRotation = new BoardRotation()
         BoardMirroring boardMirroring = new BoardMirroring()
         Coordinate offsetXY = new Coordinate()
@@ -126,24 +136,52 @@ class PNPConvert {
             boardRotation.degrees = options.r as BigDecimal
         }
 
-        if (options.rx ) {
-            boardRotation.origin.x = (options.rx as BigDecimal)
+        if (options.bw ) {
+            board.height = (options.bh as BigDecimal)
         }
 
-        if (options.ry) {
-            boardRotation.origin.y = (options.ry as BigDecimal)
+        if (options.bh) {
+            board.width = (options.bw as BigDecimal)
+        }
+
+        if (options.bd) {
+            board.depth = (options.bd as BigDecimal)
+        }
+
+        if (options.box ) {
+            board.origin.x = (options.box as BigDecimal)
+        }
+
+        if (options.boy) {
+            board.origin.y = (options.boy as BigDecimal)
+        }
+
+        if (options.beox ) {
+            board.exportOffset.x = (options.beox as BigDecimal)
+        }
+
+        if (options.beoy) {
+            board.exportOffset.y = (options.beoy as BigDecimal)
+        }
+
+        if (options.beox ) {
+            board.exportOffset.x = (options.beox as BigDecimal)
+        }
+
+        if (options.beoy) {
+            board.exportOffset.y = (options.beoy as BigDecimal)
+        }
+
+        if (options.bblox ) {
+            board.bottomLeftOffset.x = (options.bblox as BigDecimal)
+        }
+
+        if (options.bbloy) {
+            board.bottomLeftOffset.y = (options.bbloy as BigDecimal)
         }
 
         if (options.m) {
             boardMirroring.mode = parseMirroring(options.m)
-        }
-
-        if (options.mx ) {
-            boardMirroring.origin.x = (options.mx as BigDecimal)
-        }
-
-        if (options.my) {
-            boardMirroring.origin.y = (options.my as BigDecimal)
         }
 
         if (options.ox ) {
@@ -163,9 +201,11 @@ class PNPConvert {
             placementReferenceDesignatorsToDisable = allDRValues.split(',').collect { it.trim().toUpperCase() }.unique()
         }
 
-        boolean havePanelOption = (options.pix || options.piy || options.pnx || options.pny)
-        if (havePanelOption) {
-            boolean haveRequiredPanelOptions = options.pix && options.piy && options.pnx && options.pny
+        boolean haveAnyPanelOption = (options.pix || options.piy || options.pnx || options.pny ||
+            options.prwt || options.prwb || options.prwl || options.prwr)
+        if (haveAnyPanelOption) {
+            boolean haveRequiredPanelOptions = options.pix && options.piy && options.pnx && options.pny &&
+                options.prwt && options.prwb && options.prwl && options.prwr
             if (!haveRequiredPanelOptions) {
                 builder.usage()
                 System.exit(-1)
@@ -176,6 +216,10 @@ class PNPConvert {
                 intervalY: options.piy as BigDecimal,
                 numberX: options.pnx as int,
                 numberY: options.pny as int,
+                railWidthT: options.prwt as BigDecimal,
+                railWidthB: options.prwb as BigDecimal,
+                railWidthL: options.prwl as BigDecimal,
+                railWidthR: options.prwr as BigDecimal,
             ))
         }
 
@@ -204,6 +248,7 @@ class PNPConvert {
                 feedersFileName: feedersFileName,
                 componentsFileName: componentsFileName,
                 outputPrefix: outputPrefix,
+                board: board,
                 boardRotation: boardRotation,
                 boardMirroring: boardMirroring,
                 offsetXY: offsetXY,
