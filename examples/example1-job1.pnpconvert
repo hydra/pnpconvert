@@ -1,15 +1,36 @@
 -cfg examples/example1-google-sheets.config
 -i examples/example1.csv
--o examples/example1-270-with-rails
+-o examples/example1-2x1-panel-with-rails
 -c
--r 270
--rx 70
--ry 0
--ox 105
--oy 75
--fm RL,10,87 FR,105,3
--pix 5
--piy 10
--pnx 3
--pny 2
+
+# uncomment to show transforms
+#-st
+
+# board
+-bblox -35
+-bbloy -50
+-bw 70
+-bh 100
+
+# NOTE: rotation doesn't yet apply to the panel or fiducials so SVG output won't be correct.
+# panel
+# intervals includes 5mm gap between boards
+-pix 75
+-piy 105
+-pnx 2
+-pny 1
+# 5mm rails on all 4 sides
+-prwl 5
+-prwr 5
+-prwt 5
+-prwb 5
+
+# fiducials
+-fm RL,10,107.5 FR,145,2.5
+
+# arbitrary offset
+-ox 0
+-oy 0
+
+
 -s TOP
