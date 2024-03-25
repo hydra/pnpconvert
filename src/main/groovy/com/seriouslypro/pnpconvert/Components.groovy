@@ -19,8 +19,8 @@ class PartCodeAndManufacturerMatchingStrategy implements MatchingStrategy {
 
     @Override
     boolean matches(Component candidate, ComponentPlacement componentPlacement) {
-        candidate.partCode &&
-            componentPlacement.partCode &&
+        candidate.partCode && componentPlacement.partCode &&
+            candidate.manufacturer && componentPlacement.manufacturer &&
             candidate.partCode == componentPlacement.partCode &&
             candidate.manufacturer == componentPlacement.manufacturer
     }
