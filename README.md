@@ -25,7 +25,7 @@ Currently supported machines
 `pnpconvert <args>`
 
 ```
-PNPConvert (C) 2023-2024 Dominic Clifton
+PNPConvert (C) 2018-2024 Dominic Clifton
 Written by Dominic Clifton
 Usage: pnpconvert
       -bblox=<boardBottomLeftOffsetX>
