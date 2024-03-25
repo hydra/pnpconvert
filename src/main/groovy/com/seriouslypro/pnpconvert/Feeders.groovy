@@ -162,6 +162,10 @@ class Feeders {
                 }
 
                 String description = rowValues[columnIndex(context, FeederCSVColumn.DESCRIPTION)].trim()
+                String partCode = (hasColumn(FeederCSVColumn.PART_CODE) && rowValues[columnIndex(context, FeederCSVColumn.PART_CODE)]) ?
+                        rowValues[columnIndex(context, FeederCSVColumn.PART_CODE)].trim() : null
+                String manufacturer = (hasColumn(FeederCSVColumn.MANUFACTURER) && rowValues[columnIndex(context, FeederCSVColumn.MANUFACTURER)]) ?
+                        rowValues[columnIndex(context, FeederCSVColumn.MANUFACTURER)].trim() : null
                 boolean enabled = rowValues[columnIndex(context, FeederCSVColumn.ENABLED)].toBoolean()
 
                 Set<String> flags = []
@@ -183,6 +187,8 @@ class Feeders {
                         fixedId: id,
                         enabled: enabled,
                         tray: tray,
+                        partCode: partCode,
+                        manufacturer: manufacturer,
                         description: description,
                         note: note,
                         pickSettings: pickSettings
@@ -198,6 +204,8 @@ class Feeders {
                     feeder = Optional.of(new ReelFeeder(
                         fixedId: id,
                         enabled: enabled,
+                        partCode: partCode,
+                        manufacturer: manufacturer,
                         description: description,
                         note: note,
                         tapeWidth: rowValues[columnIndex(context, FeederCSVColumn.TAPE_WIDTH)] as Integer,
