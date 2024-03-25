@@ -252,17 +252,17 @@ Fields requiring additional documentation are as below.
 
 ### Columns
 
-| Column | Unit | Notes                                                                                                                                 |
-| ------ | -----| ------------------------------------------------------------------------------------------------------------------------------------- |
-| FLAGS  | comma separated list | List of flags                                                                                                         |
-| ID     | Integer | Required for left/right/front/vibration feeders, optional for "IC tray" feeders.                                                   |
-| Enabled | Boolean | Allows the component to be skipped                                                                                                |
-| Tray Name | String | Value should correspond with the name of a tray in the Trays CSV file.  A feeder is a 'Tray Feeder' if this field is specified'  |
-| Tape Width | Integer, Centimeters | Ignored for Tray feeders.  Still useful for Tray Feeders when using cut-tape in tray feeders.                     |
-| Tape Spacing | Integer, Centimeters | Ignored for Tray feeders.  Still useful for Tray Feeders when using cut-tape in tray feeders.                   |
-| Place Speed | Integer, Percentage | 0 is invalid.                                                                                                     |
-| Place Delay | Milliseconds, Delay after extending head and before retracting head.                                                                    |
-| Take Delay | Milliseconds, Delay in milliseconds
+| Column       | Unit                  | Notes                                                                                                                           |
+|--------------|-----------------------|---------------------------------------------------------------------------------------------------------------------------------|
+| FLAGS        | comma separated list  | List of flags                                                                                                                   |
+| ID           | Integer               | Required for left/right/front/vibration feeders, optional for "IC tray" feeders.                                                |
+| Enabled      | Boolean               | Allows the component to be skipped                                                                                              |
+| Tray Name    | String                | Value should correspond with the name of a tray in the Trays CSV file.  A feeder is a 'Tray Feeder' if this field is specified' |
+| Tape Width   | Integer, Centimeters  | Ignored for Tray feeders.  Still useful for Tray Feeders when using cut-tape in tray feeders.                                   |
+| Tape Spacing | Integer, Centimeters  | Ignored for Tray feeders.  Still useful for Tray Feeders when using cut-tape in tray feeders.                                   |
+| Place Speed  | Integer, Percentage   | 0 is invalid.                                                                                                                   |
+| Place Delay  | Integer, Milliseconds | Delay after extending head and before retracting head.                                                                          |
+| Take Delay   | Integer, Milliseconds | Delay in milliseconds.                                                                                                          |
 
 ### Values
 
@@ -320,6 +320,44 @@ e.g.
 
 Reference: https://docs.gradle.org/current/userguide/application_plugin.html
 
+## Known issues
+
+### Diptrace 3.x does not quote strings in CSV files
+
+Workaround: If you have a pattern, component name or component value containing a ',' the program will not work.  Remove commas as appropriate.
+Future: allow user to specify diptrace CSV separator
+Note: Diptrace 4.x fixed this.
+
+### Commas in component names, notes etc.
+
+Background: commas cause issues with DPV generation.
+Workaround: remove them
+Future: discard/replace when found on input files and warn user.
+
+### Negative rotations
+
+Workaround: always specify positive rotation values, i.e. 270, not -90
+
+### Pick angle and vision system conflict.
+
+When the pick angle is not a right-angle the pick angle will be corrected to the nearest 90 degrees by the vision system
+and then the machine angle is applied to the placement.
+
+i.e. If you have a component in a feeder at an angle of 45 degrees the vision system could correct the pick clockwise or anti-clockwise to the nearest right-angle.
+
+If vision is not used then the pick angles that are not 0/90/180/270 can be used.
+
+If you use vision and non-right-angle pick angles your results won't be as expected.
+
+It is unknown if setting the width and height on rectangular components to the correct values helps with the vision correction. Experimentation required.
+Still, that doesn't help with square components, like ICs, inductors, etc.
+
+## Would-be-nice
+
+* apply rotation/mirroring to panel, fiducials, currently rotation/mirroring only applies to components.
+* Set units for SVG display
+* Replace specific components by reference designator.
+
 # DPVToGoogleSheets
 
 DPVToGoogleSheets is a work-in-progress tool that will take an updated .dpv file from the PnP machine and update google sheets documents with the changes.
@@ -352,12 +390,16 @@ After running the tool, check it's output to see what it changed.
 You can also use the built-in version history of the google sheet by opening the sheet
 in google sheets, then file/version history, then checking the highlighted cells of the latest version
 
-## Common issues
+## Troubleshooting
 
 ### Bad Request: 'invalid_grant'
 
 * Delete the `tokens/StoredCredential` file and login again.
 * Check the credentials json file is correct.
+
+# Future Technology updates
+
+##  Groovy 2.5 cli builder - https://picocli.info/groovy-2.5-clibuilder-renewal.html
 
 # License
 
