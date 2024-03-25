@@ -104,22 +104,23 @@ trays=https://docs.google.com/spreadsheet/ccc?key=1-bZiPxQy2budCd0ny81PV6aGKu4q8
 ## Examples
 
 Example1 has board width of 70 and height of 100, PCB origin is the center.
+Offset from center to bottom left is -35,-50. 
 When exported "Use PCB origin" was NOT selected, so the bottom left component has a position is closest to 0,0.
-U1 is at the PCB origin but in the CSV file it's coordinates are relative to the bottom left component.
+U1 is at the PCB origin but in the CSV file its coordinates are relative to the bottom left component.
 
 
 * Rotate example1 90 degrees
 
-`pnpconvert -i examples/example1.csv -o example1-90 -r 90 -rx 70 -ry 0 -c`
+`pnpconvert -i examples/example1.csv -o example1-90 -r 90 -bblox -35 -bbloy -50 -bw 70 -bh 100 -c`
 
 
 * Rotate example1 90 degrees and add 5mm rails
 
-`pnpconvert -i examples/example1.csv -o example1-90-with-rails -r 90 -rx 70 -ry 0 -oy 5 -ox 5 -c`
+`pnpconvert -i examples/example1.csv -o example1-90-with-rails -r 90 -bblox -35 -bbloy -50 -bw 70 -bh 100 -oy 5 -ox 5 -c`
 
 * Rotate example1 270 degrees and add 5mm rails
 
-`pnpconvert -i examples/example1.csv -o example1-270-with-rails -r 270 -rx 70 -ry 0 -ox 105 -oy 75 -c`
+`pnpconvert -i examples/example1.csv -o example1-270-with-rails -r 270 -bblox -35 -bbloy -50 -bw 70 -bh 100 -ox 5 -oy 5 -c`
 
 * Apply a 0.5mm Z offset to when placing parts.
 
@@ -140,8 +141,12 @@ Note: PCB width and height has to be added to offsets to avoid negative componen
 `-i examples/example1.csv -o example1-270-with-rails -cfg examples/example1-google-sheets.properties -r 270 -rx 70 -ry 0 -ox 105 -oy 75 -c`
 
 * Use per-machine and per-project argument files.
+
+Note: it's also possible to include another argument file from within an argument file, by prefixing the filename with an `@` symbol.
+
 ```
-pnpconvert @machine-settings.pnpconvert @projects/my-project.pnpconvert -s TOP -c
+pnpconvert @machine-settings.pnpconvert @projects/my-project-top.pnpconvert -c
+pnpconvert @machine-settings.pnpconvert @projects/my-project-bottom.pnpconvert -c
 ```
 
 `machine-settings.pnpconvert` file content:
@@ -149,15 +154,50 @@ pnpconvert @machine-settings.pnpconvert @projects/my-project.pnpconvert -s TOP -
 -f feeders.csv
 -t trays.csv
 -co components.csv
+-ox 5
+-oy 5
 ```
 
-`projects/my-project.pnpconvert` file content:
+`projects/my-project-top.pnpconvert` file content:
 ```
 -i projects/my-project.csv
 -o projects/my-project
--r 90
--ox 5
--oy 5
+@project/my-project.panel
+-s TOP
+```
+
+`projects/my-project-bottom.pnpconvert` file content:
+```
+-i projects/my-project.csv
+-o projects/my-project
+@projects/my-project.panel
+-s BOTTOM
+-r 180
+-m HORIZONTAL
+```
+
+`projects/my-project.panel` file content:
+```
+# board
+-bblox -35
+-bbloy -50
+-bw 70
+-bh 100
+
+# panel
+# intervals includes 5mm gap between boards
+-pix 75
+-piy 105
+-pnx 2
+-pny 1
+# 5mm rails on all 4 sides
+-prwl 5
+-prwr 5
+-prwt 5
+-prwb 5
+
+# fiducials
+-fm RL,10,107.5 FR,145,2.5
 ```
 
 * Fiducial markers
