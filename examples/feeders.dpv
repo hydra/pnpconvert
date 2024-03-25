@@ -1,13 +1,15 @@
 separated
-FILE,examples/example1-270-with-rails.dpv
-PCBFILE,examples/example1.csv
+FILE,examples/feeders.dpv
+PCBFILE,NONE
 DATE,2024/03/25
-TIME,01:25:33
+TIME,01:47:50
 PANELYPE,0
 
 Table,No.,ID,DeltX,DeltY,FeedRates,Note,Height,Speed,Status,SizeX,SizeY,HeightTake,DelayTake,nPullStripSpeed
 
-Station,0,88,0,0,4,STM32F030C8T,2,100,14,700,700,0,20,0
+Station,0,36,-0.07,0.35,2,10K 0402 1%/RES_0402 - RH,0.5,100,7,50,100,25,0,0
+
+Station,1,88,0,0,4,STM32F030C8T,2,100,14,700,700,0,20,0
 
 
 
@@ -19,13 +21,9 @@ Panel_Coord,0,1,0,0
 
 Table,No.,ID,PHead,STNo.,DeltX,DeltY,Angle,Height,Skip,Speed,Explain,Note,Delay
 
-EComponent,0,1,2,88,140,125,-90,2,14,100,U1,/STM32F030C8T,0
-
 
 
 Table,No.,ID,CenterX,CenterY,IntervalX,IntervalY,NumX,NumY,Start,Name,Component
-
-ICTray,0,88,205.07,61.05,277.1,61.11,4,1,0,B-1-4-TL,STM32F030C8T
 
 
 
