@@ -15,6 +15,27 @@ interface MatchingStrategy {
     boolean isExactMatch()
 }
 
+class PartCodeAndManufacturerMatchingStrategy implements MatchingStrategy {
+
+    @Override
+    boolean matches(Component candidate, ComponentPlacement componentPlacement) {
+        candidate.partCode &&
+            componentPlacement.partCode &&
+            candidate.partCode == componentPlacement.partCode &&
+            candidate.manufacturer == componentPlacement.manufacturer
+    }
+
+    @Override
+    boolean matches(Component candidate, String name) {
+        return false
+    }
+
+    @Override
+    boolean isExactMatch() {
+        return true
+    }
+}
+
 class DiptraceMatchingStrategy implements MatchingStrategy {
 
     DipTraceComponentNameBuilder diptraceComponentNameBuilder = new DipTraceComponentNameBuilder()
@@ -96,6 +117,7 @@ class AliasMatchingStrategy implements MatchingStrategy {
 class Components {
     List<Component> components = []
     List<MatchingStrategy> matchingStrategies = [
+        new PartCodeAndManufacturerMatchingStrategy(),
         new DiptraceMatchingStrategy(),
         new DiptraceAliasMatchingStrategy(),
         new AliasMatchingStrategy(),
@@ -135,6 +157,8 @@ class Components {
     }
 
     static enum ComponentCSVColumn implements CSVColumn<ComponentCSVColumn> {
+        PART_CODE,
+        MANUFACTURER,
         NAME,
         WIDTH(["WIDTH/X", "X","WIDTH (X)"]),
         LENGTH(["LENGTH/Y", "Y","LENGTH (Y)"]),
@@ -159,6 +183,8 @@ class Components {
                 BigDecimal placementOffsetY = (hasColumn(ComponentCSVColumn.PLACEMENT_OFFSET_Y) && rowValues[columnIndex(context, ComponentCSVColumn.PLACEMENT_OFFSET_Y)]) ? rowValues[columnIndex(context, ComponentCSVColumn.PLACEMENT_OFFSET_Y)] as BigDecimal : 0
 
                 return new Component(
+                    partCode: rowValues[columnIndex(context, ComponentCSVColumn.PART_CODE)].trim(),
+                    manufacturer: rowValues[columnIndex(context, ComponentCSVColumn.MANUFACTURER)].trim(),
                     name: rowValues[columnIndex(context, ComponentCSVColumn.NAME)].trim(),
                     width: rowValues[columnIndex(context, ComponentCSVColumn.WIDTH)] as BigDecimal,
                     length: rowValues[columnIndex(context, ComponentCSVColumn.LENGTH)] as BigDecimal,

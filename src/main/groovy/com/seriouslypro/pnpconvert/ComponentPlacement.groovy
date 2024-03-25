@@ -13,6 +13,8 @@ enum PCBSide {
 class ComponentPlacement {
     boolean enabled = true
     String refdes
+    String partCode
+    String manufacturer
     String name
     String value
     String pattern

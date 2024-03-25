@@ -6,6 +6,8 @@ import groovy.transform.ToString
 @ToString(includeNames = true, includePackage = false)
 @EqualsAndHashCode
 class Component {
+    String partCode
+    String manufacturer
     String name
     BigDecimal width = 0            // mm
     BigDecimal length = 0           // mm

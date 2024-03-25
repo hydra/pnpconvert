@@ -243,11 +243,21 @@ class DPVWriter {
     }
 
     private String buildMaterialNote(Component component, Feeder feeder) {
-        String materialNote = component.name
-        if (feeder.note) {
-            materialNote += " - " + feeder.note
+
+        List<String> parts = []
+
+        if (component.partCode && component.manufacturer) {
+            parts << component.partCode
+            parts << component.manufacturer
         }
-        materialNote
+        if (component.name) {
+            parts << component.name
+        }
+        if (feeder.note) {
+            parts << feeder.note
+        }
+
+        parts.join(";")
     }
 
     private int buildStatus(boolean enabled, PickSettings pickSettings) {

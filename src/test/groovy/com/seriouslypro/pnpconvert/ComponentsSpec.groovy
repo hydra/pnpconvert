@@ -5,6 +5,8 @@ import spock.lang.Specification
 
 class ComponentsSpec extends Specification {
 
+    private static final String TEST_PART_CODE = "CRG0402F10K"
+    private static final String TEST_MANUFACTURER = "TE CONNECTIVITY"
     private static final String TEST_COMPONENT_NAME = "10K 0402 1%"
     private static final String TEST_COMPONENT_ALIAS = "10K0 1% 0402"
     private static final String TEST_WHITESPACE_ONLY_ALIAS = "  "
@@ -24,7 +26,7 @@ class ComponentsSpec extends Specification {
 
         and:
             List<Component> expectedComponentList = [
-                new Component(name: "10K 0402 1%/RES_0402", width: 0.5, length: 1.0, height: 0.5, placementOffsetX: 0.02, placementOffsetY: 0.4, aliases: ["10K 1% 0402/RES_0402",TEST_COMPONENT_ALIAS])
+                new Component(partCode: TEST_PART_CODE, manufacturer: TEST_MANUFACTURER, name: "10K 0402 1%/RES_0402", width: 0.5, length: 1.0, height: 0.5, placementOffsetX: 0.02, placementOffsetY: 0.4, aliases: ["10K 1% 0402/RES_0402",TEST_COMPONENT_ALIAS])
             ]
 
         when:
@@ -36,8 +38,8 @@ class ComponentsSpec extends Specification {
 
     def 'ignore empty aliases'() {
         given:
-            String content = '"Name","Width","Length","Height","Aliases"\n' +
-                '"NAME",1,2,3,"' + [TEST_WHITESPACE_ONLY_ALIAS, TEST_EMPTY_ALIAS].join(',')+ '"\n'
+            String content = '"Part Code","Manufacturer","Name","Width","Length","Height","Aliases"\n' +
+                '"PC","M","NAME",1,2,3,"' + [TEST_WHITESPACE_ONLY_ALIAS, TEST_EMPTY_ALIAS].join(',')+ '"\n'
             Reader inputStreamReader = new StringReader(content)
 
         when:
@@ -58,7 +60,7 @@ class ComponentsSpec extends Specification {
             !result
     }
 
-    def 'find by placement'() {
+    def 'find by placement - matched against name only (no aliases)'() {
         given:
             Component component = new Component(name: TEST_COMPONENT_NAME)
             components.add(component)
@@ -76,9 +78,27 @@ class ComponentsSpec extends Specification {
             result.matchingStrategies.find { it instanceof NameOnlyMatchingStrategy }
     }
 
-    def 'find by placement - matched against alias'() {
+    def 'find by placement - matched against name only (with non-matching aliases)'() {
         given:
-            Component component = new Component(name: TEST_COMPONENT_NAME,aliases: [TEST_COMPONENT_ALIAS])
+            Component component = new Component(name: TEST_COMPONENT_NAME, aliases: ["NON_MATCHING"])
+            components.add(component)
+
+            ComponentPlacement componentPlacement = new ComponentPlacement(name: TEST_COMPONENT_NAME)
+
+        when:
+            ComponentFindResult result = components.findByPlacement(componentPlacement)
+
+        then:
+            result
+            result.component == component
+            result.matchingStrategies.size() == 2
+            result.matchingStrategies.find { it instanceof DiptraceMatchingStrategy }
+            result.matchingStrategies.find { it instanceof NameOnlyMatchingStrategy }
+    }
+
+    def 'find by placement - matched against name or alias'() {
+        given:
+            Component component = new Component(name: TEST_COMPONENT_NAME, aliases: [TEST_COMPONENT_ALIAS])
             components.add(component)
 
             ComponentPlacement componentPlacement = new ComponentPlacement(name: TEST_COMPONENT_ALIAS)
@@ -93,11 +113,37 @@ class ComponentsSpec extends Specification {
             result.matchingStrategies.find { it instanceof AliasMatchingStrategy }
     }
 
-    @Ignore
-    def 'add component that matches existing component'() {
-        //e.g. component with same name or alias.
-        expect:
-            false
+    def 'find by placement - matched against alias'() {
+        given:
+            Component component = new Component(name: "NAME", aliases: [TEST_COMPONENT_ALIAS])
+            components.add(component)
+
+            ComponentPlacement componentPlacement = new ComponentPlacement(name: TEST_COMPONENT_ALIAS)
+
+        when:
+            ComponentFindResult result = components.findByPlacement(componentPlacement)
+
+        then:
+            result.component == component
+            result.matchingStrategies.size() == 2
+            result.matchingStrategies.find { it instanceof DiptraceAliasMatchingStrategy }
+            result.matchingStrategies.find { it instanceof AliasMatchingStrategy }
+    }
+
+    def 'find by placement - matched against part code and manufacturer'() {
+        given:
+            Component component = new Component(manufacturer: TEST_MANUFACTURER, partCode: TEST_PART_CODE)
+            components.add(component)
+
+            ComponentPlacement componentPlacement = new ComponentPlacement(manufacturer: TEST_MANUFACTURER, partCode: TEST_PART_CODE)
+
+        when:
+            ComponentFindResult result = components.findByPlacement(componentPlacement)
+
+        then:
+            result.component == component
+            result.matchingStrategies.size() == 1
+            result.matchingStrategies.find { it instanceof PartCodeAndManufacturerMatchingStrategy }
     }
 
     @Ignore

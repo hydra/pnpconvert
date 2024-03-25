@@ -11,6 +11,8 @@ enum DipTracePlacementsCSVHeaders implements CSVColumn<DipTracePlacementsCSVHead
     ROTATE(["Rotate", "Rotation"]),
     VALUE(["Value"]),
     NAME(["Name"]),
+    PART_CODE(["Part Code"]),
+    MANUFACTURER(["Manufacturer"]),
 
     // Optional: Can be added manually to allow filtering on job number
     JOB(["Job"])

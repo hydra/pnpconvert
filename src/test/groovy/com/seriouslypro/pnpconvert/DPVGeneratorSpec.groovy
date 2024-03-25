@@ -59,19 +59,29 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
             Component component1 = new Component(
                 name: "10K 0402 1%/RES_0402",
                 width: 0.01,
-                length: 30
+                length: 30,
+                partCode: "R10K00402",
+                manufacturer: "RM1",
             )
             Component component2 = new Component(
-                name: "100nF 6.3V 0402/CAP_0402"
+                name: "100nF 6.3V 0402/CAP_0402",
+                partCode: "C10404026V3",
+                manufacturer: "CM1",
             )
             Component component3 = new Component(
-                name: "MAX14851"
+                name: "MAX14851",
+                partCode: "MAX14851",
+                manufacturer: "UM1",
             )
             Component component4 = new Component(
-                name: "CAT24C32WI-GT3"
+                name: "RJ45CN",
+                partCode: "CAT24C32WI-GT3",
+                manufacturer: "JM1",
             )
             Component component5 = new Component(
                 name: "Micro USB Socket With Very Long Name",
+                partCode: "MUSBSWVLN",
+                manufacturer: "JM2",
                 width: 8,
                 height: 3.5,
                 length: 5,
@@ -102,10 +112,10 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
                 feederAngle: 270
             )
 
-            feeders.loadFeeder(feeders.createReelFeeder(1, 8, component1.name, slowPickSettings, "Cheap"))
-            feeders.loadFeeder(feeders.createReelFeeder(36, 8, component2.name, fastPickSettings, "Expensive"))
+            feeders.loadFeeder(feeders.createReelFeeder(1, 8, component1.partCode, component1.manufacturer, component1.name, slowPickSettings, "Cheap"))
+            feeders.loadFeeder(feeders.createReelFeeder(36, 8, component2.partCode, component2.manufacturer, component2.name, fastPickSettings, "Expensive"))
 
-            feeders.loadFeeder(feeders.createReelFeeder(33, 12, component5.name, new PickSettings(separateMount: true, takeHeight: 2), "Special"))
+            feeders.loadFeeder(feeders.createReelFeeder(33, 12, component5.partCode, component5.manufacturer, component5.name, new PickSettings(separateMount: true, takeHeight: 2), "Special"))
 
         and:
             Tray tray1 = new Tray(
@@ -183,7 +193,7 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
                     side: PCBSide.TOP,
                     rotation: 90,
                     value: "",
-                    name: "CAT24C32WI-GT3"
+                    name: "RJ45CN"
                 ),
                 new ComponentPlacement(
                     enabled: false,
@@ -232,11 +242,11 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
 
         and:
             List<List<String>> expectedMaterials = [
-                ["Station","0","1","0","0","4","10K 0402 1%/RES_0402 - Cheap","0.5","100","6","1","3000","0","25","0"],
-                ["Station","1","33","0","0","4","Micro USB Socket With Very Long Name - Special","3.5","100","14","800","500","200","0","0"],
-                ["Station","2","36","0","0","4","100nF 6.3V 0402/CAP_0402 - Expensive","0.5","100","6","0","0","0","0","0"],
-                ["Station","3","1001","0","0","4","MAX14851 - Back 1-4 Top-Left; Pin 1 Top-Left","0.5","100","6","0","0","0","25","0"],
-                ["Station","4","1002","0","0","4","CAT24C32WI-GT3 - Back 6-7 Top-Left; Pin 1 Bottom-Right","0.5","100","6","0","0","0","0","0"],
+                ["Station","0","1","0","0","4","R10K00402;RM1;10K 0402 1%/RES_0402;Cheap","0.5","100","6","1","3000","0","25","0"],
+                ["Station","1","33","0","0","4","MUSBSWVLN;JM2;Micro USB Socket With Very Long Name;Special","3.5","100","14","800","500","200","0","0"],
+                ["Station","2","36","0","0","4","C10404026V3;CM1;100nF 6.3V 0402/CAP_0402;Expensive","0.5","100","6","0","0","0","0","0"],
+                ["Station","3","1001","0","0","4","MAX14851;UM1;MAX14851;Back 1-4 Top-Left; Pin 1 Top-Left","0.5","100","6","0","0","0","25","0"],
+                ["Station","4","1002","0","0","4","CAT24C32WI-GT3;JM1;RJ45CN;Back 6-7 Top-Left; Pin 1 Bottom-Right","0.5","100","6","0","0","0","0","0"],
             ]
 
         and:
@@ -244,7 +254,7 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
                 ["EComponent","0","1","1","36","24.89","21.64","45","0.5","6","100","C1","100nF 6.3V 0402/CAP_0402","0"],
                 ["EComponent","1","2","1","1001","21.3","35.07","90","0.5","6","100","U1","/MAX14851","50"],
                 ["EComponent","2","3","1","1001","21.5","19.5","157.5","0.5","6","100","U2","/MAX14851","50"],
-                ["EComponent","3","4","1","1002","16","45","90","0.5","6","100","U3","/CAT24C32WI-GT3","0"],
+                ["EComponent","3","4","1","1002","16","45","90","0.5","6","100","U3","/RJ45CN","0"],
                 ["EComponent","4","5","1","1","14.44","13.9","0","0.5","6","100","R1","10K 0402 1%/RES_0402","50"],
                 ["EComponent","5","6","1","1","15.72","25.2","-90","0.5","6","100","R2","10K 0402 1%/RES_0402","50"],
                 ["EComponent","6","7","1","33","50.83","23.97","0","3.5","15","100","J1","/Micro USB Socket With Very Lon","0"],
@@ -258,11 +268,11 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
 
         and:
             List<List<String>> expectedFeederSummary = [
-                ['1','2','2','[R1, R2]','[id:1, note:Cheap]','[name:10K 0402 1%/RES_0402, aliases:[]]'],
-                ['33','0','0','[]','[id:33, note:Special]','[name:Micro USB Socket With Very Long Name, aliases:[]]'],
-                ['36','1','1','[C1]','[id:36, note:Expensive]','[name:100nF 6.3V 0402/CAP_0402, aliases:[]]'],
-                ['1001','2','2','[U1, U2]','[tray:B-1-4-TL, note:Back 1-4 Top-Left, Pin 1 Top-Left]','[name:MAX14851, aliases:[]]'],
-                ['1002','1','1','[U3]','[tray:B-6-7-TL, note:Back 6-7 Top-Left, Pin 1 Bottom-Right]','[name:CAT24C32WI-GT3, aliases:[]]']
+                ['1','2','2','[R1, R2]','[id:1, note:Cheap]','[partCode:R10K00402, manufacturer:RM1, name:10K 0402 1%/RES_0402, aliases:[]]'],
+                ['33','0','0','[]','[id:33, note:Special]','[partCode:MUSBSWVLN, manufacturer:JM2, name:Micro USB Socket With Very Long Name, aliases:[]]'],
+                ['36','1','1','[C1]','[id:36, note:Expensive]','[partCode:C10404026V3, manufacturer:CM1, name:100nF 6.3V 0402/CAP_0402, aliases:[]]'],
+                ['1001','2','2','[U1, U2]','[tray:B-1-4-TL, note:Back 1-4 Top-Left, Pin 1 Top-Left]','[partCode:MAX14851, manufacturer:UM1, name:MAX14851, aliases:[]]'],
+                ['1002','1','1','[U3]','[tray:B-6-7-TL, note:Back 6-7 Top-Left, Pin 1 Bottom-Right]','[partCode:CAT24C32WI-GT3, manufacturer:JM1, name:RJ45CN, aliases:[]]']
             ]
 
         when:

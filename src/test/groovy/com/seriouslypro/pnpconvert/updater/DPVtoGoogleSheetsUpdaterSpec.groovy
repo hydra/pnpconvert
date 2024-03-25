@@ -47,7 +47,7 @@ class DPVtoGoogleSheetsUpdaterSpec extends Specification implements TestResource
 
         and:
             def expectedTransport = GroovyMock(NetHttpTransport, name: "mockTransport")
-            testTransportFactory.instances = [expectedTransport]
+            testTransportFactory.instances = [expectedTransport] as List<NetHttpTransport>
             updater.transportFactory = testTransportFactory
 
         and:
@@ -115,7 +115,7 @@ class DPVtoGoogleSheetsUpdaterSpec extends Specification implements TestResource
     def 'report when multiple rows for the same feeder are updated when using FEEDER_ID and FLAG_ENABLED matching'() {
         given:
             // two rows in the sheet with the same feeder id and no 'disabled' flag.
-            // a DPB file with a feeder id that matches the above two rows in the sheet.
+            // a DPV file with a feeder id that matches the above two rows in the sheet.
 
         expect:
             false

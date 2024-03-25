@@ -9,11 +9,16 @@ class Feeder {
     Optional<Integer> fixedId = Optional.empty()
     boolean enabled = true
     String note = ""
-    String componentName
+    String manufacturer
+    String partCode
+    String description
     PickSettings pickSettings
     FeederProperties properties
 
-    boolean hasComponent(String componentName) {
-        return this.componentName == componentName
+    boolean hasComponent(Component component) {
+        (
+            this.manufacturer && this.manufacturer == component.manufacturer &&
+            this.partCode && this.partCode == component.partCode
+        ) || this.description == component.name
     }
 }

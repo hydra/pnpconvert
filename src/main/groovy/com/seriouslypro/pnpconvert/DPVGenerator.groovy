@@ -1,12 +1,6 @@
 package com.seriouslypro.pnpconvert
 
 import com.seriouslypro.pnpconvert.machine.Machine
-import groovy.transform.ToString
-
-import java.nio.charset.StandardCharsets
-import java.text.DecimalFormat
-import java.text.SimpleDateFormat
-
 
 class DPVGenerator {
     DPVHeader dpvHeader
@@ -55,7 +49,7 @@ class DPVGenerator {
 
         System.out.println()
         System.out.println("feedersMatchedByAlias:\n" + feedersMatchedByAlias.collect { Feeder feeder, Component component ->
-            "feederComponent: $feeder.componentName, component: $component"
+            "feederComponent: $feeder.description, component: $component"
         }.join('\n'))
 
         System.out.println()
@@ -99,14 +93,14 @@ class DPVGenerator {
             //
             // feeder with component?
             //
-            Feeder findResult = feeders.findByComponent(component.name)
+            Feeder findResult = feeders.findByComponent(component)
             if (!findResult) {
 
                 //
                 // feeder with alias?
                 //
                 findResult = component.aliases.findResult { alias ->
-                    feeders.findByComponent(alias)
+                    feeders.findByComponent(new Component(name: alias))
                 }
 
                 if (!findResult) {
@@ -117,7 +111,7 @@ class DPVGenerator {
 
                     if (aliasComponent) {
                         findResult = component.aliases.findResult { alias ->
-                            feeders.findByComponent(aliasComponent.name)
+                            feeders.findByComponent(aliasComponent)
                         }
                     }
 
@@ -263,8 +257,10 @@ class DPVGenerator {
                     refdes            : refdesList,
                     feeder            : feederPrinter.print(feeder),
                     component         : [
-                            name   : materialAssigment.value.component.name,
-                            aliases: materialAssigment.value.component.aliases,
+                            partCode     : materialAssigment.value.component.partCode,
+                            manufacturer : materialAssigment.value.component.manufacturer,
+                            name         : materialAssigment.value.component.name,
+                            aliases      : materialAssigment.value.component.aliases,
                     ],
             ]
         }

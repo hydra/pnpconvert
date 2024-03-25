@@ -1,5 +1,6 @@
 package com.seriouslypro.pnpconvert
 
+import com.seriouslypro.csv.CSVColumn
 import com.seriouslypro.csv.CSVHeaderParser
 import com.seriouslypro.csv.CSVHeaderParserBase
 import com.seriouslypro.csv.CSVInput
@@ -16,11 +17,13 @@ class Feeders {
 
     List<Exception> csvParseExceptions = []
 
-    Feeder createReelFeeder(int id, int tapeWidth, String componentName, PickSettings pickSettings, String note) {
+    Feeder createReelFeeder(int id, int tapeWidth, String partCode, String manufacturer, String description, PickSettings pickSettings, String note) {
         new ReelFeeder(
             fixedId: Optional.of(id),
             tapeWidth: tapeWidth,
-            componentName: componentName,
+            partCode: partCode,
+            manufacturer: manufacturer,
+            description: description,
             pickSettings: pickSettings,
             note: note,
         )
@@ -32,9 +35,9 @@ class Feeders {
         reelFeeder
     }
 
-    Feeder findByComponent(String name) {
+    Feeder findByComponent(Component component) {
         return feederList.findResult { Feeder feeder ->
-            feeder.hasComponent(name) ? feeder : null
+            feeder.hasComponent(component) ? feeder : null
         }
     }
 
@@ -51,18 +54,20 @@ class Feeders {
     Feeder createTrayFeeder(int id, Tray tray, String componentName, PickSettings pickSettings, String note) {
         new TrayFeeder(
             tray: tray,
-            componentName: componentName,
+                description: componentName,
             pickSettings: pickSettings,
             note: note,
         )
     }
 
-    static enum FeederCSVColumn {
+    static enum FeederCSVColumn implements CSVColumn<FeederCSVColumn> {
         ID,
         ENABLED,
         USE_VISION,
         CHECK_VACUUM,
-        COMPONENT_NAME,
+        PART_CODE,
+        MANUFACTURER,
+        DESCRIPTION(["COMPONENT NAME"]),
         NOTE,
         HEAD,
         SEPARATE_MOUNT,
@@ -84,7 +89,11 @@ class Feeders {
         TRAY_NAME,
 
         // Optional Columns
-        FLAGS,
+        FLAGS
+
+        FeederCSVColumn(List<String> aliases = []) {
+            this.aliases = aliases
+        }
     }
 
     class FeederItem {
@@ -152,7 +161,7 @@ class Feeders {
                     trayName = rowValues[headerMappings[FeederCSVColumn.TRAY_NAME].index].trim()
                 }
 
-                String componentName = rowValues[columnIndex(context, FeederCSVColumn.COMPONENT_NAME)].trim()
+                String description = rowValues[columnIndex(context, FeederCSVColumn.DESCRIPTION)].trim()
                 boolean enabled = rowValues[columnIndex(context, FeederCSVColumn.ENABLED)].toBoolean()
 
                 Set<String> flags = []
@@ -174,7 +183,7 @@ class Feeders {
                         fixedId: id,
                         enabled: enabled,
                         tray: tray,
-                        componentName: componentName,
+                        description: description,
                         note: note,
                         pickSettings: pickSettings
                     ))
@@ -189,7 +198,7 @@ class Feeders {
                     feeder = Optional.of(new ReelFeeder(
                         fixedId: id,
                         enabled: enabled,
-                        componentName: componentName,
+                        description: description,
                         note: note,
                         tapeWidth: rowValues[columnIndex(context, FeederCSVColumn.TAPE_WIDTH)] as Integer,
                         pickSettings: pickSettings

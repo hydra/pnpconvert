@@ -11,13 +11,11 @@ import com.seriouslypro.pnpconvert.MatchOption
 import spock.lang.Ignore
 import spock.lang.Specification
 
-import static com.seriouslypro.pnpconvert.Feeders.FeederCSVColumn.*
-
 class FeedersSheetProcessorSpec extends Specification {
 
     private static final String TEST_SPREADSHEET_ID = 'SPREADSHEET_ID'
     private static final String TEST_SHEET_TITLE = 'SHEET_TITLE'
-    public static final String TEST_COMPONENT_NAME = 'COMPONENT_NAME'
+    public static final String TEST_DESCRIPTION = 'DESCRIPTION'
 
     def "process empty table"() {
         given:
@@ -43,7 +41,7 @@ class FeedersSheetProcessorSpec extends Specification {
 
         and:
             FeedersSheetProcessor processor = new FeedersSheetProcessor()
-            Set<MatchOption> matchOptions = [MatchOption.FEEDER_ID, MatchOption.COMPONENT_NAME]
+            Set<MatchOption> matchOptions = [MatchOption.FEEDER_ID]
 
         when:
             SheetProcessorResult result = processor.process(mockSheetsService, spreadsheet, sheet, feedersTable, matchOptions)
@@ -75,7 +73,7 @@ class FeedersSheetProcessorSpec extends Specification {
         and:
             DPVTable feedersTable = new DPVTable()
             feedersTable.headers = ["ID", "Note", "DeltX", "DeltY"]
-            feedersTable.entries = [['1', TEST_COMPONENT_NAME + ' A NOTE', '0.12', '0.62']]
+            feedersTable.entries = [['1', TEST_DESCRIPTION + ';A NOTE', '0.12', '0.62']]
 
         and:
             Sheets.Spreadsheets mockSpreadsheets = Mock(Sheets.Spreadsheets)
@@ -89,13 +87,13 @@ class FeedersSheetProcessorSpec extends Specification {
 
         and: "use data that corresponds to the a feeder, same component and feeder id, but with different x/y co-ordinates"
             ValueRange dataValueRangeResponse = new ValueRange()
-            List<List<Object>> dataValues = [['0.23', '0.73', TEST_COMPONENT_NAME, '1','']]
+            List<List<Object>> dataValues = [['0.23', '0.73', TEST_DESCRIPTION, '1', '']]
             dataValueRangeResponse.setValues(dataValues)
 
         and: "use updated data for row to be updated"
             Sheets.Spreadsheets.Values.Update mockUpdate = Mock(Sheets.Spreadsheets.Values.Update)
             ValueRange expectedValueRange = new ValueRange()
-            List<List<Object>> updatedValues = [['0.12', '0.62', TEST_COMPONENT_NAME, '1','']]
+            List<List<Object>> updatedValues = [['0.12', '0.62', TEST_DESCRIPTION, '1', '']]
             expectedValueRange.setValues(updatedValues)
             UpdateValuesResponse updateValuesResponse = new UpdateValuesResponse()
 
@@ -105,7 +103,7 @@ class FeedersSheetProcessorSpec extends Specification {
 
         and:
             FeedersSheetProcessor processor = new FeedersSheetProcessor()
-            Set<MatchOption> matchOptions = [MatchOption.FEEDER_ID, MatchOption.COMPONENT_NAME]
+            Set<MatchOption> matchOptions = [MatchOption.FEEDER_ID, MatchOption.DESCRIPTION]
 
         when:
             SheetProcessorResult result = processor.process(mockSheetsService, spreadsheet, sheet, feedersTable, matchOptions)

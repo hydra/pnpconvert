@@ -5,6 +5,8 @@ import spock.lang.Specification
 class FeedersSpec extends Specification {
 
     private static final String TEST_COMPONENT_NAME = "TEST-COMPONENT"
+    private static final String TEST_COMPONENT_PART_CODE = "TEST-PART-CODE"
+    private static final String TEST_COMPONENT_MANUFACTURER = "TEST-MANUFACTURER"
     public static final String TEST_FEEDERS_RESOURCE_1 = "/feeders1.csv"
     public static final String TEST_FEEDERS_RESOURCE_2 = "/feeders2.csv"
     public static final String TEST_FEEDERS_RESOURCE_3 = "/feeders3.csv"
@@ -30,19 +32,35 @@ class FeedersSpec extends Specification {
 
     def 'find by component - no components'() {
         expect:
-            feeders.findByComponent(TEST_COMPONENT_NAME) == null
+            feeders.findByComponent(new Component(name: TEST_COMPONENT_NAME)) == null
     }
 
-    def 'find by component - matching component'() {
+    def 'find by component - component name matches feeder description'() {
         given:
             PickSettings mockPickSettings = Mock()
 
         and:
-            Feeder feeder = feeders.createReelFeeder(1, 8, TEST_COMPONENT_NAME, mockPickSettings, "TEST-NOTE")
+            Feeder feeder = feeders.createReelFeeder(1, 8, TEST_COMPONENT_PART_CODE, TEST_COMPONENT_MANUFACTURER, "DESCRIPTION", mockPickSettings, "TEST-NOTE")
             feeders.loadFeeder(feeder)
 
         when:
-            Feeder result = feeders.findByComponent(TEST_COMPONENT_NAME)
+            Feeder result = feeders.findByComponent(new Component(name: "DESCRIPTION"))
+
+        then:
+            result
+            result.fixedId.get() == 1
+    }
+
+    def 'find by component - matching part & manufacturer'() {
+        given:
+            PickSettings mockPickSettings = Mock()
+
+        and:
+            Feeder feeder = feeders.createReelFeeder(1, 8, TEST_COMPONENT_PART_CODE, TEST_COMPONENT_MANUFACTURER, "UNMATCHED_DESCRIPTION", mockPickSettings, "TEST-NOTE")
+            feeders.loadFeeder(feeder)
+
+        when:
+            Feeder result = feeders.findByComponent(new Component(partCode: TEST_COMPONENT_PART_CODE, manufacturer: TEST_COMPONENT_MANUFACTURER, name: TEST_COMPONENT_NAME))
 
         then:
             result
@@ -76,7 +94,7 @@ class FeedersSpec extends Specification {
             Feeder feeder1 = new ReelFeeder(
                 fixedId: Optional.of(feeder1Id),
                 enabled: false,
-                componentName: "10K 0402 1%/RES_0402",
+                description: "10K 0402 1%/RES_0402",
                 note: "RH",
                 pickSettings: feeder1PickSettings,
                 tapeWidth: 8,
@@ -103,7 +121,7 @@ class FeedersSpec extends Specification {
             Feeder feeder2 = new ReelFeeder(
                 fixedId: Optional.of(feeder2Id),
                 enabled: true,
-                componentName: "MicroUSB/001-01-0x06x",
+                description: "MicroUSB/001-01-0x06x",
                 note: "LH",
                 pickSettings: feeder2PickSettings,
                 tapeWidth: 16,
@@ -139,7 +157,7 @@ class FeedersSpec extends Specification {
                     columns:4,
                     firstComponentIndex:0
                 ),
-                componentName: "MAX14851",
+                description: "MAX14851",
                 note: "Back 1-4 Top-Left",
                 pickSettings: feeder3PickSettings
             )

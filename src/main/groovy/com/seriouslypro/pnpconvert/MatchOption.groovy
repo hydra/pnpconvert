@@ -2,6 +2,8 @@ package com.seriouslypro.pnpconvert
 
 enum MatchOption {
     FEEDER_ID,
-    COMPONENT_NAME,
+    PART_CODE,
+    MANUFACTURER,
+    DESCRIPTION,
     FLAG_ENABLED,
 }

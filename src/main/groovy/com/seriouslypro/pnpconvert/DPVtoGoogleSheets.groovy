@@ -36,7 +36,9 @@ class DPVtoGoogleSheets {
         builder.i(args:1, argName: 'input', 'input dpv file/url')
         builder.s(args:1, argName: 'sheet', 'sheet id')
         builder.c(args:1, argName: 'credentials', 'credentials json file/url')
-        builder.mo(args:'+', argName: 'match-options', 'match options')
+
+        String matchOptionsSpecification = '<[' + MatchOption.values().each { it.toString() }.join("] [") + '] ...>'
+        builder.mo(args:'+', argName: 'match-options', matchOptionsSpecification)
 
         builder.cfg(args:1, argName: 'config', 'configuration file (in "key=value" format)')
 
@@ -73,7 +75,7 @@ class DPVtoGoogleSheets {
         String credentialsFileName = config.getOrDefault("credentials","credentials.json")
         String sheetId = config.getOrDefault("sheetId","")
 
-        Set<MatchOption> matchOptions = [MatchOption.FEEDER_ID, MatchOption.COMPONENT_NAME]
+        Set<MatchOption> matchOptions = [MatchOption.FEEDER_ID, MatchOption.DESCRIPTION]
 
         if (options.i) {
             inputFileName = options.i

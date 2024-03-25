@@ -194,13 +194,13 @@ class DPVWriterSpec extends Specification implements DPVFileAssertions {
             DPVWriter writer = new DPVWriter(outputStream, machine, offsetZ, dpvHeader)
 
         and:
-            ComponentPlacement cp1 = new ComponentPlacement(enabled: true, refdes: "Z1", name: "Placement Name 1", value: "Value 1", pattern: "Pattern 1", coordinate: new Coordinate(x: 3, y: 4), side: PCBSide.TOP, rotation: 0)
-            ComponentPlacement cp2 = new ComponentPlacement(enabled: false, refdes: "Z2", name: "Placement Name 2", value: "Value 2", pattern: "Pattern 2", coordinate: new Coordinate(x: 5, y: 6), side: PCBSide.BOTTOM, rotation: 90)
-            Component c1 = new Component(name: "Component Name")
+            ComponentPlacement cp1 = new ComponentPlacement(enabled: true, refdes: "Z1", partCode: "C0DE", manufacturer: "MFR", name: "Placement Name 1", value: "Value 1", pattern: "Pattern 1", coordinate: new Coordinate(x: 3, y: 4), side: PCBSide.TOP, rotation: 0)
+            ComponentPlacement cp2 = new ComponentPlacement(enabled: false, refdes: "Z2", partCode: "C0DE", manufacturer: "MFR", name: "Placement Name 2", value: "Value 2", pattern: "Pattern 2", coordinate: new Coordinate(x: 5, y: 6), side: PCBSide.BOTTOM, rotation: 90)
+            Component c1 = new Component(name: "Component Name", partCode: "C0DE", manufacturer: "MFR")
             PickSettings pickSettings1 = new PickSettings()
             FeederProperties feederProperties = new FeederProperties()
             Optional<Integer> noFixedId = Optional.empty()
-            Feeder feeder1 = new Feeder(fixedId: noFixedId, enabled: true, note: "Feeder Note", componentName: "Feeder Component Name",  pickSettings: pickSettings1, properties: feederProperties)
+            Feeder feeder1 = new Feeder(fixedId: noFixedId, enabled: true, note: "Feeder Note", description: "Feeder Component Name",  pickSettings: pickSettings1, properties: feederProperties)
             MaterialAssignment ma1 = new MaterialAssignment(component: c1, feederId: 1, feeder: feeder1)
             materialAssignments = [
                 (cp1): ma1,
@@ -209,7 +209,7 @@ class DPVWriterSpec extends Specification implements DPVFileAssertions {
 
         and:
             List<List<String>> expectedMaterials = [
-                ["Station","0","1","0","0","4","Component Name - Feeder Note","0.5","100","6","0","0","0","0","0"],
+                ["Station","0","1","0","0","4","C0DE;MFR;Component Name;Feeder Note","0.5","100","6","0","0","0","0","0"],
             ]
 
         and:

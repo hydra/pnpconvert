@@ -407,14 +407,15 @@ DPVToGoogleSheets is a work-in-progress tool that will take an updated .dpv file
 `dpvtogooglesheets <args>`
 
 ```
-DPVtoGoogleSheets (C) 2024 Dominic Clifton
+DPVtoGoogleSheets (C) 2018-2024 Dominic Clifton
 Written by Dominic Clifton
 Usage: dpvtogooglesheets
   -c=<credentials>    credentials json file/url
       -cfg=<config>   configuration file (in "key=value" format)
   -i=<input>          input dpv file/url
       -mo=<match-options>...
-                      match options
+                      <[FEEDER_ID] [PART_CODE] [MANUFACTURER] [DESCRIPTION]
+                        [FLAG_ENABLED] ...>
   -s=<sheet>          sheet id
   -u                  update
   -v                  version
@@ -425,10 +426,34 @@ Example:
 dpvtogooglesheets -mo FEEDER_ID FLAG_ENABLED -u -cfg machine1.config -i project.dpv
 ```
 
+```
+dpvtogooglesheets -mo PART_CODE MANUFACTURER FLAG_ENABLED -u -cfg machine1.config -i project.dpv
+```
+
 After running the tool, check it's output to see what it changed.
 
 You can also use the built-in version history of the google sheet by opening the sheet
 in google sheets, then file/version history, then checking the highlighted cells of the latest version
+
+## Match options
+
+Matching on feeder id works well, however incorrect rows will be updated if you change or re-order the feeder id's
+on the PnP machine.
+
+While it's possible to update a sheet using only the match option 'MANUFACTURER' it's not a good idea as it will
+potentially match many rows.
+
+Using part code and manufacturer matching options works well, but note if the part code combined with the manufacturer
+name is longer than the maximum length allowed in the DPV file then matching will fail. (no partial matches on either).
+For this reason it's best to use manufacturer codes, like 'TE', or 'TI', instead of the full name, like 
+'T.E. Connectivity' or 'Texas Instruments', respectively.
+
+Matching on description only is bad if part code and manufacturer are used due to the description becoming truncated due
+to DPV feeder note length constrants.  Description is matched if is /starts-with/ the same text.
+
+Matching on feeder id and a partial description works well, this is the default.
+
+Matching on feeder id, part code and manufacturer is best, but more strict.
 
 ## Troubleshooting
 

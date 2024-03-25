@@ -86,12 +86,13 @@ class DiptraceComponentPlacementTransformer implements ComponentPlacementTransfo
             if (showTransforms) renderer.drawPart(coordinate, Color.MAGENTA, componentPlacement.refdes, rotation)
         }
 
-
         // apply offset
         coordinate = coordinate + offset
         renderer.drawPart(coordinate, theme.component, componentPlacement.refdes, rotation)
 
         ComponentPlacement transformedComponentPlacement = new ComponentPlacement(
+            partCode: componentPlacement.partCode,
+            manufacturer: componentPlacement.manufacturer,
             refdes: componentPlacement.refdes,
             pattern: componentPlacement.pattern,
             coordinate: coordinate,

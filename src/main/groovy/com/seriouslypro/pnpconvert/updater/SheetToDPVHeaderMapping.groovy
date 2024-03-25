@@ -62,9 +62,10 @@ class SheetToDPVHeaderMapping {
 
         sheetHeaders.eachWithIndex { String sheetHeader, int sheetHeaderIndex ->
             try {
-                Feeders.FeederCSVColumn sheetHeaderCSVColumn = sheetHeader.toUpperCase().replaceAll('[^A-Za-z0-9]', "_") as Feeders.FeederCSVColumn
+                Feeders.FeederCSVColumn sheetHeaderCSVColumn = Feeders.FeederCSVColumn.fromString(Feeders.FeederCSVColumn, sheetHeader.toUpperCase().replaceAll('[^A-Za-z0-9]', "_"))
+
                 feederCSVColumnIndexMap[sheetHeaderCSVColumn] = sheetHeaderIndex
-            } catch (java.lang.IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 println("Ignoring column, name: '${sheetHeader}'")
             }
         }
