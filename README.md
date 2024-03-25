@@ -39,9 +39,9 @@ Usage: pnpconvert
       -beoy=<boardExportOffsetY>
                             EDA export Y offset (e.g. 10.0)
       -bh=<boardHeight>     Board height (not panel height)
-      -box=<boardExportOffsetX>
+      -box=<boardOffsetX>
                             EDA origin X (usually 0.0)
-      -boy=<boardExportOffsetY>
+      -boy=<boardOffsetY>
                             EDA origin Y (usually 0.0)
       -bw=<boardWidth>      Board width (not panel width)
   -c                        convert
