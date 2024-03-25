@@ -2,7 +2,7 @@
 
 by Dominic Clifton. (C) 2018-2024
 
-[![Build Status](https://travis-ci.com/hydra/pnpconvert.svg?branch=master)](https://travis-ci.com/hydra/pnpconvert)
+[![Build Status](https://app.travis-ci.com/hydra/pnpconvert.svg?token=FAzFDGBuW6cyzgkbxUqv&branch=master)](https://app.travis-ci.com/github/hydra/pnpconvert)
 
 Utility to process DipTrace "Pick and Place" export files and generate DPV format files suitable for use with CharmHigh
 Technology pick-and-place SMT machines.
@@ -464,7 +464,12 @@ Matching on feeder id, part code and manufacturer is best, but more strict.
 
 # Future Technology updates
 
-##  Groovy 2.5 cli builder - https://picocli.info/groovy-2.5-clibuilder-renewal.html
+## Groovy 2.5 cli builder - https://picocli.info/groovy-2.5-clibuilder-renewal.html
+
+## Travis
+
+Replace travis with something else in light of new non-free travis pricing structure changes.  Build status indicator 
+may be showing the status a build from some time ago. Check build history as required.
 
 # License
 
