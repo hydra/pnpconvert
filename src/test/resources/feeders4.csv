@@ -1,0 +1,2 @@
+"ID","Enabled","Component Name","Tape Width","Note","Tape Spacing","X Offset","Y Offset","Head","Separate Mount","Package Angle","Use Vision","Check Vacuum", "Place Speed","Place Delay","Take Height","Take Delay","Tape Pull Speed","Tray Name","Flags"
+,Y,"STM32H750VBT6",,"",,0,0,0,N,0,N,N,10,20,0,75,,"B-1-4-TL",""

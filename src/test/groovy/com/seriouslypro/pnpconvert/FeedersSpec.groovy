@@ -10,6 +10,7 @@ class FeedersSpec extends Specification {
     public static final String TEST_FEEDERS_RESOURCE_1 = "/feeders1.csv"
     public static final String TEST_FEEDERS_RESOURCE_2 = "/feeders2.csv"
     public static final String TEST_FEEDERS_RESOURCE_3 = "/feeders3.csv"
+    public static final String TEST_FEEDERS_RESOURCE_4 = "/feeders4.csv"
 
     Feeders feeders
 
@@ -210,6 +211,23 @@ class FeedersSpec extends Specification {
 
         when:
             feeders.loadFromCSV(TEST_FEEDERS_RESOURCE_3, inputStreamReader)
+
+        then:
+            mockTrays.findByName('B-1-4-TL') >> testTray
+            0 * _
+
+        and:
+            feeders.csvParseExceptions.empty
+            !feeders.feederList.empty
+    }
+
+    def 'allow header aliases'() {
+        given:
+            InputStream inputStream = this.getClass().getResourceAsStream(TEST_FEEDERS_RESOURCE_4)
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream)
+
+        when:
+            feeders.loadFromCSV(TEST_FEEDERS_RESOURCE_4, inputStreamReader)
 
         then:
             mockTrays.findByName('B-1-4-TL') >> testTray

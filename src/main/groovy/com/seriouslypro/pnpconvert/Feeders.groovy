@@ -208,16 +208,16 @@ class Feeders {
             }
         }
 
-        CSVHeaderParser<FeederCSVColumn> componentHeaderParser = new CSVHeaderParserBase<FeederCSVColumn>() {
+        CSVHeaderParser<FeederCSVColumn> feederHeaderParser = new CSVHeaderParserBase<FeederCSVColumn>() {
             @Override
             FeederCSVColumn parseHeader(CSVInputContext context, String headerValue) {
-                headerValue.toUpperCase().replaceAll('[^A-Za-z0-9]', "_") as FeederCSVColumn
+                FeederCSVColumn.fromString(FeederCSVColumn, headerValue)
             }
         }
 
         csvParseExceptions = []
 
-        CSVInput<FeederItem, FeederCSVColumn> csvInput = new CSVInput<FeederItem, FeederCSVColumn>(reference, reader, componentHeaderParser, lineParser)
+        CSVInput<FeederItem, FeederCSVColumn> csvInput = new CSVInput<FeederItem, FeederCSVColumn>(reference, reader, feederHeaderParser, lineParser)
         csvInput.parseHeader()
 
         csvInput.parseLines({ CSVInputContext context, FeederItem feederItem, String[] line ->
