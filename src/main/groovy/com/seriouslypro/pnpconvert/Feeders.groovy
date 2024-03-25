@@ -230,6 +230,7 @@ class Feeders {
             }
         }, { CSVInputContext context, String[] line, Exception cause ->
             csvParseExceptions << cause
+            csvInput.defaultExceptionHandler(context, line, cause)
         })
 
         csvInput.close()
