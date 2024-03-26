@@ -101,6 +101,7 @@ clover {
         '**/DipTracePlacementsLineParser.groovy',
         '**/DPVFile.groovy',
         '**/DPVGenerator.groovy',
+        '**/RowMatcher.groovy',
     ]
     testExcludes = [
             // All the following cause: java.lang.UnsupportedOperationException: EmptyExpression.INSTANCE is immutable"

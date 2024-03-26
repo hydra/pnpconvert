@@ -22,7 +22,7 @@ class RowMatcherSpec extends Specification {
             SheetToDPVHeaderMapping sheetToEntryHeaderMapping = new SheetToDPVHeaderMapping(dpvTableHeaders, sheetHeaders)
 
         when:
-            boolean result = RowMatcher.match(matchOptions, sheetToEntryHeaderMapping, sheetFeederRowValues, dpvFeederEntryValues)
+            boolean result = new RowMatcher().match(matchOptions, sheetToEntryHeaderMapping, sheetFeederRowValues, dpvFeederEntryValues)
 
         then:
             result
@@ -45,7 +45,7 @@ class RowMatcherSpec extends Specification {
             SheetToDPVHeaderMapping sheetToEntryHeaderMapping = new SheetToDPVHeaderMapping(dpvTableHeaders, sheetHeaders)
 
         when:
-            boolean result = RowMatcher.match(matchOptions, sheetToEntryHeaderMapping, sheetFeederRowValues, dpvFeederEntryValues)
+            boolean result = new RowMatcher().match(matchOptions, sheetToEntryHeaderMapping, sheetFeederRowValues, dpvFeederEntryValues)
 
         then:
             result == expectedResult
@@ -78,7 +78,7 @@ class RowMatcherSpec extends Specification {
             SheetToDPVHeaderMapping sheetToEntryHeaderMapping = new SheetToDPVHeaderMapping(dpvTableHeaders, sheetHeaders)
 
         when:
-            boolean result = RowMatcher.match(matchOptions, sheetToEntryHeaderMapping, sheetFeederRowValues, dpvFeederEntryValues)
+            boolean result = new RowMatcher().match(matchOptions, sheetToEntryHeaderMapping, sheetFeederRowValues, dpvFeederEntryValues)
 
         then:
             result
@@ -100,7 +100,7 @@ class RowMatcherSpec extends Specification {
             SheetToDPVHeaderMapping sheetToEntryHeaderMapping = new SheetToDPVHeaderMapping(dpvTableHeaders, sheetHeaders)
 
         when:
-            boolean result = RowMatcher.match(matchOptions, sheetToEntryHeaderMapping, sheetFeederRowValues, dpvFeederEntryValues)
+            boolean result = new RowMatcher().match(matchOptions, sheetToEntryHeaderMapping, sheetFeederRowValues, dpvFeederEntryValues)
 
         then:
             !result
@@ -123,7 +123,7 @@ class RowMatcherSpec extends Specification {
             SheetToDPVHeaderMapping sheetToEntryHeaderMapping = new SheetToDPVHeaderMapping(dpvTableHeaders, sheetHeaders)
 
         when:
-            boolean result = RowMatcher.match(matchOptions, sheetToEntryHeaderMapping, sheetFeederRowValues, dpvFeederEntryValues)
+            boolean result = new RowMatcher().match(matchOptions, sheetToEntryHeaderMapping, sheetFeederRowValues, dpvFeederEntryValues)
 
         then:
             result == expectedResult
