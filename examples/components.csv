@@ -1,6 +1,6 @@
-Name,Width,Length,Height,Aliases
-10K 0402 1%/RES_0402,0.5,1,0.5,"10K 1% 0402/RES_0402,10K0 0402 1%/RES_0402"
-100nF 6.3V 0402/CAP_0402,0.5,1,0.5,
-1uF 6.3V 0402/CAP_0402,0.5,1,0.5,
-10uF 16V 0805/CAP_0805,1.25,2,1,
-STM32F030C8T,7,7,2,
+"Part Code","Manufacturer","Name","Width","Length","Height","Aliases","OffsetX","OffsetY"
+"CRG0402F10K","TE CONNECTIVITY","10K 0402 1%/RES_0402",0.5,1.0,0.5,"10K 1% 0402/RES_0402,10K0 1% 0402",0.02,0.4
+"","","100nF 6.3V 0402/CAP_0402",0.5,1,0.5,,,
+"","","1uF 6.3V 0402/CAP_0402",0.5,1,0.5,,,
+"","","10uF 16V 0805/CAP_0805",1.25,2,1,,,
+"","","STM32F030C8T",7,7,2,,,
