@@ -1,7 +1,12 @@
 package com.seriouslypro.pnpconvert
 
 import com.seriouslypro.csv.CSVProcessor
+import com.seriouslypro.eda.diptrace.placement.DipTracePartMapper
+import com.seriouslypro.eda.part.PartMappings
+import com.seriouslypro.eda.part.PartMapping
 import com.seriouslypro.pnpconvert.machine.Machine
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 
 import static FileTools.*
 
@@ -11,6 +16,7 @@ class Converter {
     String traysFileName
     String feedersFileName
     String componentsFileName
+    String partMappingsFileName
     String outputPrefix
 
     Machine machine
@@ -126,6 +132,30 @@ class Converter {
         }
 
         //
+        // Load Mappings
+        //
+
+        PartMappings partMapper = loadPartMappings()
+
+        System.out.println()
+        System.out.println("part mappings:")
+        partMapper.partMappings.each { PartMapping partMapping ->
+            System.out.println(partMapping.toString())
+        }
+
+        //
+        // Apply part mappings to placements
+        //
+
+        List<PartMappingResult> appliedMappings = new PlacementPartMapper().applyPartMappings(partMapper.partMappings, placements)
+        int appliedMappingsCount = appliedMappings.size()
+        System.out.println("applied ${appliedMappingsCount} part mapping(s)")
+        appliedMappings.each { PartMappingResult result ->
+            System.out.println(result.toString())
+        }
+        System.out.println()
+
+        //
         // Load Components
         //
 
@@ -220,5 +250,60 @@ class Converter {
         components.loadFromCSV(componentsFileName, reader)
 
         components
+    }
+
+    private PartMappings loadPartMappings() {
+        PartMappings partMapper = new PartMappings()
+
+        if (partMappingsFileName) {
+            Reader reader = openFileOrUrl(partMappingsFileName)
+            partMapper.loadFromCSV(partMappingsFileName, reader)
+        }
+
+        partMapper
+    }
+}
+
+@ToString(includeNames = true, includePackage = false)
+@EqualsAndHashCode
+class PartMappingResult {
+    PartMapping partMapping
+    ComponentPlacement placement
+    Map<String, Tuple2<String,String>> modifiedFields
+
+    @Override
+    String toString() {
+        System.out.println("mapped: ${placement.refdes}, using: ${partMapping}")
+        modifiedFields.each { fieldName, tuple ->
+            System.out.println("    '${fieldName}', old: '${tuple[0]}', new: '${tuple[1]}'")
+        }
+    }
+}
+
+class PlacementPartMapper {
+    List<PartMappingResult> applyPartMappings(List<PartMapping> partMappings, List<ComponentPlacement> placements) {
+
+        placements.findResults { placement ->
+            List<PartMapping> matchedMappings = new DipTracePartMapper().buildOptions(partMappings, placement.name, placement.value)
+            if (!matchedMappings) {
+                return null
+            }
+
+            PartMapping first = matchedMappings.first()
+
+            PartMappingResult result = new PartMappingResult(
+                partMapping: first,
+                placement: placement,
+                modifiedFields: [
+                    'partCode': new Tuple2(placement.partCode, first.partCode),
+                    'manufacturer': new Tuple2(placement.manufacturer, first.manufacturer)
+                ]
+            )
+
+            placement.partCode = first.partCode
+            placement.manufacturer = first.manufacturer
+
+            result
+        }
     }
 }

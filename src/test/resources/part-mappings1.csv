@@ -1,0 +1,2 @@
+Name Pattern,Value Pattern,Part Code,Manufacturer
+"/RES_0402.*/","/10K 0402( (.*)%)?( (.*)mW)?/","CRG0402F10K", "TE CONNECTIVITY"

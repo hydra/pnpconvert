@@ -306,9 +306,21 @@ Fields requiring additional documentation are as below.
 
 ### Values
 
-| Flag | Meaning                                                                                                                |
-| !    | Ignore the row.  Use this flag to manage feeders/trays that are not currently in use without having to delete the row  |
+#### Flags
+| Flag | Meaning                                                                                                               |
+| ---- |-----------------------------------------------------------------------------------------------------------------------|
+| !    | Ignore the row.  Use this flag to manage feeders/trays that are not currently in use without having to delete the row |
 
+##### Disabled vs Ignored workflow
+
+IMPORTANT: Disabled != Ignored.
+* Disabled - component still present in the machine!
+* Ignored Flag in CSV - component is NOT in the machine, but a row exists which can later be restored if the component is reloaded into the machine.
+
+When a feeder is disabled, it will still appear in the DPV and it will still be used for component selection, however the machine just won't place
+the component on the PCB.
+
+#### ID
 Feeder IDs for the CHMT48VB are as below, they are FIXED by the software in the CHMT48VB.
 
 | ID    | Purpose                               |

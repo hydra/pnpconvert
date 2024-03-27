@@ -1,6 +1,7 @@
 -cfg examples/example1-google-sheets.config
 -i examples/example1.csv
 -o examples/example1-2x1-panel-with-rails
+-pm examples/example1-part-mappings.csv
 -c
 
 # uncomment to show transforms

@@ -124,7 +124,7 @@ class DPVWriter {
                 buildStatus(componentPlacement.enabled && materialAssignment.feeder.enabled, pickSettings),
                 buildPlaceSpeed(pickSettings.placeSpeedPercentage),
                 componentPlacement.refdes,
-                (componentPlacement.value + "/" + componentPlacement.name).take(31),
+                (materialAssignment.component.name + ";" + componentPlacement.value).take(31),
                 (pickSettings.placeDelay * 100) as Integer
             ]
 
@@ -250,8 +250,8 @@ class DPVWriter {
             parts << component.partCode
             parts << component.manufacturer
         }
-        if (component.name) {
-            parts << component.name
+        if (feeder.description) {
+            parts << feeder.description
         }
         if (feeder.note) {
             parts << feeder.note

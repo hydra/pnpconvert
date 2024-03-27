@@ -91,11 +91,11 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
                 placementOffsetX: 1.10,
                 placementOffsetY: 0.80,
             )
-            components.add(component5)
-            components.add(component4)
-            components.add(component3)
-            components.add(component2)
             components.add(component1)
+            components.add(component2)
+            components.add(component3)
+            components.add(component4)
+            components.add(component5)
 
         and:
             PickSettings slowPickSettings = new PickSettings(
@@ -113,9 +113,8 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
             )
 
             feeders.loadFeeder(feeders.createReelFeeder(1, 8, component1.partCode, component1.manufacturer, component1.name, slowPickSettings, "Cheap"))
-            feeders.loadFeeder(feeders.createReelFeeder(36, 8, component2.partCode, component2.manufacturer, component2.name, fastPickSettings, "Expensive"))
-
             feeders.loadFeeder(feeders.createReelFeeder(33, 12, component5.partCode, component5.manufacturer, component5.name, new PickSettings(separateMount: true, takeHeight: 2), "Special"))
+            feeders.loadFeeder(feeders.createReelFeeder(36, 8, component2.partCode, component2.manufacturer, component2.name, fastPickSettings, "Expensive"))
 
         and:
             Tray tray1 = new Tray(
@@ -236,7 +235,6 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
             boolean haveComponentWithPlacementOffset = componentPlacements.find { it.name == nameOfComponentWithPlacementOffset && it.rotation != 0 && it.coordinate.x != it.coordinate.y}
             boolean havePlacementThatUsesComponentWithPlacementOffset = components.components.find { it.name == nameOfComponentWithPlacementOffset && it.placementOffsetX != 0 && it.placementOffsetY != 0 && it.placementOffsetX != it.placementOffsetY}
             assert haveComponentWithPlacementOffset && havePlacementThatUsesComponentWithPlacementOffset
-
         and:
             DPVGenerator generator = buildGenerator()
 
@@ -251,13 +249,13 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
 
         and:
             List<List<String>> expectedComponents = [
-                ["EComponent","0","1","1","36","24.89","21.64","45","0.5","6","100","C1","100nF 6.3V 0402/CAP_0402","0"],
-                ["EComponent","1","2","1","1001","21.3","35.07","90","0.5","6","100","U1","/MAX14851","50"],
-                ["EComponent","2","3","1","1001","21.5","19.5","157.5","0.5","6","100","U2","/MAX14851","50"],
-                ["EComponent","3","4","1","1002","16","45","90","0.5","6","100","U3","/RJ45CN","0"],
-                ["EComponent","4","5","1","1","14.44","13.9","0","0.5","6","100","R1","10K 0402 1%/RES_0402","50"],
-                ["EComponent","5","6","1","1","15.72","25.2","-90","0.5","6","100","R2","10K 0402 1%/RES_0402","50"],
-                ["EComponent","6","7","1","33","50.83","23.97","0","3.5","15","100","J1","/Micro USB Socket With Very Lon","0"],
+                ["EComponent","0","1","1","36","24.89","21.64","45","0.5","6","100","C1","100nF 6.3V 0402/CAP_0402;100nF ","0"],
+                ["EComponent","1","2","1","1001","21.3","35.07","90","0.5","6","100","U1","MAX14851;","50"],
+                ["EComponent","2","3","1","1001","21.5","19.5","157.5","0.5","6","100","U2","MAX14851;","50"],
+                ["EComponent","3","4","1","1002","16","45","90","0.5","6","100","U3","RJ45CN;","0"],
+                ["EComponent","4","5","1","1","14.44","13.9","0","0.5","6","100","R1","10K 0402 1%/RES_0402;10K 0402 1","50"],
+                ["EComponent","5","6","1","1","15.72","25.2","-90","0.5","6","100","R2","10K 0402 1%/RES_0402;10K 0402 1","50"],
+                ["EComponent","6","7","1","33","50.83","23.97","0","3.5","15","100","J1","Micro USB Socket With Very Long","0"],
             ]
 
         and:

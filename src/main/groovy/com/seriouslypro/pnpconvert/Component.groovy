@@ -19,5 +19,9 @@ class Component {
     BigDecimal area() {
         return width * length
     }
+
+    boolean hasPartCodeAndManufacturer() {
+        partCode && partCode.length() > 0 && manufacturer && manufacturer.length() > 0
+    }
 }
 

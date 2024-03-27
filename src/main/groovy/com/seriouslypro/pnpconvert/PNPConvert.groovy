@@ -21,6 +21,7 @@ class PNPConvert {
         builder.t(args:1, argName: 'trays', 'trays csv file/url')
         builder.f(args:1, argName: 'feeders', 'feeders csv file/url')
         builder.co(args:1, argName: 'components', 'components csv file/url')
+        builder.pm(args:1, argName: 'partMappings', 'part mappings csv file/url')
         builder.r(args:1, argName: 'rotation', 'rotation degrees (positive is clockwise)')
         builder.s(args:1, argName: 'side', 'pcb side (top|bottom|all), default is all')
         builder.m(args:1, argName: 'mirroring', 'mirroring mode (horizontal/vertical/both/none), default is none')
@@ -95,6 +96,7 @@ class PNPConvert {
         String traysFileName = config.getOrDefault("trays","trays.csv")
         String feedersFileName = config.getOrDefault("feeders","feeders.csv")
         String componentsFileName = config.getOrDefault("components","components.csv")
+        String partMappingsFileName  = config.getOrDefault("partMappings","part-mappings.csv")
 
         Board board = new Board()
         BoardRotation boardRotation = new BoardRotation()
@@ -124,6 +126,10 @@ class PNPConvert {
 
         if (options.f) {
             feedersFileName = options.f
+        }
+
+        if (options.pm) {
+            partMappingsFileName = options.pm
         }
 
         if (options.j) {
@@ -255,6 +261,7 @@ class PNPConvert {
                 traysFileName: traysFileName,
                 feedersFileName: feedersFileName,
                 componentsFileName: componentsFileName,
+                partMappingsFileName: partMappingsFileName,
                 outputPrefix: outputPrefix,
                 board: board,
                 boardRotation: boardRotation,

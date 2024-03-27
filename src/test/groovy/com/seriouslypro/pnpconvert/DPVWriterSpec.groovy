@@ -188,7 +188,6 @@ class DPVWriterSpec extends Specification implements DPVFileAssertions {
             90          | 90        | 270          | 90
     }
 
-
     def 'write dpv for one component placed 2 times'() {
         given:
             DPVWriter writer = new DPVWriter(outputStream, machine, offsetZ, dpvHeader)
@@ -200,7 +199,7 @@ class DPVWriterSpec extends Specification implements DPVFileAssertions {
             PickSettings pickSettings1 = new PickSettings()
             FeederProperties feederProperties = new FeederProperties()
             Optional<Integer> noFixedId = Optional.empty()
-            Feeder feeder1 = new Feeder(fixedId: noFixedId, enabled: true, note: "Feeder Note", description: "Feeder Component Name",  pickSettings: pickSettings1, properties: feederProperties)
+            Feeder feeder1 = new Feeder(fixedId: noFixedId, enabled: true, note: "Feeder Note", description: "Feeder Description",  pickSettings: pickSettings1, properties: feederProperties)
             MaterialAssignment ma1 = new MaterialAssignment(component: c1, feederId: 1, feeder: feeder1)
             materialAssignments = [
                 (cp1): ma1,
@@ -209,13 +208,13 @@ class DPVWriterSpec extends Specification implements DPVFileAssertions {
 
         and:
             List<List<String>> expectedMaterials = [
-                ["Station","0","1","0","0","4","C0DE;MFR;Component Name;Feeder Note","0.5","100","6","0","0","0","0","0"],
+                ["Station","0","1","0","0","4","C0DE;MFR;Feeder Description;Feeder Note","0.5","100","6","0","0","0","0","0"],
             ]
 
         and:
             List<List<String>> expectedComponents = [
-                ["EComponent","0","1","1","1","3","4","180","0.5","6","100","Z1","Value 1/Placement Name 1","0"],
-                ["EComponent","1","2","1","1","5","6","90","0.5","7","100","Z2","Value 2/Placement Name 2","0"],
+                ["EComponent","0","1","1","1","3","4","180","0.5","6","100","Z1","Component Name;Value 1","0"],
+                ["EComponent","1","2","1","1","5","6","90","0.5","7","100","Z2","Component Name;Value 2","0"],
             ]
 
         and:

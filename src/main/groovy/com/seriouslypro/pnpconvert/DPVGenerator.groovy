@@ -1,6 +1,8 @@
 package com.seriouslypro.pnpconvert
 
+import com.seriouslypro.eda.part.PartMapping
 import com.seriouslypro.pnpconvert.machine.Machine
+import org.checkerframework.checker.units.qual.C
 
 class DPVGenerator {
     DPVHeader dpvHeader
@@ -16,10 +18,11 @@ class DPVGenerator {
     List<ComponentPlacement> placementsWithUnknownComponents
     Set<Component> unloadedComponents
     Map<Feeder, Component> feedersMatchedByAlias
-    Map<ComponentPlacement, ComponentFindResult> inexactComponentMatches
+    Map<ComponentPlacement, Component> inexactComponentMatches
 
     Optional<Panel> optionalPanel
     Optional<List<Fiducial>> optionalFiducials
+    List<PartMapping> partMappings
 
     void generate(OutputStream outputStream) {
         placementsWithUnknownComponents = []
@@ -43,8 +46,8 @@ class DPVGenerator {
         System.out.println('')
 
         System.out.println()
-        System.out.println("inexactComponentsMatches:\n" + inexactComponentMatches.collect { ComponentPlacement placement, ComponentFindResult componentFindResult ->
-            "placement: $placement, component: $componentFindResult.component, strategies: $componentFindResult.matchingStrategies"
+        System.out.println("inexactComponentsMatches:\n" + inexactComponentMatches.collect { ComponentPlacement placement, Component component ->
+            "placement: $placement, component: $component"
         }.join('\n'))
 
         System.out.println()
@@ -85,7 +88,7 @@ class DPVGenerator {
             }
 
             if (!componentFindResult.isExactMatch()) {
-                inexactComponentMatches[placement] = componentFindResult
+                inexactComponentMatches[placement] = componentFindResult.component
             }
 
             Component component = componentFindResult.component
@@ -112,6 +115,9 @@ class DPVGenerator {
                     if (aliasComponent) {
                         findResult = component.aliases.findResult { alias ->
                             feeders.findByComponent(aliasComponent)
+                        }
+                        if (findResult) {
+                            component = aliasComponent
                         }
                     }
 
@@ -203,7 +209,6 @@ class DPVGenerator {
                 )
                 materialAssignments[placement] = materialAssignment
             }
-
         }
 
         return materialAssignments

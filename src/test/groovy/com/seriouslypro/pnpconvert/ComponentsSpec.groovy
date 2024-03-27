@@ -25,7 +25,7 @@ class ComponentsSpec extends Specification {
             InputStreamReader inputStreamReader = new InputStreamReader(inputStream)
 
         and:
-            List<Component> expectedComponentList = [
+            List<Component> expectedComponents = [
                 new Component(partCode: TEST_PART_CODE, manufacturer: TEST_MANUFACTURER, name: "10K 0402 1%/RES_0402", width: 0.5, length: 1.0, height: 0.5, placementOffsetX: 0.02, placementOffsetY: 0.4, aliases: ["10K 1% 0402/RES_0402",TEST_COMPONENT_ALIAS])
             ]
 
@@ -33,7 +33,7 @@ class ComponentsSpec extends Specification {
             components.loadFromCSV(TEST_COMPONENTS_RESOURCE, inputStreamReader)
 
         then:
-            components.components == expectedComponentList
+            components.components == expectedComponents
     }
 
     def 'ignore empty aliases'() {

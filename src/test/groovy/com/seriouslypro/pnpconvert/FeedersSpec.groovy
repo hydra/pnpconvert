@@ -14,7 +14,6 @@ class FeedersSpec extends Specification {
 
     Feeders feeders
 
-
     private static Tray testTray = new Tray(
         name: "B-1-4-TL",
         firstComponentX: 205.07G, firstComponentY: 61.05G,
@@ -42,6 +41,23 @@ class FeedersSpec extends Specification {
 
         and:
             Feeder feeder = feeders.createReelFeeder(1, 8, TEST_COMPONENT_PART_CODE, TEST_COMPONENT_MANUFACTURER, "DESCRIPTION", mockPickSettings, "TEST-NOTE")
+            feeders.loadFeeder(feeder)
+
+        when:
+            Feeder result = feeders.findByComponent(new Component(name: "DESCRIPTION"))
+
+        then:
+            result
+            result.fixedId.get() == 1
+    }
+
+    def 'find by component - component name matches feeder description, but feeder disabled'() {
+        given:
+            PickSettings mockPickSettings = Mock()
+
+        and:
+            Feeder feeder = feeders.createReelFeeder(1, 8, TEST_COMPONENT_PART_CODE, TEST_COMPONENT_MANUFACTURER, "DESCRIPTION", mockPickSettings, "TEST-NOTE")
+            feeder.enabled = false
             feeders.loadFeeder(feeder)
 
         when:
