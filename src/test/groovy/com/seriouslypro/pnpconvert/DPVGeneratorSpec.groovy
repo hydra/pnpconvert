@@ -3,10 +3,6 @@ package com.seriouslypro.pnpconvert
 import com.seriouslypro.pnpconvert.machine.Machine
 import spock.lang.Ignore
 import spock.lang.Specification
-import spock.lang.Unroll
-
-import java.text.DecimalFormat
-
 import org.springframework.boot.test.OutputCapture
 
 // reference: https://github.com/sparkfunX/Desktop-PickAndPlace-CHMT36VA/blob/master/Eagle-Conversion/ConvertToCharm.ulp#L469-L498
@@ -21,15 +17,13 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
             pcbFileName: "TEST-PCB-FILE"
     )
 
-    List<ComponentPlacement> componentPlacements
-    Components components
+    List<MappedPlacement> mappedPlacements
     Feeders feeders
 
     OutputStream outputStream
 
     void setup() {
-        componentPlacements = []
-        components = new Components()
+        mappedPlacements = []
         feeders = new Feeders()
 
         outputStream = new ByteArrayOutputStream()
@@ -49,53 +43,50 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
             content
     }
 
-    def 'generate for components in feeders'() {
+    def 'generate'() {
         // This test is testing too much now.  Create separate tests for the following.
         // * Feeder/Placement/Component Content to DPV file content.
         // * Material selection
         // * Material assignment
 
         given:
-            Component component1 = new Component(
-                name: "10K 0402 1%/RES_0402",
-                width: 0.01,
-                length: 30,
-                partCode: "R10K00402",
-                manufacturer: "RM1",
-            )
-            Component component2 = new Component(
-                name: "100nF 6.3V 0402/CAP_0402",
-                partCode: "C10404026V3",
-                manufacturer: "CM1",
-            )
-            Component component3 = new Component(
-                name: "MAX14851",
-                partCode: "MAX14851",
-                manufacturer: "UM1",
-            )
-            Component component4 = new Component(
-                name: "RJ45CN",
-                partCode: "CAT24C32WI-GT3",
-                manufacturer: "JM1",
-            )
-            Component component5 = new Component(
-                name: "Micro USB Socket With Very Long Name",
-                partCode: "MUSBSWVLN",
-                manufacturer: "JM2",
-                width: 8,
-                height: 3.5,
-                length: 5,
+            List<Component> components = [
+                new Component(
+                    description: "10K 0402 1%/RES_0402",
+                    width: 0.01,
+                    length: 30,
+                    partCode: "R10K00402",
+                    manufacturer: "RM1",
+                ),
+                new Component(
+                    description: "100nF 6.3V 0402/CAP_0402",
+                    partCode: "C10404026V3",
+                    manufacturer: "CM1",
+                ),
+                new Component(
+                    description: "MAX14851",
+                    partCode: "MAX14851",
+                    manufacturer: "UM1",
+                ),
+                new Component(
+                    description: "RJ45CN",
+                    partCode: "CAT24C32WI-GT3",
+                    manufacturer: "JM1",
+                ),
+                new Component(
+                    description: "Micro USB Socket With Very Long Name",
+                    partCode: "MUSBSWVLN",
+                    manufacturer: "JM2",
+                    width: 8,
+                    height: 3.5,
+                    length: 5,
 
-                // use zero second fraction digit to aid matching rotation calculations (note: easy to see 0.1 + 0.02 = 0.12)
-                // use offsets that will result it the first digit of the placement being different for X/Y
-                placementOffsetX: 1.10,
-                placementOffsetY: 0.80,
-            )
-            components.add(component1)
-            components.add(component2)
-            components.add(component3)
-            components.add(component4)
-            components.add(component5)
+                    // use zero second fraction digit to aid matching rotation calculations (note: easy to see 0.1 + 0.02 = 0.12)
+                    // use offsets that will result it the first digit of the placement being different for X/Y
+                    placementOffsetX: 1.10,
+                    placementOffsetY: 0.80,
+                )
+            ]
 
         and:
             PickSettings slowPickSettings = new PickSettings(
@@ -112,9 +103,9 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
                 feederAngle: 270
             )
 
-            feeders.loadFeeder(feeders.createReelFeeder(1, 8, component1.partCode, component1.manufacturer, component1.name, slowPickSettings, "Cheap"))
-            feeders.loadFeeder(feeders.createReelFeeder(33, 12, component5.partCode, component5.manufacturer, component5.name, new PickSettings(separateMount: true, takeHeight: 2), "Special"))
-            feeders.loadFeeder(feeders.createReelFeeder(36, 8, component2.partCode, component2.manufacturer, component2.name, fastPickSettings, "Expensive"))
+            feeders.loadFeeder(feeders.createReelFeeder(1, 8, components[0].partCode, components[0].manufacturer, components[0].description, slowPickSettings, "Cheap"))
+            feeders.loadFeeder(feeders.createReelFeeder(33, 12, components[4].partCode, components[4].manufacturer, components[4].description, new PickSettings(separateMount: true, takeHeight: 2), "Special"))
+            feeders.loadFeeder(feeders.createReelFeeder(36, 8, components[1].partCode, components[1].manufacturer, components[1].description, fastPickSettings, "Expensive"))
 
         and:
             Tray tray1 = new Tray(
@@ -135,11 +126,11 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
                 firstComponentIndex: 0
             )
 
-            feeders.loadFeeder(feeders.createTrayFeeder(91, tray1, component3.name, slowPickSettings, "Back 1-4 Top-Left, Pin 1 Top-Left"))
-            feeders.loadFeeder(feeders.createTrayFeeder(92, tray2, component4.name, fastPickSettings,"Back 6-7 Top-Left, Pin 1 Bottom-Right"))
+            feeders.loadFeeder(feeders.createTrayFeeder(tray1, components[2].partCode, components[2].manufacturer, components[2].description, slowPickSettings, "Back 1-4 Top-Left, Pin 1 Top-Left"))
+            feeders.loadFeeder(feeders.createTrayFeeder(tray2, components[3].partCode, components[3].manufacturer, components[3].description, fastPickSettings,"Back 6-7 Top-Left, Pin 1 Bottom-Right"))
 
         and:
-            componentPlacements = [
+            List<ComponentPlacement> componentPlacements = [
                 new ComponentPlacement(
                     refdes: "R1",
                     pattern: "RES_0402_HIGH_DENSITY",
@@ -205,6 +196,37 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
                     name: "Micro USB Socket With Very Long Name"
                 )
             ]
+        and:
+            mappedPlacements = [
+                new MappedPlacement(
+                    placement: componentPlacements[0],
+                    component: Optional.of(components[0]),
+                ),
+                new MappedPlacement(
+                    placement: componentPlacements[1],
+                    component: Optional.of(components[0]),
+                ),
+                new MappedPlacement(
+                    placement: componentPlacements[2],
+                    component: Optional.of(components[1]),
+                ),
+                new MappedPlacement(
+                    placement: componentPlacements[3],
+                    component: Optional.of(components[2]),
+                ),
+                new MappedPlacement(
+                    placement: componentPlacements[4],
+                    component: Optional.of(components[2]),
+                ),
+                new MappedPlacement(
+                    placement: componentPlacements[5],
+                    component: Optional.of(components[3]),
+                ),
+                new MappedPlacement(
+                    placement: componentPlacements[6],
+                    component: Optional.of(components[4]),
+                ),
+            ]
 
         and: // test data expectations
             boolean haveTwoIdenticalComponents = (
@@ -233,7 +255,7 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
 
             String nameOfComponentWithPlacementOffset = "Micro USB Socket With Very Long Name"
             boolean haveComponentWithPlacementOffset = componentPlacements.find { it.name == nameOfComponentWithPlacementOffset && it.rotation != 0 && it.coordinate.x != it.coordinate.y}
-            boolean havePlacementThatUsesComponentWithPlacementOffset = components.components.find { it.name == nameOfComponentWithPlacementOffset && it.placementOffsetX != 0 && it.placementOffsetY != 0 && it.placementOffsetX != it.placementOffsetY}
+            boolean havePlacementThatUsesComponentWithPlacementOffset = components.find { it.description == nameOfComponentWithPlacementOffset && it.placementOffsetX != 0 && it.placementOffsetY != 0 && it.placementOffsetX != it.placementOffsetY}
             assert haveComponentWithPlacementOffset && havePlacementThatUsesComponentWithPlacementOffset
         and:
             DPVGenerator generator = buildGenerator()
@@ -266,11 +288,11 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
 
         and:
             List<List<String>> expectedFeederSummary = [
-                ['1','2','2','[R1, R2]','[id:1, note:Cheap]','[partCode:R10K00402, manufacturer:RM1, name:10K 0402 1%/RES_0402, aliases:[]]'],
-                ['33','0','0','[]','[id:33, note:Special]','[partCode:MUSBSWVLN, manufacturer:JM2, name:Micro USB Socket With Very Long Name, aliases:[]]'],
-                ['36','1','1','[C1]','[id:36, note:Expensive]','[partCode:C10404026V3, manufacturer:CM1, name:100nF 6.3V 0402/CAP_0402, aliases:[]]'],
-                ['1001','2','2','[U1, U2]','[tray:B-1-4-TL, note:Back 1-4 Top-Left, Pin 1 Top-Left]','[partCode:MAX14851, manufacturer:UM1, name:MAX14851, aliases:[]]'],
-                ['1002','1','1','[U3]','[tray:B-6-7-TL, note:Back 6-7 Top-Left, Pin 1 Bottom-Right]','[partCode:CAT24C32WI-GT3, manufacturer:JM1, name:RJ45CN, aliases:[]]']
+                ['1','2','2','[R1, R2]','[id:1, note:Cheap]','[partCode:R10K00402, manufacturer:RM1, name:10K 0402 1%/RES_0402]'],
+                ['33','0','0','[]','[id:33, note:Special]','[partCode:MUSBSWVLN, manufacturer:JM2, name:Micro USB Socket With Very Long Name]'],
+                ['36','1','1','[C1]','[id:36, note:Expensive]','[partCode:C10404026V3, manufacturer:CM1, name:100nF 6.3V 0402/CAP_0402]'],
+                ['1001','2','2','[U1, U2]','[tray:B-1-4-TL, note:Back 1-4 Top-Left, Pin 1 Top-Left]','[partCode:MAX14851, manufacturer:UM1, name:MAX14851]'],
+                ['1002','1','1','[U3]','[tray:B-6-7-TL, note:Back 6-7 Top-Left, Pin 1 Bottom-Right]','[partCode:CAT24C32WI-GT3, manufacturer:JM1, name:RJ45CN]']
             ]
 
         when:
@@ -289,90 +311,8 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
             feederSummaryPresent(capturedOutput, expectedFeederSummary)
     }
 
-    // FIXME this test is currently failing until a solution is implemented.
-    //       The problem is actually worse than this, as feeder names are also used for matching, which results
-    //       in either unintended component selection and/or missing or erroneous messages regarding which components were
-    //       in exact matches due to component aliases being allowed to used to match feeders, and results depend on
-    //       which placement was processed first.
-    //       Given the above the solution is likely deletion of aliases and using stricter manufacturer and part codes
-    //       everywhere, which would bypass the need for this test or error checking and forces the user to use refdes
-    //       replacements and part mappings which will should yield consistent, repeatable, understandable and
-    //       error-free component selections.
-    def 'generate - with circular loop on components'() {
-        given:
-            Component component1 = new Component(
-                name: "10K 0402 1% 10V/RES_0402",
-                partCode: "R10K00402",
-                manufacturer: "RM1",
-                aliases: ["10K 0402 1% 50V/RES_0402"] // <-- a user with this scenario should probably be change this
-            )
-            Component component2 = new Component(
-                name: "10K 0402 1% 50V/RES_0402",
-                partCode: "CRG0402F10K",
-                manufacturer: "TEC",
-                aliases: ["10K 0402 1% 10V/RES_0402"]
-            )
-            components.add(component1)
-            components.add(component2)
-
-        and:
-            PickSettings pickSettings = new PickSettings()
-
-        and:
-            feeders.loadFeeder(feeders.createReelFeeder(1, 8, component1.partCode, component1.manufacturer, "RES 10K 0402 1% 10V", pickSettings, "Cheap/Generic"))
-            feeders.loadFeeder(feeders.createReelFeeder(2, 8, component2.partCode, component2.manufacturer, "RES 10K 0402 1% 50V", pickSettings, "Explicit"))
-
-        and:
-            componentPlacements = [
-                new ComponentPlacement(
-                    refdes: "R2",
-                    pattern: "RES_0402",
-                    coordinate: new Coordinate(x: 0.0, y: 0.0),
-                    side: PCBSide.TOP,
-                    rotation: 0,
-                    value: "10K 0402 1% 50V",
-                    name: "RES_0402",
-                    partCode: "CRG0402F10K",
-                    manufacturer: "TEC",
-                ),
-                new ComponentPlacement(
-                    refdes: "R1",
-                    pattern: "RES_0402",
-                    coordinate: new Coordinate(x: 10.0, y: 10.0),
-                    side: PCBSide.TOP,
-                    rotation: 0,
-
-                    // a user with this scenario could use refdes replacement or part mappings so that their BOM uses the 50V parts everywere.
-                    partCode: "R10K00402",
-                    manufacturer: "RM1",
-                    value: "10K 0402 1% 10V",
-                    name: "RES_0402"
-                ),
-            ]
-
-        and: // test data expectations
-            // two components, one higher spec with explicit part code, and another more generic part
-            // each component has an alias of the other.
-            // two placements, each using the two components
-            assert component1.aliases.contains(component2.name)
-            assert component2.aliases.contains(component1.name)
-        and:
-            DPVGenerator generator = buildGenerator()
-
-        when:
-            generator.generate(outputStream)
-
-        then:
-            // placement order should NOT determine which feeder is used
-            // it is required disable one or the other feeder to be consistent.
-            String capturedOutput = capture.toString()
-
-            // TODO add details of which refdes and which components are the problem.
-            capturedOutput.contains("components cross-reference each other")
-    }
-
     @Ignore
-    def 'placement with unknown component'() {
+    def 'placement with un-mapped component'() {
         expect:
             false
     }
@@ -390,18 +330,6 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
     }
 
     @Ignore
-    def 'feeder match using a component alias'() {
-        expect:
-            false
-    }
-
-    @Ignore
-    def 'feeder match using component that is an alias of component'() {
-        expect:
-            false
-    }
-
-    @Ignore
     def 'error should be generated if no more tray ids are available when assigning IDs to trays'() {
         expect:
             false
@@ -411,8 +339,7 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
         DPVGenerator generator = new DPVGenerator(
                 machine: new TestMachine(),
                 dpvHeader: dpvHeader,
-                placements: componentPlacements,
-                components: components,
+                mappedPlacements: mappedPlacements,
                 feeders: feeders,
                 optionalPanel: Optional.empty(),
                 optionalFiducials: Optional.empty(),

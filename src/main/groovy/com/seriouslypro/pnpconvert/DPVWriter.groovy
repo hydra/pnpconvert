@@ -124,7 +124,7 @@ class DPVWriter {
                 buildStatus(componentPlacement.enabled && materialAssignment.feeder.enabled, pickSettings),
                 buildPlaceSpeed(pickSettings.placeSpeedPercentage),
                 componentPlacement.refdes,
-                (materialAssignment.component.name + ";" + componentPlacement.value).take(31),
+                (materialAssignment.component.description + ";" + componentPlacement.value).take(31),
                 (pickSettings.placeDelay * 100) as Integer
             ]
 
@@ -190,7 +190,7 @@ class DPVWriter {
                 tray.rows,
                 tray.firstComponentIndex,
                 tray.name,
-                materialAssignment.component.name
+                materialAssignment.component.description
             ]
 
             return trayRow

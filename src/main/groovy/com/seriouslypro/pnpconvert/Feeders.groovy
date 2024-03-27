@@ -51,10 +51,12 @@ class Feeders {
         feederList.add(feeder)
     }
 
-    Feeder createTrayFeeder(int id, Tray tray, String componentName, PickSettings pickSettings, String note) {
+    Feeder createTrayFeeder(Tray tray, String partCode, String manufacturer, String description, PickSettings pickSettings, String note) {
         new TrayFeeder(
             tray: tray,
-                description: componentName,
+            partCode: partCode,
+            manufacturer: manufacturer,
+            description: description,
             pickSettings: pickSettings,
             note: note,
         )

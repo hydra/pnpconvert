@@ -1,0 +1,15 @@
+
+defined components:
+Component(partCode:CRG0402F10K, manufacturer:TE CONNECTIVITY, description:10K 402 1%/RES_0402, width:0.5, length:1.0, height:0.5, placementOffsetX:0.02, placementOffsetY:0.4)
+Component(partCode:C1046V30402, manufacturer:CMFR1, description:100nF 6.3V 0402 10%/CAP_0402, width:0.5, length:1, height:0.5, placementOffsetX:0, placementOffsetY:0)
+Component(partCode:C10616V0402, manufacturer:CMFR2, description:10uF 16V 0805/CAP_0805, width:1.25, length:2, height:1, placementOffsetX:0, placementOffsetY:0)
+Component(partCode:STM32F030C8T6, manufacturer:ST, description:STM32F030C8T6, width:7, length:7, height:2, placementOffsetX:0, placementOffsetY:0)
+
+
+defined trays:
+Tray(name:B-1-4-TL, firstComponentX:205.07, firstComponentY:61.05, lastComponentX:277.1, lastComponentY:61.11, rows:1, columns:4, firstComponentIndex:0)
+
+defined feeders:
+feeder: ReelFeeder(tapeWidth:8, fixedId:Optional[36], enabled:false, note:RH, manufacturer:TE CONNECTIVITY, partCode:CRG0402F10K, description:10K 0402 1%/RES_0402, pickSettings:PickSettings(xOffset:-0.07, yOffset:0.35, useVision:true, checkVacuum:true, separateMount:false, head:1, placeSpeedPercentage:20, placeDelay:0.5, takeHeight:0.25, takeDelay:0, packageAngle:0, tapeSpacing:2, pullSpeed:0), properties:null)
+feeder: ReelFeeder(tapeWidth:8, fixedId:Optional[1], enabled:true, note:RH, manufacturer:CMFR1, partCode:C1046V30402, description:100nF 6.3V 0402 10%/CAP_0402, pickSettings:PickSettings(xOffset:0, yOffset:0, useVision:true, checkVacuum:true, separateMount:false, head:1, placeSpeedPercentage:10, placeDelay:0.5, takeHeight:0.25, takeDelay:0, packageAngle:0, tapeSpacing:2, pullSpeed:0), properties:null)
+feeder: TrayFeeder(tray:Tray(name:B-1-4-TL, firstComponentX:205.07, firstComponentY:61.05, lastComponentX:277.1, lastComponentY:61.11, rows:1, columns:4, firstComponentIndex:0), fixedId:Optional[88], enabled:true, note:, manufacturer:ST, partCode:STM32F030C8T6, description:STM32F030C8T, pickSettings:PickSettings(xOffset:0, yOffset:0, useVision:true, checkVacuum:true, separateMount:true, head:2, placeSpeedPercentage:100, placeDelay:0, takeHeight:0, takeDelay:0.2, packageAngle:0, tapeSpacing:4, pullSpeed:0), properties:null)

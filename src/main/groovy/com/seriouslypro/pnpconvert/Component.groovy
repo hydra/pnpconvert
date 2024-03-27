@@ -8,11 +8,10 @@ import groovy.transform.ToString
 class Component {
     String partCode
     String manufacturer
-    String name
+    String description
     BigDecimal width = 0            // mm
     BigDecimal length = 0           // mm
     BigDecimal height = 0.5G        // mm
-    ArrayList<String> aliases = []
     BigDecimal placementOffsetX = 0 // mm
     BigDecimal placementOffsetY = 0 // mm
 

@@ -82,7 +82,7 @@ class FeedersSheetProcessorSpec extends Specification {
 
         and: "use headers in a different order to the values in the dpv file"
             ValueRange headersValueRangeResponse = new ValueRange()
-            List<List<Object>> headerValues = [["X Offset", "Y Offset", "Component Name", "ID", "Flags"]]
+            List<List<Object>> headerValues = [["X Offset", "Y Offset", "Description", "ID", "Flags"]]
             headersValueRangeResponse.setValues(headerValues)
 
         and: "use data that corresponds to the a feeder, same component and feeder id, but with different x/y co-ordinates"

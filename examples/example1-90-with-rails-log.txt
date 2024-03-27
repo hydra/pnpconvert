@@ -1,0 +1,77 @@
+D1,DIODE_0805,DIO_0805,5,49.05,Top,270.0,                                        -> D1,DIO_0805,39.05,85.00,Top,180.0,,DIODE_0805
+R3,RES_2512,RES_2512,65,92.8,Top,90.0,                                           -> R3,RES_2512,82.80,25.00,Top,0.0,,RES_2512
+R4,RES_2512,RES_2512,62.2,5,Top,180.0,                                           -> R4,RES_2512,-5.00,27.80,Top,90.0,,RES_2512
+R5,RES_2512,RES_2512,5,7.2,Top,270.0,                                            -> R5,RES_2512,-2.80,85.00,Top,180.0,,RES_2512
+D2,DIODE_0805,DIO_0805,34.05,95,Top,180.0,                                       -> D2,DIO_0805,85.00,55.95,Top,90.0,,DIODE_0805
+D3,DIODE_0805,DIO_0805,65,50.95,Top,90.0,                                        -> D3,DIO_0805,40.95,25.00,Top,0.0,,DIODE_0805
+D4,DIODE_0805,DIO_0805,35.95,5,Top,0.0,                                          -> D4,DIO_0805,-5.00,54.05,Top,270.0,,DIODE_0805
+U1,STM32F030C8T,QFP-48/9x9x0.5,35,50,Top,0.0,                                    -> U1,QFP-48/9x9x0.5,40.00,55.00,Top,270.0,,STM32F030C8T
+R1,RES_2512,RES_2512,7.8,95,Top,0.0,                                             -> R1,RES_2512,85.00,82.20,Top,270.0,,RES_2512
+
+rendered SVG, svgFileName: 'examples/example1-90-with-rails.svg'
+
+part mappings:
+PartMapping(namePattern:/RES_0402.*/, valuePattern:/10K 0402( (.*)%)?( (.*)mW)?/, partCode:CRG0402F10K, manufacturer:TE CONNECTIVITY)
+PartMapping(namePattern:/STM32F030C8T(6)?/, valuePattern:/.*/, partCode:STM32F030C8T6, manufacturer:ST)
+
+defined components:
+Component(partCode:CRG0402F10K, manufacturer:TE CONNECTIVITY, description:10K 402 1%/RES_0402, width:0.5, length:1.0, height:0.5, placementOffsetX:0.02, placementOffsetY:0.4)
+Component(partCode:C1046V30402, manufacturer:CMFR1, description:100nF 6.3V 0402 10%/CAP_0402, width:0.5, length:1, height:0.5, placementOffsetX:0, placementOffsetY:0)
+Component(partCode:C10616V0402, manufacturer:CMFR2, description:10uF 16V 0805/CAP_0805, width:1.25, length:2, height:1, placementOffsetX:0, placementOffsetY:0)
+Component(partCode:STM32F030C8T6, manufacturer:ST, description:STM32F030C8T6, width:7, length:7, height:2, placementOffsetX:0, placementOffsetY:0)
+
+
+defined trays:
+Tray(name:B-1-4-TL, firstComponentX:205.07, firstComponentY:61.05, lastComponentX:277.1, lastComponentY:61.11, rows:1, columns:4, firstComponentIndex:0)
+
+defined feeders:
+feeder: ReelFeeder(tapeWidth:8, fixedId:Optional[36], enabled:false, note:RH, manufacturer:TE CONNECTIVITY, partCode:CRG0402F10K, description:10K 0402 1%/RES_0402, pickSettings:PickSettings(xOffset:-0.07, yOffset:0.35, useVision:true, checkVacuum:true, separateMount:false, head:1, placeSpeedPercentage:20, placeDelay:0.5, takeHeight:0.25, takeDelay:0, packageAngle:0, tapeSpacing:2, pullSpeed:0), properties:null)
+feeder: ReelFeeder(tapeWidth:8, fixedId:Optional[1], enabled:true, note:RH, manufacturer:CMFR1, partCode:C1046V30402, description:100nF 6.3V 0402 10%/CAP_0402, pickSettings:PickSettings(xOffset:0, yOffset:0, useVision:true, checkVacuum:true, separateMount:false, head:1, placeSpeedPercentage:10, placeDelay:0.5, takeHeight:0.25, takeDelay:0, packageAngle:0, tapeSpacing:2, pullSpeed:0), properties:null)
+feeder: TrayFeeder(tray:Tray(name:B-1-4-TL, firstComponentX:205.07, firstComponentY:61.05, lastComponentX:277.1, lastComponentY:61.11, rows:1, columns:4, firstComponentIndex:0), fixedId:Optional[88], enabled:true, note:, manufacturer:ST, partCode:STM32F030C8T6, description:STM32F030C8T, pickSettings:PickSettings(xOffset:0, yOffset:0, useVision:true, checkVacuum:true, separateMount:true, head:2, placeSpeedPercentage:100, placeDelay:0, takeHeight:0, takeDelay:0.2, packageAngle:0, tapeSpacing:4, pullSpeed:0), properties:null)
+
+placement component mappings:
+D1 -> error
+	no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
+
+R3 -> error
+	no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
+
+R4 -> error
+	no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
+
+R5 -> error
+	no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
+
+D2 -> error
+	no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
+
+D3 -> error
+	no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
+
+D4 -> error
+	no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
+
+U1 -> STM32F030C8T6 / ST <- name pattern: '/STM32F030C8T(6)?/', value pattern: '/STM32F030C8T(6)?/'
+R1 -> error
+	no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
+
+
+
+*** MATERIAL ASSIGNMENTS *** - Components from the design that matched the components and feeders/trays
+
+
+materialAssignments:
+placement: ComponentPlacement(enabled:true, refdes:U1, partCode:null, manufacturer:null, name:STM32F030C8T, value:, pattern:QFP-48/9x9x0.5, coordinate:[x: 40.00, y: 55.00], side:TOP, rotation:90.0, optionalJob:null), materialAssignment: MaterialAssignment(component:Component(partCode:STM32F030C8T6, manufacturer:ST, description:STM32F030C8T6, width:7, length:7, height:2, placementOffsetX:0, placementOffsetY:0), feederId:88, feeder:TrayFeeder(tray:Tray(name:B-1-4-TL, firstComponentX:205.07, firstComponentY:61.05, lastComponentX:277.1, lastComponentY:61.11, rows:1, columns:4, firstComponentIndex:0), fixedId:Optional[88], enabled:true, note:, manufacturer:ST, partCode:STM32F030C8T6, description:STM32F030C8T, pickSettings:PickSettings(xOffset:0, yOffset:0, useVision:true, checkVacuum:true, separateMount:true, head:2, placeSpeedPercentage:100, placeDelay:0, takeHeight:0, takeDelay:0.2, packageAngle:0, tapeSpacing:4, pullSpeed:0), properties:null))
+
+usedFeeders:
+88
+
+feederSummary:
+feederId,componentsPerUnit,componentsPerPanel,refdes,feeder,component
+88,1,1,[U1],[tray:B-1-4-TL, note:],[partCode:STM32F030C8T6, manufacturer:ST, name:STM32F030C8T6]
+
+*** ISSUES *** - Components that need loading
+
+
+unloadedComponents:
+

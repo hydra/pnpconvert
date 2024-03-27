@@ -1,2 +1,2 @@
-"ID","Enabled","Description","Tape Width","Note","Tape Spacing","X Offset","Y Offset","Head","Separate Mount","Package Angle","Use Vision","Check Vacuum", "Place Speed","Place Delay","Take Height","Take Delay","Tape Pull Speed","Tray Name"
+"ID","Enabled","Component Name","Tape Width","Note","Tape Spacing","X Offset","Y Offset","Head","Separate Mount","Package Angle","Use Vision","Check Vacuum", "Place Speed","Place Delay","Take Height","Take Delay","Tape Pull Speed","Tray Name"
 36,Y,"10K 0402 1%/RES_0402",8,"RH",2,-0.07,0.35,1,Y,0,Y,Y,100,.5,0,.25,100,

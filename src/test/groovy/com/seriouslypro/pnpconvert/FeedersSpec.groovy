@@ -4,7 +4,7 @@ import spock.lang.Specification
 
 class FeedersSpec extends Specification {
 
-    private static final String TEST_COMPONENT_NAME = "TEST-COMPONENT"
+    private static final String TEST_COMPONENT_DESCRIPTION = "TEST-COMPONENT"
     private static final String TEST_COMPONENT_PART_CODE = "TEST-PART-CODE"
     private static final String TEST_COMPONENT_MANUFACTURER = "TEST-MANUFACTURER"
     public static final String TEST_FEEDERS_RESOURCE_1 = "/feeders1.csv"
@@ -32,40 +32,7 @@ class FeedersSpec extends Specification {
 
     def 'find by component - no components'() {
         expect:
-            feeders.findByComponent(new Component(name: TEST_COMPONENT_NAME)) == null
-    }
-
-    def 'find by component - component name matches feeder description'() {
-        given:
-            PickSettings mockPickSettings = Mock()
-
-        and:
-            Feeder feeder = feeders.createReelFeeder(1, 8, TEST_COMPONENT_PART_CODE, TEST_COMPONENT_MANUFACTURER, "DESCRIPTION", mockPickSettings, "TEST-NOTE")
-            feeders.loadFeeder(feeder)
-
-        when:
-            Feeder result = feeders.findByComponent(new Component(name: "DESCRIPTION"))
-
-        then:
-            result
-            result.fixedId.get() == 1
-    }
-
-    def 'find by component - component name matches feeder description, but feeder disabled'() {
-        given:
-            PickSettings mockPickSettings = Mock()
-
-        and:
-            Feeder feeder = feeders.createReelFeeder(1, 8, TEST_COMPONENT_PART_CODE, TEST_COMPONENT_MANUFACTURER, "DESCRIPTION", mockPickSettings, "TEST-NOTE")
-            feeder.enabled = false
-            feeders.loadFeeder(feeder)
-
-        when:
-            Feeder result = feeders.findByComponent(new Component(name: "DESCRIPTION"))
-
-        then:
-            result
-            result.fixedId.get() == 1
+            feeders.findByComponent(new Component(description: TEST_COMPONENT_DESCRIPTION)) == null
     }
 
     def 'find by component - matching part & manufacturer'() {
@@ -77,7 +44,7 @@ class FeedersSpec extends Specification {
             feeders.loadFeeder(feeder)
 
         when:
-            Feeder result = feeders.findByComponent(new Component(partCode: TEST_COMPONENT_PART_CODE, manufacturer: TEST_COMPONENT_MANUFACTURER, name: TEST_COMPONENT_NAME))
+            Feeder result = feeders.findByComponent(new Component(partCode: TEST_COMPONENT_PART_CODE, manufacturer: TEST_COMPONENT_MANUFACTURER, description: TEST_COMPONENT_DESCRIPTION))
 
         then:
             result

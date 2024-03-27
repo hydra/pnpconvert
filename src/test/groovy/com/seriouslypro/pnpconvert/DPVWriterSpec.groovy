@@ -195,7 +195,7 @@ class DPVWriterSpec extends Specification implements DPVFileAssertions {
         and:
             ComponentPlacement cp1 = new ComponentPlacement(enabled: true, refdes: "Z1", partCode: "C0DE", manufacturer: "MFR", name: "Placement Name 1", value: "Value 1", pattern: "Pattern 1", coordinate: new Coordinate(x: 3, y: 4), side: PCBSide.TOP, rotation: 0)
             ComponentPlacement cp2 = new ComponentPlacement(enabled: false, refdes: "Z2", partCode: "C0DE", manufacturer: "MFR", name: "Placement Name 2", value: "Value 2", pattern: "Pattern 2", coordinate: new Coordinate(x: 5, y: 6), side: PCBSide.BOTTOM, rotation: 90)
-            Component c1 = new Component(name: "Component Name", partCode: "C0DE", manufacturer: "MFR")
+            Component c1 = new Component(description: "Component Description", partCode: "C0DE", manufacturer: "MFR")
             PickSettings pickSettings1 = new PickSettings()
             FeederProperties feederProperties = new FeederProperties()
             Optional<Integer> noFixedId = Optional.empty()
@@ -213,8 +213,8 @@ class DPVWriterSpec extends Specification implements DPVFileAssertions {
 
         and:
             List<List<String>> expectedComponents = [
-                ["EComponent","0","1","1","1","3","4","180","0.5","6","100","Z1","Component Name;Value 1","0"],
-                ["EComponent","1","2","1","1","5","6","90","0.5","7","100","Z2","Component Name;Value 2","0"],
+                ["EComponent","0","1","1","1","3","4","180","0.5","6","100","Z1","Component Description;Value 1","0"],
+                ["EComponent","1","2","1","1","5","6","90","0.5","7","100","Z2","Component Description;Value 2","0"],
             ]
 
         and:

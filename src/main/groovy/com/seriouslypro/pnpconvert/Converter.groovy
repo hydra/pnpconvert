@@ -1,12 +1,9 @@
 package com.seriouslypro.pnpconvert
 
 import com.seriouslypro.csv.CSVProcessor
-import com.seriouslypro.eda.diptrace.placement.DipTracePartMapper
 import com.seriouslypro.eda.part.PartMappings
 import com.seriouslypro.eda.part.PartMapping
 import com.seriouslypro.pnpconvert.machine.Machine
-import groovy.transform.EqualsAndHashCode
-import groovy.transform.ToString
 
 import static FileTools.*
 
@@ -144,18 +141,6 @@ class Converter {
         }
 
         //
-        // Apply part mappings to placements
-        //
-
-        List<PartMappingResult> appliedMappings = new PlacementPartMapper().applyPartMappings(partMapper.partMappings, placements)
-        int appliedMappingsCount = appliedMappings.size()
-        System.out.println("applied ${appliedMappingsCount} part mapping(s)")
-        appliedMappings.each { PartMappingResult result ->
-            System.out.println(result.toString())
-        }
-        System.out.println()
-
-        //
         // Load Components
         //
 
@@ -168,7 +153,6 @@ class Converter {
         }
 
         System.out.println()
-
 
         //
         // Load Trays
@@ -195,6 +179,32 @@ class Converter {
         }
 
         //
+        // Generate a map of placements mapped to components
+        //
+        String indentation = "\t"
+
+        List<MappedPlacement> mappedPlacements = new PlacementPartMapper().apply(placements, components.components, partMapper.partMappings)
+        System.out.println()
+        System.out.println("placement component mappings:")
+        mappedPlacements.each { MappedPlacement mappedPlacement ->
+            System.out.print("${mappedPlacement.placement.refdes} -> ")
+            if (mappedPlacement.component.isPresent()) {
+                Component mappedComponent = mappedPlacement.component.get()
+                System.out.print("${mappedComponent.partCode} / ${mappedComponent.manufacturer}")
+                mappedPlacement.partMapping.ifPresent { partMapping ->
+                    System.out.print(" <- name pattern: '${partMapping.namePattern}', value pattern: '${partMapping.namePattern}'")
+                }
+            } else {
+                System.out.println("error")
+                mappedPlacement.errors.each { error ->
+                    System.out.println(indentation + error)
+                }
+            }
+            System.out.println()
+        }
+        System.out.println()
+
+        //
         // Generate DPV
         //
 
@@ -210,8 +220,7 @@ class Converter {
         DPVGenerator generator = new DPVGenerator(
                 machine: machine,
                 dpvHeader: dpvHeader,
-                placements: placements,
-                components: components,
+                mappedPlacements: mappedPlacements,
                 feeders: feeders,
                 optionalPanel: optionalPanel,
                 optionalFiducials: optionalFiducials,
@@ -261,49 +270,5 @@ class Converter {
         }
 
         partMapper
-    }
-}
-
-@ToString(includeNames = true, includePackage = false)
-@EqualsAndHashCode
-class PartMappingResult {
-    PartMapping partMapping
-    ComponentPlacement placement
-    Map<String, Tuple2<String,String>> modifiedFields
-
-    @Override
-    String toString() {
-        System.out.println("mapped: ${placement.refdes}, using: ${partMapping}")
-        modifiedFields.each { fieldName, tuple ->
-            System.out.println("    '${fieldName}', old: '${tuple[0]}', new: '${tuple[1]}'")
-        }
-    }
-}
-
-class PlacementPartMapper {
-    List<PartMappingResult> applyPartMappings(List<PartMapping> partMappings, List<ComponentPlacement> placements) {
-
-        placements.findResults { placement ->
-            List<PartMapping> matchedMappings = new DipTracePartMapper().buildOptions(partMappings, placement.name, placement.value)
-            if (!matchedMappings) {
-                return null
-            }
-
-            PartMapping first = matchedMappings.first()
-
-            PartMappingResult result = new PartMappingResult(
-                partMapping: first,
-                placement: placement,
-                modifiedFields: [
-                    'partCode': new Tuple2(placement.partCode, first.partCode),
-                    'manufacturer': new Tuple2(placement.manufacturer, first.manufacturer)
-                ]
-            )
-
-            placement.partCode = first.partCode
-            placement.manufacturer = first.manufacturer
-
-            result
-        }
     }
 }
