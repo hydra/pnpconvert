@@ -39,10 +39,8 @@ Usage: pnpconvert
       -beoy=<boardExportOffsetY>
                             EDA export Y offset (e.g. 10.0)
       -bh=<boardHeight>     Board height (not panel height)
-      -box=<boardOffsetX>
-                            EDA origin X (usually 0.0)
-      -boy=<boardOffsetY>
-                            EDA origin Y (usually 0.0)
+      -box=<boardOriginX>   EDA origin X (usually 0.0)
+      -boy=<boardOriginY>   EDA origin Y (usually 0.0)
       -bw=<boardWidth>      Board width (not panel width)
   -c                        convert
       -cfg=<config>         configuration file (in "key=value" format)
@@ -63,6 +61,7 @@ Usage: pnpconvert
                               increase for thicker PCBs
       -pix=<panelIntervalX> Interval spacing on the X axis
       -piy=<panelIntervalY> Interval spacing on the Y axis
+      -pm=<partMappings>    part mappings csv file/url
       -pnx=<panelNumberX>   Number of PCBs on the X axis
       -pny=<panelNumberY>   Number of PCBs on the Y axis
       -poy=<panelNumberY>   Number of PCBs on the Y axis
@@ -82,7 +81,7 @@ Usage: pnpconvert
       -st                   Show transforms in SVG
   -t=<trays>                trays csv file/url
   -v                        version
-  ```
+```
 
 PnPConvert also supports reading one or more files containing arguments, prefix each filename with an @ symbol.
 
