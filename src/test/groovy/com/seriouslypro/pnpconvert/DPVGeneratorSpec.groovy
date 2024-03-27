@@ -289,6 +289,88 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
             feederSummaryPresent(capturedOutput, expectedFeederSummary)
     }
 
+    // FIXME this test is currently failing until a solution is implemented.
+    //       The problem is actually worse than this, as feeder names are also used for matching, which results
+    //       in either unintended component selection and/or missing or erroneous messages regarding which components were
+    //       in exact matches due to component aliases being allowed to used to match feeders, and results depend on
+    //       which placement was processed first.
+    //       Given the above the solution is likely deletion of aliases and using stricter manufacturer and part codes
+    //       everywhere, which would bypass the need for this test or error checking and forces the user to use refdes
+    //       replacements and part mappings which will should yield consistent, repeatable, understandable and
+    //       error-free component selections.
+    def 'generate - with circular loop on components'() {
+        given:
+            Component component1 = new Component(
+                name: "10K 0402 1% 10V/RES_0402",
+                partCode: "R10K00402",
+                manufacturer: "RM1",
+                aliases: ["10K 0402 1% 50V/RES_0402"] // <-- a user with this scenario should probably be change this
+            )
+            Component component2 = new Component(
+                name: "10K 0402 1% 50V/RES_0402",
+                partCode: "CRG0402F10K",
+                manufacturer: "TEC",
+                aliases: ["10K 0402 1% 10V/RES_0402"]
+            )
+            components.add(component1)
+            components.add(component2)
+
+        and:
+            PickSettings pickSettings = new PickSettings()
+
+        and:
+            feeders.loadFeeder(feeders.createReelFeeder(1, 8, component1.partCode, component1.manufacturer, "RES 10K 0402 1% 10V", pickSettings, "Cheap/Generic"))
+            feeders.loadFeeder(feeders.createReelFeeder(2, 8, component2.partCode, component2.manufacturer, "RES 10K 0402 1% 50V", pickSettings, "Explicit"))
+
+        and:
+            componentPlacements = [
+                new ComponentPlacement(
+                    refdes: "R2",
+                    pattern: "RES_0402",
+                    coordinate: new Coordinate(x: 0.0, y: 0.0),
+                    side: PCBSide.TOP,
+                    rotation: 0,
+                    value: "10K 0402 1% 50V",
+                    name: "RES_0402",
+                    partCode: "CRG0402F10K",
+                    manufacturer: "TEC",
+                ),
+                new ComponentPlacement(
+                    refdes: "R1",
+                    pattern: "RES_0402",
+                    coordinate: new Coordinate(x: 10.0, y: 10.0),
+                    side: PCBSide.TOP,
+                    rotation: 0,
+
+                    // a user with this scenario could use refdes replacement or part mappings so that their BOM uses the 50V parts everywere.
+                    partCode: "R10K00402",
+                    manufacturer: "RM1",
+                    value: "10K 0402 1% 10V",
+                    name: "RES_0402"
+                ),
+            ]
+
+        and: // test data expectations
+            // two components, one higher spec with explicit part code, and another more generic part
+            // each component has an alias of the other.
+            // two placements, each using the two components
+            assert component1.aliases.contains(component2.name)
+            assert component2.aliases.contains(component1.name)
+        and:
+            DPVGenerator generator = buildGenerator()
+
+        when:
+            generator.generate(outputStream)
+
+        then:
+            // placement order should NOT determine which feeder is used
+            // it is required disable one or the other feeder to be consistent.
+            String capturedOutput = capture.toString()
+
+            // TODO add details of which refdes and which components are the problem.
+            capturedOutput.contains("components cross-reference each other")
+    }
+
     @Ignore
     def 'placement with unknown component'() {
         expect:
