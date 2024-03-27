@@ -311,10 +311,33 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
             feederSummaryPresent(capturedOutput, expectedFeederSummary)
     }
 
-    @Ignore
     def 'placement with un-mapped component'() {
-        expect:
-            false
+        given:
+            DPVGenerator generator = buildGenerator()
+
+        and:
+            ComponentPlacement componentPlacement = new ComponentPlacement(
+                refdes: "R1",
+                pattern: "RES_0402_HIGH_DENSITY",
+                coordinate: new Coordinate(x: 14.44, y: 13.9),
+                side: PCBSide.TOP,
+                rotation: 90,
+                value: "10K 0402 1%",
+                name: "RES_0402"
+            )
+
+            generator.mappedPlacements = [
+                new MappedPlacement(
+                    placement: componentPlacement,
+                    component: Optional.empty(),
+                )
+            ]
+
+        when:
+            generator.generate(outputStream)
+
+        then:
+            noExceptionThrown()
     }
 
     @Ignore
@@ -323,10 +346,34 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
             false
     }
 
-    @Ignore
-    def 'unloaded component'() {
-        expect:
-            false
+    def 'placement with unloaded component'() {
+        given:
+            DPVGenerator generator = buildGenerator()
+
+        and:
+            ComponentPlacement componentPlacement = new ComponentPlacement()
+            Component component = new Component(description: "Component 1")
+
+            generator.mappedPlacements = [
+                new MappedPlacement(
+                    placement: componentPlacement,
+                    component: Optional.of(component),
+                )
+            ]
+
+        and:
+            Feeders mockFeeders = GroovyMock(Feeders)
+            generator.feeders = mockFeeders
+
+        when:
+            generator.generate(outputStream)
+
+        then:
+            1 * mockFeeders.findByComponent(component) >> null
+            0 * _
+
+        and:
+            generator.unloadedComponents.contains(component)
     }
 
     @Ignore

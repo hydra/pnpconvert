@@ -64,6 +64,7 @@ class DPVGenerator {
             Feeder feeder = feeders.findByComponent(component)
             if (!feeder) {
                 unloadedComponents << component
+                return
             }
 
             MaterialSelectionEntry materialSelection = new MaterialSelectionEntry(
