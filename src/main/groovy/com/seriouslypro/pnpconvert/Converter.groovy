@@ -188,12 +188,12 @@ class Converter {
         System.out.println("placement component mappings:")
         mappedPlacements.each { MappedPlacement mappedPlacement ->
             System.out.print("${mappedPlacement.placement.refdes} -> ")
+            mappedPlacement.partMapping.ifPresent { partMapping ->
+                System.out.print("name pattern: '${partMapping.namePattern}', value pattern: '${partMapping.namePattern}' -> ")
+            }
             if (mappedPlacement.component.isPresent()) {
                 Component mappedComponent = mappedPlacement.component.get()
                 System.out.print("${mappedComponent.partCode} / ${mappedComponent.manufacturer}")
-                mappedPlacement.partMapping.ifPresent { partMapping ->
-                    System.out.print(" <- name pattern: '${partMapping.namePattern}', value pattern: '${partMapping.namePattern}'")
-                }
             } else {
                 System.out.println("error")
                 mappedPlacement.errors.each { error ->
