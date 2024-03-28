@@ -157,7 +157,7 @@ class Feeders {
                     note = rowValues[columnIndex(context, FeederCSVColumn.NOTE)].trim()
                 }
 
-                String trayName
+                String trayName = null // CLOVER assignment needed to prevent 'EmptyExpression.INSTANCE is immutable' error
 
                 if (hasColumn(FeederCSVColumn.TRAY_NAME)) {
                     trayName = rowValues[headerMappings[FeederCSVColumn.TRAY_NAME].index].trim()
