@@ -151,7 +151,7 @@ class DPVGenerator {
                 materialAssignments[placement] = existingMaterialAssignment
             } else {
 
-                Integer feederId
+                Integer feederId = null
 
                 try {
                     feederId = assignFeederID(trayIdSequence, machine.trayIds, usedIDs, feeder)
