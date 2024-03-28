@@ -49,8 +49,8 @@ classes {
 }
 
 dependencies {
-    implementation 'org.codehaus.groovy:groovy-all:3.0.8'
-    implementation 'commons-codec:commons-codec:1.10'
+    implementation 'org.codehaus.groovy:groovy-all:3.0.21'
+    implementation 'commons-codec:commons-codec:1.16.1'
     testImplementation 'org.spockframework:spock-core:2.0-groovy-3.0'
     testImplementation 'org.spockframework:spock-junit4:2.0-groovy-3.0'
     testImplementation group: 'cglib', name: 'cglib-nodep', version: '2.2'
