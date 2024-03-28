@@ -12,7 +12,7 @@ class DPVFileParserSpec extends Specification {
             InputStream inputStream = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8.name()))
 
         when:
-            DPVFile file = new DPVFileParser().parse(inputStream)
+            new DPVFileParser().parse(inputStream)
 
         then:
             UnsupportedDPVContent caught = thrown()
@@ -36,7 +36,7 @@ class DPVFileParserSpec extends Specification {
             InputStream inputStream = new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8.name()))
 
         when:
-            DPVFile file = new DPVFileParser().parse(inputStream)
+            new DPVFileParser().parse(inputStream)
 
         then:
             noExceptionThrown()

@@ -95,8 +95,7 @@ clover {
         // All the following cause: java.lang.UnsupportedOperationException: EmptyExpression.INSTANCE is immutable"
     ]
     testExcludes = [
-            // All the following cause: java.lang.UnsupportedOperationException: EmptyExpression.INSTANCE is immutable"
-            '**/DPVFileParserSpec.groovy',
+        // All the following cause: java.lang.UnsupportedOperationException: EmptyExpression.INSTANCE is immutable"
     ]
 
     report {
