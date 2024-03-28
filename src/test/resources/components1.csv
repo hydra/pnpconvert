@@ -1,2 +1,2 @@
-"Part Code","Manufacturer","Name","Width","Length","Height","Aliases","OffsetX","OffsetY"
-"CRG0402F10K", "TE CONNECTIVITY"," 10K 0402 1%/RES_0402 ",0.5,1.0,0.5," 10K 1% 0402/RES_0402 ,  10K0 1% 0402 ,  ,",0.02,0.4
+"Part Code","Manufacturer","Description","Width","Length","Height","OffsetX","OffsetY"
+"CRG0402F10K", "TE CONNECTIVITY"," 10K 0402 1%/RES_0402 ",0.5,1.0,0.5,0.02,0.4

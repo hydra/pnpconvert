@@ -1,13 +1,10 @@
 package com.seriouslypro.pnpconvert
 
-import com.seriouslypro.eda.part.PartMapping
 import com.seriouslypro.pnpconvert.machine.Machine
-import org.checkerframework.checker.units.qual.C
 
 class DPVGenerator {
     DPVHeader dpvHeader
-    List<ComponentPlacement> placements
-    Components components
+    List<PlacementMapping> placementMappings
     Feeders feeders
     BigDecimal offsetZ
 
@@ -15,20 +12,15 @@ class DPVGenerator {
 
     DPVWriter writer
 
-    List<ComponentPlacement> placementsWithUnknownComponents
+    Set<PlacementMapping> unmappedPlacements
     Set<Component> unloadedComponents
-    Map<Feeder, Component> feedersMatchedByAlias
-    Map<ComponentPlacement, Component> inexactComponentMatches
 
     Optional<Panel> optionalPanel
     Optional<List<Fiducial>> optionalFiducials
-    List<PartMapping> partMappings
 
     void generate(OutputStream outputStream) {
-        placementsWithUnknownComponents = []
         unloadedComponents = []
-        feedersMatchedByAlias = [:]
-        inexactComponentMatches = [:]
+        unmappedPlacements = []
 
         Map<ComponentPlacement, MaterialSelectionEntry> materialSelections = selectMaterials()
         Map<ComponentPlacement, MaterialAssignment> materialAssignments = assignMaterials(materialSelections)
@@ -41,25 +33,30 @@ class DPVGenerator {
         dumpMaterialAsignments(materialAssignments)
         dumpSummary(optionalPanel, materialAssignments)
 
-        System.out.println()
-        System.out.println('*** ISSUES *** - Components that did not match, need verification or loading')
-        System.out.println('')
+        boolean showIssues = !unmappedPlacements.empty || !unloadedComponents.empty
+        if (showIssues) {
+            System.out.println()
+            System.out.println('*** ISSUES ***')
+            System.out.println('')
+        }
 
-        System.out.println()
-        System.out.println("inexactComponentsMatches:\n" + inexactComponentMatches.collect { ComponentPlacement placement, Component component ->
-            "placement: $placement, component: $component"
-        }.join('\n'))
+        if (!unmappedPlacements.empty) {
+            System.out.println()
+            System.out.println("unmappedPlacements:\n" + unmappedPlacements.collect { PlacementMapping p -> [
+                refdes: p.placement.refdes,
+                name: p.placement.name,
+                value: p.placement.value,
+            ]}.join('\n'))
+        }
 
-        System.out.println()
-        System.out.println("feedersMatchedByAlias:\n" + feedersMatchedByAlias.collect { Feeder feeder, Component component ->
-            "feederComponent: $feeder.description, component: $component"
-        }.join('\n'))
-
-        System.out.println()
-        System.out.println("placementsWithUnknownComponents:\n" + placementsWithUnknownComponents.join('\n'))
-
-        System.out.println()
-        System.out.println("unloadedComponents:\n" + unloadedComponents.join('\n'))
+        if (!unloadedComponents.empty) {
+            System.out.println()
+            System.out.println("unloadedComponents:\n" + unloadedComponents.collect {Component c -> [
+                partCode: c.partCode,
+                manufacturer: c.manufacturer,
+                description: c.description,
+            ]}.join('\n'))
+        }
 
         writer = new DPVWriter(outputStream, machine, offsetZ, dpvHeader)
         writer.setPanel(optionalPanel)
@@ -79,65 +76,26 @@ class DPVGenerator {
 
         Map<ComponentPlacement, MaterialSelectionEntry> materialSelections = [:]
 
-        placements.each { ComponentPlacement placement ->
-            ComponentFindResult componentFindResult = components.findByPlacement(placement)
+        placementMappings.each { PlacementMapping mappedPlacement ->
 
-            if (!componentFindResult) {
-                placementsWithUnknownComponents << placement
+            if (!mappedPlacement.component.isPresent()) {
+                unmappedPlacements << mappedPlacement
                 return
             }
 
-            if (!componentFindResult.isExactMatch()) {
-                inexactComponentMatches[placement] = componentFindResult.component
+            Component component = mappedPlacement.component.get()
+            Feeder feeder = feeders.findByComponent(component)
+            if (!feeder) {
+                unloadedComponents << component
+                return
             }
-
-            Component component = componentFindResult.component
-
-            //
-            // feeder with component?
-            //
-            Feeder findResult = feeders.findByComponent(component)
-            if (!findResult) {
-
-                //
-                // feeder with alias?
-                //
-                findResult = component.aliases.findResult { alias ->
-                    feeders.findByComponent(new Component(name: alias))
-                }
-
-                if (!findResult) {
-                    //
-                    // alias component in feeder?
-                    //
-                    Component aliasComponent = components.components.find { otherComponent -> otherComponent.aliases.contains(component.name) }
-
-                    if (aliasComponent) {
-                        findResult = component.aliases.findResult { alias ->
-                            feeders.findByComponent(aliasComponent)
-                        }
-                        if (findResult) {
-                            component = aliasComponent
-                        }
-                    }
-
-                    if (!findResult) {
-                        unloadedComponents << component
-                        return
-                    }
-                }
-
-                feedersMatchedByAlias[findResult] = component
-
-            }
-            Feeder feeder = findResult
 
             MaterialSelectionEntry materialSelection = new MaterialSelectionEntry(
                 component: component,
                 feeder: feeder,
             )
 
-            materialSelections[placement] = materialSelection
+            materialSelections[mappedPlacement.placement] = materialSelection
         }
 
         return materialSelections
@@ -264,8 +222,7 @@ class DPVGenerator {
                     component         : [
                             partCode     : materialAssigment.value.component.partCode,
                             manufacturer : materialAssigment.value.component.manufacturer,
-                            name         : materialAssigment.value.component.name,
-                            aliases      : materialAssigment.value.component.aliases,
+                            name         : materialAssigment.value.component.description,
                     ],
             ]
         }

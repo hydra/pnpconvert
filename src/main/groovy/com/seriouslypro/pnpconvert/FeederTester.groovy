@@ -69,16 +69,15 @@ class FeederTester {
         DPVWriter dpvWriter = new DPVWriter(outputStream, machine, 0.0, dpvHeader)
         feeders.feederList.each { Feeder feeder ->
             feeder.fixedId.ifPresent { feederId ->
-                ComponentFindResult result = components.findByFeederName(feeder.description)
-
-                Component component
-                if (result) {
-                    component = result.component
-                } else {
-                    component = new Component(name: feeder.description)
+                Component component = components.components.find { candidate ->
+                    candidate.partCode == feeder.partCode && candidate.manufacturer == feeder.manufacturer &&
+                        feeder.partCode && candidate.partCode &&
+                        feeder.manufacturer && candidate.manufacturer
                 }
 
-                dpvWriter.addMaterial(feederId, feeder, component)
+                if (component) {
+                    dpvWriter.addMaterial(feederId, feeder, component)
+                }
             }
         }
 

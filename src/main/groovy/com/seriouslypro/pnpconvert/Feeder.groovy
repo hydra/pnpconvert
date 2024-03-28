@@ -19,6 +19,6 @@ class Feeder {
         (
             this.manufacturer && this.manufacturer == component.manufacturer &&
             this.partCode && this.partCode == component.partCode
-        ) || this.description == component.name
+        )
     }
 }

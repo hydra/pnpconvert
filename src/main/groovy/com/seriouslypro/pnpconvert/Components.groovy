@@ -8,162 +8,20 @@ import com.seriouslypro.csv.CSVInputContext
 import com.seriouslypro.csv.CSVLineParser
 import com.seriouslypro.csv.CSVLineParserBase
 
-
-interface MatchingStrategy {
-    boolean matches(Component candidate, ComponentPlacement componentPlacement)
-    boolean matches(Component candidate, String name)
-    boolean isExactMatch()
-}
-
-class PartCodeAndManufacturerMatchingStrategy implements MatchingStrategy {
-
-    @Override
-    boolean matches(Component candidate, ComponentPlacement componentPlacement) {
-        candidate.partCode && componentPlacement.partCode &&
-            candidate.manufacturer && componentPlacement.manufacturer &&
-            candidate.partCode == componentPlacement.partCode &&
-            candidate.manufacturer == componentPlacement.manufacturer
-    }
-
-    @Override
-    boolean matches(Component candidate, String name) {
-        return false
-    }
-
-    @Override
-    boolean isExactMatch() {
-        return true
-    }
-}
-
-class DiptraceMatchingStrategy implements MatchingStrategy {
-
-    DipTraceComponentNameBuilder diptraceComponentNameBuilder = new DipTraceComponentNameBuilder()
-
-    @Override
-    boolean matches(Component candidate, ComponentPlacement componentPlacement) {
-        String dipTraceComponentName = diptraceComponentNameBuilder.buildDipTraceComponentName(componentPlacement)
-        dipTraceComponentName && candidate.name == dipTraceComponentName
-    }
-
-    @Override
-    boolean matches(Component candidate, String name) {
-        return false
-    }
-
-    @Override
-    boolean isExactMatch() {
-        return true
-    }
-}
-
-class NameOnlyMatchingStrategy implements MatchingStrategy {
-
-    @Override
-    boolean matches(Component candidate, ComponentPlacement componentPlacement) {
-        componentPlacement.name && candidate.name == componentPlacement.name
-    }
-
-    @Override
-    boolean matches(Component candidate, String name) {
-        name == candidate.name
-    }
-
-    @Override
-    boolean isExactMatch() {
-        return true
-    }
-}
-
-class DiptraceAliasMatchingStrategy implements MatchingStrategy {
-
-    DipTraceComponentNameBuilder diptraceComponentNameBuilder = new DipTraceComponentNameBuilder()
-
-    @Override
-    boolean matches(Component candidate, ComponentPlacement componentPlacement) {
-        String dipTraceComponentName = diptraceComponentNameBuilder.buildDipTraceComponentName(componentPlacement)
-        dipTraceComponentName && candidate.aliases.contains(dipTraceComponentName)
-    }
-
-    @Override
-    boolean matches(Component candidate, String name) {
-        return false
-    }
-
-    @Override
-    boolean isExactMatch() {
-        return false
-    }
-}
-
-class AliasMatchingStrategy implements MatchingStrategy {
-
-    @Override
-    boolean matches(Component candidate, ComponentPlacement componentPlacement) {
-        componentPlacement && candidate.aliases.contains(componentPlacement.name)
-    }
-
-    @Override
-    boolean matches(Component candidate, String name) {
-        candidate.aliases.contains(name)
-    }
-
-    @Override
-    boolean isExactMatch() {
-        return false
-    }
-}
-
 class Components {
     List<Component> components = []
-    List<MatchingStrategy> matchingStrategies = [
-        new PartCodeAndManufacturerMatchingStrategy(),
-        new DiptraceMatchingStrategy(),
-        new DiptraceAliasMatchingStrategy(),
-        new AliasMatchingStrategy(),
-        new NameOnlyMatchingStrategy()
-    ]
-
-    ComponentFindResult findByPlacement(ComponentPlacement componentPlacement) {
-        components.findResult { Component candidate ->
-            List<MatchingStrategy> matchedMatchingStrategies = matchingStrategies.findAll { MatchingStrategy strategy ->
-                strategy.matches(candidate, componentPlacement)
-            }
-
-            if (!matchedMatchingStrategies)  {
-                return null
-            }
-
-            new ComponentFindResult(component: candidate, matchingStrategies: matchedMatchingStrategies)
-        }
-    }
 
     void add(Component component) {
         components << component
     }
 
-    ComponentFindResult findByFeederName(String feederName) {
-        components.findResult { Component candidate ->
-            List<MatchingStrategy> matchedMatchingStrategies = matchingStrategies.findAll { MatchingStrategy strategy ->
-                strategy.matches(candidate, feederName)
-            }
-
-            if (!matchedMatchingStrategies)  {
-                return null
-            }
-
-            new ComponentFindResult(component: candidate, matchingStrategies: matchedMatchingStrategies)
-        }
-    }
-
     static enum ComponentCSVColumn implements CSVColumn<ComponentCSVColumn> {
         PART_CODE,
         MANUFACTURER,
-        NAME,
+        DESCRIPTION,
         WIDTH(["WIDTH/X", "X","WIDTH (X)"]),
         LENGTH(["LENGTH/Y", "Y","LENGTH (Y)"]),
         HEIGHT(["HEIGHT/Z", "Z","HEIGHT (Z)"]),
-        ALIASES,
         PLACEMENT_OFFSET_X(["OFFSET X", "OFFSETX"]),
         PLACEMENT_OFFSET_Y(["OFFSET Y", "OFFSETY"])
 
@@ -185,15 +43,10 @@ class Components {
                 return new Component(
                     partCode: rowValues[columnIndex(context, ComponentCSVColumn.PART_CODE)].trim(),
                     manufacturer: rowValues[columnIndex(context, ComponentCSVColumn.MANUFACTURER)].trim(),
-                    name: rowValues[columnIndex(context, ComponentCSVColumn.NAME)].trim(),
+                    description: rowValues[columnIndex(context, ComponentCSVColumn.DESCRIPTION)].trim(),
                     width: rowValues[columnIndex(context, ComponentCSVColumn.WIDTH)] as BigDecimal,
                     length: rowValues[columnIndex(context, ComponentCSVColumn.LENGTH)] as BigDecimal,
                     height: rowValues[columnIndex(context, ComponentCSVColumn.HEIGHT)] as BigDecimal,
-                    aliases: rowValues[columnIndex(context, ComponentCSVColumn.ALIASES)].split(",").findResults { raw ->
-                        String value = raw.trim()
-                        boolean emptyValue = !value
-                        emptyValue ? null : value
-                    },
                     placementOffsetX: placementOffsetX,
                     placementOffsetY: placementOffsetY,
                 )
