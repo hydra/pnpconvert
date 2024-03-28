@@ -6,7 +6,7 @@ import groovy.transform.ToString
 
 @ToString(includeNames = true, includePackage = false)
 @EqualsAndHashCode
-class MappedPlacement {
+class PlacementMapping {
     ComponentPlacement placement
 
     Optional<Component> component = Optional.empty()

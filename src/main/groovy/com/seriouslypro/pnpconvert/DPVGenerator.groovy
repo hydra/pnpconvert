@@ -4,7 +4,7 @@ import com.seriouslypro.pnpconvert.machine.Machine
 
 class DPVGenerator {
     DPVHeader dpvHeader
-    List<MappedPlacement> mappedPlacements
+    List<PlacementMapping> placementMappings
     Feeders feeders
     BigDecimal offsetZ
 
@@ -12,7 +12,7 @@ class DPVGenerator {
 
     DPVWriter writer
 
-    Set<MappedPlacement> unmappedPlacements
+    Set<PlacementMapping> unplacementMappings
     Set<Component> unloadedComponents
 
     Optional<Panel> optionalPanel
@@ -20,7 +20,7 @@ class DPVGenerator {
 
     void generate(OutputStream outputStream) {
         unloadedComponents = []
-        unmappedPlacements = []
+        unplacementMappings = []
 
         Map<ComponentPlacement, MaterialSelectionEntry> materialSelections = selectMaterials()
         Map<ComponentPlacement, MaterialAssignment> materialAssignments = assignMaterials(materialSelections)
@@ -37,9 +37,9 @@ class DPVGenerator {
         System.out.println('*** ISSUES *** - Components that need loading')
         System.out.println('')
 
-        if (!unmappedPlacements.empty) {
+        if (!unplacementMappings.empty) {
             System.out.println()
-            System.out.println("unmappedPlacements:\n" + unmappedPlacements.collect {MappedPlacement p -> [
+            System.out.println("unplacementMappings:\n" + unplacementMappings.collect { PlacementMapping p -> [
                 refdes: p.placement.refdes,
                 name: p.placement.name,
                 value: p.placement.value,
@@ -73,10 +73,10 @@ class DPVGenerator {
 
         Map<ComponentPlacement, MaterialSelectionEntry> materialSelections = [:]
 
-        mappedPlacements.each { MappedPlacement mappedPlacement ->
+        placementMappings.each { PlacementMapping mappedPlacement ->
 
             if (!mappedPlacement.component.isPresent()) {
-                unmappedPlacements << mappedPlacement
+                unplacementMappings << mappedPlacement
                 return
             }
 

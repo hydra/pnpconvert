@@ -3,17 +3,17 @@ package com.seriouslypro.pnpconvert
 import com.seriouslypro.eda.diptrace.placement.DipTracePartMapper
 import com.seriouslypro.eda.part.PartMapping
 
-class PlacementPartMapper {
-    List<MappedPlacement> apply(List<ComponentPlacement> placements, List<Component> components, List<PartMapping> partMappings) {
+class PlacementMapper {
+    List<PlacementMapping> map(List<ComponentPlacement> placements, List<Component> components, List<PartMapping> partMappings) {
 
         DipTracePartMapper mapper = new DipTracePartMapper()
 
-        List<MappedPlacement> mappedPlacements = placements.findResults { placement ->
+        List<PlacementMapping> placementMappings = placements.findResults { placement ->
 
             String partCode = placement.partCode
             String manufacturer = placement.manufacturer
 
-            MappedPlacement mappedPlacement = new MappedPlacement(placement: placement)
+            PlacementMapping mappedPlacement = new PlacementMapping(placement: placement)
 
             List<PartMapping> applicableMappings = mapper.buildOptions(partMappings, placement.name, placement.value)
             if (applicableMappings.size() > 1) {
@@ -41,7 +41,7 @@ class PlacementPartMapper {
             mappedPlacement
         }
 
-        mappedPlacements
+        placementMappings
     }
 
     List<Component> findComponents(List<Component> components, partCode, manufacturer) {

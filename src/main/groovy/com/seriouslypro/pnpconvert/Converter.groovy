@@ -183,10 +183,10 @@ class Converter {
         //
         String indentation = "\t"
 
-        List<MappedPlacement> mappedPlacements = new PlacementPartMapper().apply(placements, components.components, partMapper.partMappings)
+        List<PlacementMapping> placementMappings = new PlacementMapper().map(placements, components.components, partMapper.partMappings)
         System.out.println()
         System.out.println("placement component mappings:")
-        mappedPlacements.each { MappedPlacement mappedPlacement ->
+        placementMappings.each { PlacementMapping mappedPlacement ->
             System.out.print("${mappedPlacement.placement.refdes} -> ")
             mappedPlacement.partMapping.ifPresent { partMapping ->
                 System.out.print("name pattern: '${partMapping.namePattern}', value pattern: '${partMapping.namePattern}' -> ")
@@ -220,7 +220,7 @@ class Converter {
         DPVGenerator generator = new DPVGenerator(
                 machine: machine,
                 dpvHeader: dpvHeader,
-                mappedPlacements: mappedPlacements,
+                placementMappings: placementMappings,
                 feeders: feeders,
                 optionalPanel: optionalPanel,
                 optionalFiducials: optionalFiducials,

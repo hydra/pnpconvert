@@ -4,7 +4,7 @@ import com.seriouslypro.eda.part.PartMapping
 import org.junit.Ignore
 import spock.lang.Specification
 
-class PlacementPartMapperSpec extends Specification {
+class PlacementMapperSpec extends Specification {
 
     def 'no mappings'() {
         given:
@@ -13,7 +13,7 @@ class PlacementPartMapperSpec extends Specification {
             List<PartMapping> partMappings = []
 
         expect:
-            new PlacementPartMapper().apply(placements, components, partMappings) == []
+            new PlacementMapper().map(placements, components, partMappings) == []
     }
 
     def 'mapped component'() {
@@ -31,7 +31,7 @@ class PlacementPartMapperSpec extends Specification {
             ]
 
         and:
-            MappedPlacement expectedMappedPlacement = new MappedPlacement(
+            PlacementMapping expectedMappedPlacement = new PlacementMapping(
                 // input
                 placement: placements[0],
                 // results
@@ -40,7 +40,7 @@ class PlacementPartMapperSpec extends Specification {
             )
 
         when:
-            List<MappedPlacement> result = new PlacementPartMapper().apply(placements, components, partMappings)
+            List<PlacementMapping> result = new PlacementMapper().map(placements, components, partMappings)
 
 
         then:
@@ -60,7 +60,7 @@ class PlacementPartMapperSpec extends Specification {
             ]
 
         and:
-            MappedPlacement expectedMappedPlacement = new MappedPlacement(
+            PlacementMapping expectedMappedPlacement = new PlacementMapping(
                 // input
                 placement: placements[0],
                 // results
@@ -69,7 +69,7 @@ class PlacementPartMapperSpec extends Specification {
             )
 
         when:
-            List<MappedPlacement> result = new PlacementPartMapper().apply(placements, components, partMappings)
+            List<PlacementMapping> result = new PlacementMapper().map(placements, components, partMappings)
 
 
         then:
@@ -86,7 +86,7 @@ class PlacementPartMapperSpec extends Specification {
             List<Component> components = []
 
         and:
-            MappedPlacement expectedMappedPlacement = new MappedPlacement(
+            PlacementMapping expectedMappedPlacement = new PlacementMapping(
                 // input
                 placement: placements[0],
                 // results
@@ -95,7 +95,7 @@ class PlacementPartMapperSpec extends Specification {
                 errors: ['no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings']
             )
         when:
-            List<MappedPlacement> result = new PlacementPartMapper().apply(placements, components, partMappings)
+            List<PlacementMapping> result = new PlacementMapper().map(placements, components, partMappings)
 
         then:
             result.first() == expectedMappedPlacement

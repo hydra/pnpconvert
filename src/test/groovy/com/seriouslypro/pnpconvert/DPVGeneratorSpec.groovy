@@ -17,13 +17,13 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
             pcbFileName: "TEST-PCB-FILE"
     )
 
-    List<MappedPlacement> mappedPlacements
+    List<PlacementMapping> placementMappings
     Feeders feeders
 
     OutputStream outputStream
 
     void setup() {
-        mappedPlacements = []
+        placementMappings = []
         feeders = new Feeders()
 
         outputStream = new ByteArrayOutputStream()
@@ -197,32 +197,32 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
                 )
             ]
         and:
-            mappedPlacements = [
-                new MappedPlacement(
+            placementMappings = [
+                new PlacementMapping(
                     placement: componentPlacements[0],
                     component: Optional.of(components[0]),
                 ),
-                new MappedPlacement(
+                new PlacementMapping(
                     placement: componentPlacements[1],
                     component: Optional.of(components[0]),
                 ),
-                new MappedPlacement(
+                new PlacementMapping(
                     placement: componentPlacements[2],
                     component: Optional.of(components[1]),
                 ),
-                new MappedPlacement(
+                new PlacementMapping(
                     placement: componentPlacements[3],
                     component: Optional.of(components[2]),
                 ),
-                new MappedPlacement(
+                new PlacementMapping(
                     placement: componentPlacements[4],
                     component: Optional.of(components[2]),
                 ),
-                new MappedPlacement(
+                new PlacementMapping(
                     placement: componentPlacements[5],
                     component: Optional.of(components[3]),
                 ),
-                new MappedPlacement(
+                new PlacementMapping(
                     placement: componentPlacements[6],
                     component: Optional.of(components[4]),
                 ),
@@ -327,19 +327,19 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
             )
 
         and:
-            MappedPlacement placementMapping = new MappedPlacement(
+            PlacementMapping placementMapping = new PlacementMapping(
                 placement: componentPlacement,
                 component: Optional.empty(),
             )
 
         and:
-            generator.mappedPlacements = [ placementMapping ]
+            generator.placementMappings = [ placementMapping ]
 
         when:
             generator.generate(outputStream)
 
         then:
-            generator.unmappedPlacements.contains(placementMapping)
+            generator.unplacementMappings.contains(placementMapping)
     }
 
     @Ignore
@@ -356,8 +356,8 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
             ComponentPlacement componentPlacement = new ComponentPlacement()
             Component component = new Component(description: "Component 1")
 
-            generator.mappedPlacements = [
-                new MappedPlacement(
+            generator.placementMappings = [
+                new PlacementMapping(
                     placement: componentPlacement,
                     component: Optional.of(component),
                 )
@@ -388,7 +388,7 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
         DPVGenerator generator = new DPVGenerator(
                 machine: new TestMachine(),
                 dpvHeader: dpvHeader,
-                mappedPlacements: mappedPlacements,
+                placementMappings: placementMappings,
                 feeders: feeders,
                 optionalPanel: Optional.empty(),
                 optionalFiducials: Optional.empty(),
