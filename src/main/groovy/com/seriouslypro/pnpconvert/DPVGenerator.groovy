@@ -33,9 +33,12 @@ class DPVGenerator {
         dumpMaterialAsignments(materialAssignments)
         dumpSummary(optionalPanel, materialAssignments)
 
-        System.out.println()
-        System.out.println('*** ISSUES *** - Components that need loading')
-        System.out.println('')
+        boolean showIssues = !unmappedPlacements.empty || !unloadedComponents.empty
+        if (showIssues) {
+            System.out.println()
+            System.out.println('*** ISSUES ***')
+            System.out.println('')
+        }
 
         if (!unmappedPlacements.empty) {
             System.out.println()
