@@ -23,7 +23,7 @@ class PlacementMapperSpec extends Specification {
             ]
 
             List<PartMapping> partMappings = [
-                new PartMapping(namePattern: "/.*/", valuePattern: "/.*/", partCode: 'PC2', manufacturer: 'MFR2')
+                new PartMapping(namePattern: "/.*/", valuePattern: "/.*/", partCode: 'PC2', manufacturer: 'MFR2'),
             ]
 
             List<Component> components = [
@@ -101,7 +101,74 @@ class PlacementMapperSpec extends Specification {
             result.first() == expectedMappedPlacement
     }
 
-    @Ignore
-    def 'component with multiple applicable mappings generates error'() {
+    def 'placement with multiple matching components generates error'() {
+        given:
+            List<ComponentPlacement> placements = [
+                new ComponentPlacement(refdes: 'R1', name: '', value: '10K', partCode: 'PC2', manufacturer: 'MFR1'),
+            ]
+
+            List<PartMapping> partMappings = [
+            ]
+
+            List<Component> components = [
+                new Component(partCode: 'PC1', manufacturer: 'MFR1'),
+                new Component(partCode: 'PC2', manufacturer: 'MFR1', description: "A"),
+                new Component(partCode: 'PC2', manufacturer: 'MFR1', description: "B"),
+            ]
+        and:
+            List<Component> expectedApplicableComponents = [
+                components[1],
+                components[2],
+            ]
+            PlacementMapping expectedMappedPlacement = new PlacementMapping(
+                // input
+                placement: placements[0],
+                // results
+                component: Optional<Component>.empty(),
+                partMapping: Optional<PartMapping>.empty(),
+                errors: ["multiple matching components found, check for component duplicates. applicableComponents: '${expectedApplicableComponents}'"]
+            )
+        when:
+            List<PlacementMapping> result = new PlacementMapper().map(placements, components, partMappings)
+
+        then:
+            result.first() == expectedMappedPlacement
+    }
+
+    def 'placement with multiple applicable mappings generates error'() {
+        given:
+            List<ComponentPlacement> placements = [
+                new ComponentPlacement(refdes: 'R1', name: '', value: '10K'),
+            ]
+
+            List<PartMapping> partMappings = [
+                new PartMapping(namePattern: "/.*/", valuePattern: "/10K.*/", partCode: 'PC2', manufacturer: 'MFR2'),
+                new PartMapping(namePattern: "/.*/", valuePattern: "/20K.*/", partCode: 'PC3', manufacturer: 'MFR3'),
+                new PartMapping(namePattern: "/.*/", valuePattern: "/10K.*/", partCode: 'PC4', manufacturer: 'MFR4'),
+            ]
+
+            List<Component> components = [
+                new Component(partCode: 'PC2', manufacturer: 'MFR2'), // <-- this component should match, but not be included in the result.
+                new Component(partCode: 'PC3', manufacturer: 'MFR3'),
+                new Component(partCode: 'PC4', manufacturer: 'MFR4'), // <-- this component should match, but not be included in the result.
+            ]
+        and:
+            List<PartMapping> expectedApplicablePartMappings = [
+                partMappings[0],
+                partMappings[2],
+            ]
+            PlacementMapping expectedMappedPlacement = new PlacementMapping(
+                // input
+                placement: placements[0],
+                // results
+                component: Optional<Component>.empty(),
+                partMapping: Optional<PartMapping>.empty(),
+                errors: ["multiple matching mappings found, be more specific with mappings or use refdes replacements. applicableMappings: '${expectedApplicablePartMappings}'"]
+            )
+        when:
+            List<PlacementMapping> result = new PlacementMapper().map(placements, components, partMappings)
+
+        then:
+            result.first() == expectedMappedPlacement
     }
 }

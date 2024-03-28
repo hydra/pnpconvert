@@ -18,6 +18,7 @@ class PlacementMapper {
             List<PartMapping> applicableMappings = mapper.buildOptions(partMappings, placement.name, placement.value)
             if (applicableMappings.size() > 1) {
                 mappedPlacement.errors << "multiple matching mappings found, be more specific with mappings or use refdes replacements. applicableMappings: '${applicableMappings}'".toString()
+                return mappedPlacement
             } else if (applicableMappings.size() == 1) {
                 PartMapping selectedMapping = applicableMappings.first()
 
