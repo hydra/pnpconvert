@@ -1,4 +1,5 @@
 Flags,ID,Enabled,Part Code,Manufacturer,Description,Tape Width,Note,Tape Spacing,X Offset,Y Offset,Head,Separate Mount,Package Angle,Check Vacuum,Use Vision,Place Speed,Place Delay,Take Delay,Take Height,Tray Name
+,1,Y,"C1046V30402","CMFR1","100nF 6.3V 0402 10%/CAP_0402",8,"LH",2,0,0,1,N,0,Y,Y,10,0.5,0,0.25,
+,10,Y,"SD0805S040S0R5","KYOCERA","DIODE 40V 0.5A 0805",8,"LH",4,0.05,0.25,1,N,180,Y,Y,100,0,0.2,0.20,
 ,36,N,"CRG0402F10K","TE CONNECTIVITY","10K 0402 1%/RES_0402",8,"RH",2,-0.07,0.35,1,N,0,Y,Y,20,0.5,0,0.25,
-,1,Y,"C1046V30402","CMFR1","100nF 6.3V 0402 10%/CAP_0402",8,"RH",2,0,0,1,N,0,Y,Y,10,0.5,0,0.25,
-,88,Y,"STM32F030C8T6","ST","STM32F030C8T",,,,0,0,2,Y,0,Y,Y,100,0,0.2,0,"B-1-4-TL"
+,,Y,"STM32F030C8T6","ST","STM32F030C8T",,"N",,0,0,2,Y,0,Y,Y,100,0,0.2,0,"B-1-4-TL"

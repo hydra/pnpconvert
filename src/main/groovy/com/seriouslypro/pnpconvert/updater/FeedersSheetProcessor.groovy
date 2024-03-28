@@ -7,7 +7,7 @@ import com.google.api.services.sheets.v4.model.Spreadsheet
 import com.google.api.services.sheets.v4.model.UpdateValuesResponse
 import com.google.api.services.sheets.v4.model.ValueRange
 import com.seriouslypro.googlesheets.GridRangeConverter
-import com.seriouslypro.pnpconvert.Feeders
+import com.seriouslypro.pnpconvert.FeedersLoader
 import com.seriouslypro.pnpconvert.MatchOption
 
 class FeedersSheetProcessor {
@@ -101,8 +101,8 @@ class FeedersSheetProcessor {
         // update the sheet with the new values, check the result
 
         List<String> updatedRowValues = sheetFeederRowValues.collect()
-        updatedRowValues.set(sheetToEntryHeaderMapping.sheetIndex(Feeders.FeederCSVColumn.X_OFFSET), dpvFeederEntryValues[sheetToEntryHeaderMapping.dpvIndex(DPVStationTableColumn.DELTA_X)])
-        updatedRowValues.set(sheetToEntryHeaderMapping.sheetIndex(Feeders.FeederCSVColumn.Y_OFFSET), dpvFeederEntryValues[sheetToEntryHeaderMapping.dpvIndex(DPVStationTableColumn.DELTA_Y)])
+        updatedRowValues.set(sheetToEntryHeaderMapping.sheetIndex(FeedersLoader.FeederCSVColumn.X_OFFSET), dpvFeederEntryValues[sheetToEntryHeaderMapping.dpvIndex(DPVStationTableColumn.DELTA_X)])
+        updatedRowValues.set(sheetToEntryHeaderMapping.sheetIndex(FeedersLoader.FeederCSVColumn.Y_OFFSET), dpvFeederEntryValues[sheetToEntryHeaderMapping.dpvIndex(DPVStationTableColumn.DELTA_Y)])
 
         ValueRange valueRange = new ValueRange()
         List<List<Object>> updatedValues = [updatedRowValues]

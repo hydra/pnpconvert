@@ -68,5 +68,4 @@ trait DPVFileAssertions {
             assert content.contains(row)
         }
     }
-
 }

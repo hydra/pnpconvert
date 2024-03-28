@@ -2,15 +2,15 @@ package com.seriouslypro.pnpconvert
 
 import spock.lang.Specification
 
-class ComponentsSpec extends Specification {
+class ComponentsLoaderSpec extends Specification {
 
     public static final String TEST_COMPONENTS_RESOURCE = "/components1.csv"
     public static final String TEST_LEGACY_COMPONENTS_RESOURCE = "/components-legacy.csv"
 
-    Components components
+    ComponentsLoader components
 
     void setup() {
-        components = new Components()
+        components = new ComponentsLoader()
     }
 
     def 'load'() {

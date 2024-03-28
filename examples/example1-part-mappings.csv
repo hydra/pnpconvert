@@ -1,3 +1,4 @@
 Name Pattern,Value Pattern,Part Code,Manufacturer
 "/RES_0402.*/","/10K 0402( (.*)%)?( (.*)mW)?/","CRG0402F10K", "TE CONNECTIVITY"
 "/STM32F030C8T(6)?/","/.*/","STM32F030C8T6","ST"
+"DIODE_0805","40V 0.5A 0805","SD0805S040S0R5","KYOCERA"

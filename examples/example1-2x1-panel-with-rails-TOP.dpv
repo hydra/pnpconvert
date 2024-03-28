@@ -2,12 +2,14 @@ separated
 FILE,examples/example1-2x1-panel-with-rails-TOP.dpv
 PCBFILE,examples/example1.csv
 DATE,2024/03/28
-TIME,10:56:48
+TIME,21:32:49
 PANELYPE,1
 
 Table,No.,ID,DeltX,DeltY,FeedRates,Note,Height,Speed,Status,SizeX,SizeY,HeightTake,DelayTake,nPullStripSpeed
 
-Station,0,88,0,0,4,STM32F030C8T6;ST;STM32F030C8T,2,100,14,700,700,0,20,0
+Station,0,10,0.05,0.25,4,SD0805S040S0R5;KYOCERA;DIODE 40V 0.5A 0805;LH,0.8,100,6,120,200,20,20,0
+
+Station,1,88,0,0,4,STM32F030C8T6;ST;STM32F030C8T;T,2,100,14,700,700,0,20,0
 
 
 
@@ -19,7 +21,15 @@ Panel_Array,0,1,75,105,2,1
 
 Table,No.,ID,PHead,STNo.,DeltX,DeltY,Angle,Height,Skip,Speed,Explain,Note,Delay
 
-EComponent,0,1,2,88,40,55,180,2,14,100,U1,STM32F030C8T;,0
+EComponent,0,1,1,10,10,54.05,0,0.8,6,100,D1,DIODE 40V 0.5A 0805;40V 0.5A 08,0
+
+EComponent,1,2,1,10,39.05,100,-90,0.8,6,100,D2,DIODE 40V 0.5A 0805;40V 0.5A 08,0
+
+EComponent,2,3,1,10,70,55.95,180,0.8,6,100,D3,DIODE 40V 0.5A 0805;40V 0.5A 08,0
+
+EComponent,3,4,1,10,40.95,10,90,0.8,6,100,D4,DIODE 40V 0.5A 0805;40V 0.5A 08,0
+
+EComponent,4,5,2,88,40,55,180,2,14,100,U1,STM32F030C8T;,0
 
 
 

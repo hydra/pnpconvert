@@ -1,6 +1,7 @@
 package com.seriouslypro.pnpconvert.updater
 
-import com.seriouslypro.pnpconvert.Feeders
+
+import com.seriouslypro.pnpconvert.FeedersLoader
 import com.seriouslypro.pnpconvert.MatchOption
 
 class RowMatcher {
@@ -12,7 +13,7 @@ class RowMatcher {
         }
 
         if (matchOptions.contains(MatchOption.FLAG_ENABLED)) {
-            int sheetFlagsIndex = sheetToEntryHeaderMapping.sheetIndex(Feeders.FeederCSVColumn.FLAGS)
+            int sheetFlagsIndex = sheetToEntryHeaderMapping.sheetIndex(FeedersLoader.FeederCSVColumn.FLAGS)
 
             boolean enabledFlagMatched = !sheetFeederRowValues[sheetFlagsIndex].contains('!')
             if (!enabledFlagMatched) {
@@ -22,7 +23,7 @@ class RowMatcher {
 
         if (matchOptions.contains(MatchOption.FEEDER_ID)) {
             int dpvIdIndex = sheetToEntryHeaderMapping.dpvIndex(DPVStationTableColumn.ID)
-            int sheetColumnIndex = sheetToEntryHeaderMapping.sheetIndex(Feeders.FeederCSVColumn.ID)
+            int sheetColumnIndex = sheetToEntryHeaderMapping.sheetIndex(FeedersLoader.FeederCSVColumn.ID)
 
             boolean idMatched = dpvFeederEntryValues[dpvIdIndex] == sheetFeederRowValues[sheetColumnIndex]
             if (!idMatched) {
@@ -36,7 +37,7 @@ class RowMatcher {
         List<String> noteParts = dpvFeederEntryValues[dpvNoteIndex] ? dpvFeederEntryValues[dpvNoteIndex].split(";") : []
 
         if (matchOptions.contains(MatchOption.PART_CODE)) {
-            int sheetColumnIndex = sheetToEntryHeaderMapping.sheetIndex(Feeders.FeederCSVColumn.PART_CODE)
+            int sheetColumnIndex = sheetToEntryHeaderMapping.sheetIndex(FeedersLoader.FeederCSVColumn.PART_CODE)
 
             if (noteParts.size() < 2) {
                 return false
@@ -50,7 +51,7 @@ class RowMatcher {
         }
 
         if (matchOptions.contains(MatchOption.MANUFACTURER)) {
-            int sheetColumnIndex = sheetToEntryHeaderMapping.sheetIndex(Feeders.FeederCSVColumn.MANUFACTURER)
+            int sheetColumnIndex = sheetToEntryHeaderMapping.sheetIndex(FeedersLoader.FeederCSVColumn.MANUFACTURER)
 
             if (noteParts.size() < 2) {
                 return false
@@ -69,7 +70,7 @@ class RowMatcher {
         // may match more rows than intended!
 
         if (matchOptions.contains(MatchOption.DESCRIPTION)) {
-            int sheetComponentNameIndex = sheetToEntryHeaderMapping.sheetIndex(Feeders.FeederCSVColumn.DESCRIPTION)
+            int sheetComponentNameIndex = sheetToEntryHeaderMapping.sheetIndex(FeedersLoader.FeederCSVColumn.DESCRIPTION)
 
             int descriptionIndex = 0 // CLOVER assignment needed to prevent 'EmptyExpression.INSTANCE is immutable' error
             switch (noteParts.size()) {

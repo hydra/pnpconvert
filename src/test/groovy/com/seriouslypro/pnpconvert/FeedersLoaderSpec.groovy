@@ -2,7 +2,7 @@ package com.seriouslypro.pnpconvert
 
 import spock.lang.Specification
 
-class FeedersSpec extends Specification {
+class FeedersLoaderSpec extends Specification {
 
     private static final String TEST_COMPONENT_DESCRIPTION = "TEST-COMPONENT"
     private static final String TEST_COMPONENT_PART_CODE = "TEST-PART-CODE"
@@ -12,7 +12,7 @@ class FeedersSpec extends Specification {
     public static final String TEST_FEEDERS_RESOURCE_3 = "/feeders3.csv"
     public static final String TEST_FEEDERS_RESOURCE_4 = "/feeders4.csv"
 
-    Feeders feeders
+    FeedersLoader feedersLoader
 
     private static Tray testTray = new Tray(
         name: "B-1-4-TL",
@@ -23,16 +23,16 @@ class FeedersSpec extends Specification {
         firstComponentIndex: 0
     )
 
-    Trays mockTrays
+    TraysLoader mockTrays
 
     void setup() {
         mockTrays = Mock()
-        feeders = new Feeders(trays: mockTrays)
+        feedersLoader = new FeedersLoader(traysLoader: mockTrays)
     }
 
     def 'find by component - no components'() {
         expect:
-            feeders.findByComponent(new Component(description: TEST_COMPONENT_DESCRIPTION)) == null
+            feedersLoader.findByComponent(new Component(description: TEST_COMPONENT_DESCRIPTION)) == null
     }
 
     def 'find by component - matching part & manufacturer'() {
@@ -40,11 +40,11 @@ class FeedersSpec extends Specification {
             PickSettings mockPickSettings = Mock()
 
         and:
-            Feeder feeder = feeders.createReelFeeder(1, 8, TEST_COMPONENT_PART_CODE, TEST_COMPONENT_MANUFACTURER, "UNMATCHED_DESCRIPTION", mockPickSettings, "TEST-NOTE")
-            feeders.loadFeeder(feeder)
+            Feeder feeder = feedersLoader.createReelFeeder(1, 8, TEST_COMPONENT_PART_CODE, TEST_COMPONENT_MANUFACTURER, "UNMATCHED_DESCRIPTION", mockPickSettings, "TEST-NOTE")
+            feedersLoader.loadFeeder(feeder)
 
         when:
-            Feeder result = feeders.findByComponent(new Component(partCode: TEST_COMPONENT_PART_CODE, manufacturer: TEST_COMPONENT_MANUFACTURER, description: TEST_COMPONENT_DESCRIPTION))
+            Feeder result = feedersLoader.findByComponent(new Component(partCode: TEST_COMPONENT_PART_CODE, manufacturer: TEST_COMPONENT_MANUFACTURER, description: TEST_COMPONENT_DESCRIPTION))
 
         then:
             result
@@ -161,15 +161,15 @@ class FeedersSpec extends Specification {
             allPropertiesDifferent(ReelFeeder, feeder1, feeder2)
 
         when:
-            feeders.loadFromCSV(TEST_FEEDERS_RESOURCE_1, inputStreamReader)
+            feedersLoader.loadFromCSV(TEST_FEEDERS_RESOURCE_1, inputStreamReader)
 
         then:
             1 * mockTrays.findByName("B-1-4-TL") >> testTray
             0 * _
 
         and:
-            feeders.csvParseExceptions.empty
-            feeders.feederList.sort() == expectedFeederList.sort()
+            feedersLoader.csvParseExceptions.empty
+            feedersLoader.feederList.sort() == expectedFeederList.sort()
     }
 
     def 'ignore rows that have ignore flag'() {
@@ -180,15 +180,15 @@ class FeedersSpec extends Specification {
             List<Feeder> expectedFeederList = []
 
         when:
-            feeders.loadFromCSV(TEST_FEEDERS_RESOURCE_2, inputStreamReader)
+            feedersLoader.loadFromCSV(TEST_FEEDERS_RESOURCE_2, inputStreamReader)
 
         then:
             1 * mockTrays.findByName('B-1-4-TL') >> testTray
             0 * _
 
         and:
-            feeders.csvParseExceptions.empty
-            feeders.feederList.empty
+            feedersLoader.csvParseExceptions.empty
+            feedersLoader.feederList.empty
     }
 
     def 'allow rows with no fixed ID'() {
@@ -197,15 +197,15 @@ class FeedersSpec extends Specification {
             InputStreamReader inputStreamReader = new InputStreamReader(inputStream)
 
         when:
-            feeders.loadFromCSV(TEST_FEEDERS_RESOURCE_3, inputStreamReader)
+            feedersLoader.loadFromCSV(TEST_FEEDERS_RESOURCE_3, inputStreamReader)
 
         then:
             mockTrays.findByName('B-1-4-TL') >> testTray
             0 * _
 
         and:
-            feeders.csvParseExceptions.empty
-            !feeders.feederList.empty
+            feedersLoader.csvParseExceptions.empty
+            !feedersLoader.feederList.empty
     }
 
     def 'allow header aliases'() {
@@ -214,15 +214,15 @@ class FeedersSpec extends Specification {
             InputStreamReader inputStreamReader = new InputStreamReader(inputStream)
 
         when:
-            feeders.loadFromCSV(TEST_FEEDERS_RESOURCE_4, inputStreamReader)
+            feedersLoader.loadFromCSV(TEST_FEEDERS_RESOURCE_4, inputStreamReader)
 
         then:
             mockTrays.findByName('B-1-4-TL') >> testTray
             0 * _
 
         and:
-            feeders.csvParseExceptions.empty
-            !feeders.feederList.empty
+            feedersLoader.csvParseExceptions.empty
+            !feedersLoader.feederList.empty
     }
 
     void allPropertiesDifferent(Class aClass, Object a, Object b) {

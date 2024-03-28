@@ -1,2 +1,3 @@
 "RefDes","Pattern","X (mm)","Y (mm)","Side","Rotate","Value","Name","Manufacturer","Part Code"
 "R1","RES_0402",7.8,95,"Top",0,"10K 0402 1%","RES_0402","RM1","R10K00402"
+"C1","CAP_0402",4.2,6.9,"Top",0,"100nF 16V 0402 X5R 10%","CAP_0402","CM1","C10416V0402X5R"

@@ -1,6 +1,6 @@
 package com.seriouslypro.pnpconvert.updater
 
-import com.seriouslypro.pnpconvert.Feeders
+import com.seriouslypro.pnpconvert.FeedersLoader
 
 enum DPVStationTableColumn {
     TABLE('Table'),
@@ -54,7 +54,7 @@ class SheetToDPVHeaderMapping {
     private final List<String> sheetHeaders
 
     Map<DPVStationTableColumn, Integer> dpvStationTableColumnIndexMap = [:]
-    Map<Feeders.FeederCSVColumn, Integer> feederCSVColumnIndexMap = [:]
+    Map<FeedersLoader.FeederCSVColumn, Integer> feederCSVColumnIndexMap = [:]
 
     SheetToDPVHeaderMapping(List<String> dpvTableHeaders, List<String>sheetHeaders) {
         this.sheetHeaders = sheetHeaders
@@ -62,7 +62,7 @@ class SheetToDPVHeaderMapping {
 
         sheetHeaders.eachWithIndex { String sheetHeader, int sheetHeaderIndex ->
             try {
-                Feeders.FeederCSVColumn sheetHeaderCSVColumn = Feeders.FeederCSVColumn.fromString(Feeders.FeederCSVColumn, sheetHeader.toUpperCase().replaceAll('[^A-Za-z0-9]', "_"))
+                FeedersLoader.FeederCSVColumn sheetHeaderCSVColumn = FeedersLoader.FeederCSVColumn.fromString(FeedersLoader.FeederCSVColumn, sheetHeader.toUpperCase().replaceAll('[^A-Za-z0-9]', "_"))
 
                 feederCSVColumnIndexMap[sheetHeaderCSVColumn] = sheetHeaderIndex
             } catch (IllegalArgumentException e) {
@@ -80,7 +80,7 @@ class SheetToDPVHeaderMapping {
         return dpvStationTableColumnIndexMap[dpvStationTableColumn]
     }
 
-    int sheetIndex(Feeders.FeederCSVColumn feederCSVColumn) {
+    int sheetIndex(FeedersLoader.FeederCSVColumn feederCSVColumn) {
         return feederCSVColumnIndexMap[feederCSVColumn]
     }
 }

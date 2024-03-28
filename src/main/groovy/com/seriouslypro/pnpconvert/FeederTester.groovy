@@ -19,7 +19,7 @@ class FeederTester {
         // Load Components
         //
 
-        Components components = loadComponents()
+        ComponentsLoader components = loadComponents()
 
         System.out.println()
         System.out.println("defined components:")
@@ -33,7 +33,7 @@ class FeederTester {
         // Load Trays
         //
 
-        Trays trays = loadTrays()
+        TraysLoader trays = loadTrays()
 
         System.out.println()
         System.out.println("defined trays:")
@@ -45,7 +45,7 @@ class FeederTester {
         // Load Feeders
         //
 
-        Feeders feeders = loadFeeders(trays)
+        FeedersLoader feeders = loadFeeders(trays)
 
         System.out.println()
         System.out.println("defined feeders:")
@@ -87,30 +87,30 @@ class FeederTester {
     }
 
 
-    private Trays loadTrays() {
+    private TraysLoader loadTrays() {
         Reader reader = openFileOrUrl(traysFileName)
 
-        Trays trays = new Trays()
+        TraysLoader trays = new TraysLoader()
         trays.loadFromCSV(traysFileName, reader)
 
         trays
     }
 
-    private Feeders loadFeeders(Trays trays) {
+    private FeedersLoader loadFeeders(TraysLoader trays) {
         Reader reader = openFileOrUrl(feedersFileName)
 
-        Feeders feeders = new Feeders(
-            trays: trays
+        FeedersLoader feeders = new FeedersLoader(
+            traysLoader: trays
         )
 
         feeders.loadFromCSV(feedersFileName, reader)
         feeders
     }
 
-    private Components loadComponents() {
+    private ComponentsLoader loadComponents() {
         Reader reader = openFileOrUrl(componentsFileName)
 
-        Components components = new Components()
+        ComponentsLoader components = new ComponentsLoader()
         components.loadFromCSV(componentsFileName, reader)
 
         components

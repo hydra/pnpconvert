@@ -5,7 +5,7 @@ import com.seriouslypro.pnpconvert.machine.Machine
 class DPVGenerator {
     DPVHeader dpvHeader
     List<PlacementMapping> placementMappings
-    Feeders feeders
+    FeedersLoader feedersLoader
     BigDecimal offsetZ
 
     Machine machine
@@ -84,7 +84,7 @@ class DPVGenerator {
             }
 
             Component component = mappedPlacement.component.get()
-            Feeder feeder = feeders.findByComponent(component)
+            Feeder feeder = feedersLoader.findByComponent(component)
             if (!feeder) {
                 unloadedComponents << component
                 return

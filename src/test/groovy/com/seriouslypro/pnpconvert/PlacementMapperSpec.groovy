@@ -16,6 +16,7 @@ class PlacementMapperSpec extends Specification {
             new PlacementMapper().map(placements, components, partMappings) == []
     }
 
+    // TODO test more combinations of name patterns and value patterns
     def 'mapped component'() {
         given:
             List<ComponentPlacement> placements = [
