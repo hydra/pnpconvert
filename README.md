@@ -414,6 +414,8 @@ Still, that doesn't help with square components, like ICs, inductors, etc.
 * apply rotation/mirroring to panel, fiducials, currently rotation/mirroring only applies to components.
 * Set units for SVG display
 * Replace specific components by reference designator.
+* Display a summary of applied substitutions maybe instead of, or addition to, all the per-refdes component substitutions, include list of refdes that the substitutions applied to.
+* Display a summary of applied mappings maybe instead of, or addition to, all the per-refdes component mappings, include list of refdes that the mappings applied to.
 
 # DPVToGoogleSheets
 
