@@ -214,7 +214,7 @@ class Converter {
             System.out.println()
             if (mappedPlacement.errors) {
                 mappedPlacement.errors.eachWithIndex { error, i ->
-                    String indentation
+                    String indentation = '' // add unused assignment to prevent 'EmptyExpression.INSTANCE is immutable' error with clover
                     if (i == mappedPlacement.errors.size() - 1) {
                         indentation = '└── '
                     } else {
