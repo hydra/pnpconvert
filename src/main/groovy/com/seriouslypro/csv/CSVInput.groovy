@@ -44,13 +44,13 @@ class CSVInput<TResult, TColumn extends Enum> {
     }
 
     void parseLines(Closure c, Closure exceptionHandler = this.&defaultExceptionHandler) {
-        String[] line
+        String[] line = [] // CLOVER assignment needed to prevent 'EmptyExpression.INSTANCE is immutable' error
 
         while ((line = inputCSVReader.readNext()) != null) {
             context.lineIndex++
             context.columnName = null
 
-            TResult t
+            TResult t = null // CLOVER assignment needed to prevent 'EmptyExpression.INSTANCE is immutable' error
             try {
                 t = lineParser.parse(context, line)
             } catch(Exception cause) {

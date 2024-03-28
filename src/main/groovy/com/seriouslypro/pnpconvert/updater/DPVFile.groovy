@@ -23,7 +23,7 @@ class DPVFileParser {
         DPVFile dpvFile = new DPVFile()
 
         Scanner scanner = new Scanner(inputStream)
-        String line
+        String line = null // CLOVER assignment needed to prevent 'EmptyExpression.INSTANCE is immutable' error
         line = nextLine(scanner)
 
         if (line != "separated") {
@@ -32,7 +32,7 @@ class DPVFileParser {
 
         Task task = Task.PROPERTY
 
-        DPVTable activeTable
+        DPVTable activeTable = null // CLOVER assignment needed to prevent 'EmptyExpression.INSTANCE is immutable' error
 
         while (scanner.hasNextLine()) {
             line = nextLine(scanner)
@@ -87,8 +87,8 @@ class DPVFileParser {
     }
 
     void parseProperty(Properties properties, String line) {
-        String key
-        String value
+        String key = null // CLOVER assignment needed to prevent 'EmptyExpression.INSTANCE is immutable' error
+        String value = null // CLOVER assignment needed to prevent 'EmptyExpression.INSTANCE is immutable' error
 
         try {
             (key, value) = line.split(",", 2)

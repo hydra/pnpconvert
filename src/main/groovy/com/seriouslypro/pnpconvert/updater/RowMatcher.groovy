@@ -71,7 +71,7 @@ class RowMatcher {
         if (matchOptions.contains(MatchOption.DESCRIPTION)) {
             int sheetComponentNameIndex = sheetToEntryHeaderMapping.sheetIndex(Feeders.FeederCSVColumn.DESCRIPTION)
 
-            int descriptionIndex
+            int descriptionIndex = 0 // CLOVER assignment needed to prevent 'EmptyExpression.INSTANCE is immutable' error
             switch (noteParts.size()) {
                 case 1:
                 case 2:
