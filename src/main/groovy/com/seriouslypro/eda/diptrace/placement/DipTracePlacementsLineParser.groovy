@@ -18,7 +18,7 @@ class DipTracePlacementsLineParser extends CSVLineParserBase<ComponentPlacement,
         BigDecimal y = rowValues[columnIndex(context, DipTracePlacementsCSVHeaders.Y)] as BigDecimal
         Coordinate coordinate = new Coordinate(x: x, y: y)
 
-        PCBSide side
+        PCBSide side = null // CLOVER assignment needed to prevent 'EmptyExpression.INSTANCE is immutable' error
         String sideValue = rowValues[columnIndex(context, DipTracePlacementsCSVHeaders.SIDE)]
 
         try {
