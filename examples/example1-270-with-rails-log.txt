@@ -30,31 +30,23 @@ feeder: ReelFeeder(tapeWidth:8, fixedId:Optional[1], enabled:true, note:RH, manu
 feeder: TrayFeeder(tray:Tray(name:B-1-4-TL, firstComponentX:205.07, firstComponentY:61.05, lastComponentX:277.1, lastComponentY:61.11, rows:1, columns:4, firstComponentIndex:0), fixedId:Optional[88], enabled:true, note:, manufacturer:ST, partCode:STM32F030C8T6, description:STM32F030C8T, pickSettings:PickSettings(xOffset:0, yOffset:0, useVision:true, checkVacuum:true, separateMount:true, head:2, placeSpeedPercentage:100, placeDelay:0, takeHeight:0, takeDelay:0.2, packageAngle:0, tapeSpacing:4, pullSpeed:0), properties:null)
 
 placement component mappings:
-D1 -> error
-	no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
-
-R3 -> error
-	no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
-
-R4 -> error
-	no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
-
-R5 -> error
-	no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
-
-D2 -> error
-	no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
-
-D3 -> error
-	no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
-
-D4 -> error
-	no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
-
-U1 -> STM32F030C8T6 / ST <- name pattern: '/STM32F030C8T(6)?/', value pattern: '/STM32F030C8T(6)?/'
-R1 -> error
-	no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
-
+[refdes:D1, name:DIODE_0805, value:] -> error
+??? error: no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
+[refdes:R3, name:RES_2512, value:] -> error
+??? error: no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
+[refdes:R4, name:RES_2512, value:] -> error
+??? error: no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
+[refdes:R5, name:RES_2512, value:] -> error
+??? error: no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
+[refdes:D2, name:DIODE_0805, value:] -> error
+??? error: no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
+[refdes:D3, name:DIODE_0805, value:] -> error
+??? error: no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
+[refdes:D4, name:DIODE_0805, value:] -> error
+??? error: no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
+[refdes:U1, name:STM32F030C8T, value:] -> [part code:STM32F030C8T6, manufacturer:ST, description:STM32F030C8T6] <- [name pattern:/STM32F030C8T(6)?/, value pattern:/.*/]'
+[refdes:R1, name:RES_2512, value:] -> error
+??? error: no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
 
 
 *** MATERIAL ASSIGNMENTS *** - Components from the design that matched the components and feeders/trays
@@ -70,8 +62,15 @@ feederSummary:
 feederId,componentsPerUnit,componentsPerPanel,refdes,feeder,component
 88,1,1,[U1],[tray:B-1-4-TL, note:],[partCode:STM32F030C8T6, manufacturer:ST, name:STM32F030C8T6]
 
-*** ISSUES *** - Components that need loading
+*** ISSUES ***
 
 
-unloadedComponents:
-
+unmappedPlacements:
+[refdes:D1, name:DIODE_0805, value:]
+[refdes:R3, name:RES_2512, value:]
+[refdes:R4, name:RES_2512, value:]
+[refdes:R5, name:RES_2512, value:]
+[refdes:D2, name:DIODE_0805, value:]
+[refdes:D3, name:DIODE_0805, value:]
+[refdes:D4, name:DIODE_0805, value:]
+[refdes:R1, name:RES_2512, value:]
