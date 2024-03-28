@@ -416,6 +416,12 @@ Still, that doesn't help with square components, like ICs, inductors, etc.
 * Replace specific components by reference designator.
 * Display a summary of applied substitutions maybe instead of, or addition to, all the per-refdes component substitutions, include list of refdes that the substitutions applied to.
 * Display a summary of applied mappings maybe instead of, or addition to, all the per-refdes component mappings, include list of refdes that the mappings applied to.
+* Improvement of automatically determining the rotation by recording: 
+  1) definition of EDA pattern rotation vs datasheet (needs to be per-pattern) 
+  2) cut-tape orientation, many manufacturers specify the pin-1 location in the packaging specification.
+  3) definition of datasheet measurement codes used for X/Y/Z, e.g. X=L;Y=W;Z=T as there doesn't appear to be a standard, and it varies by manufacturer and component type.
+* Override vision X/Y/Z from components file, since the camera bounding box often applies to the shiny pads, and not the case or maximum dimensions.  Datasheet X=W/Y=H/Z=D should be the primary values for cross-referencing with component outline, etc
+* Check and report components that are too tall for the machine (>5mm for CHMT48VB/CHMT43VB/CHMT43VA)
 
 # DPVToGoogleSheets
 
