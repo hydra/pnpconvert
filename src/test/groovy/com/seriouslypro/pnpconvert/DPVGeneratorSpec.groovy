@@ -311,7 +311,7 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
             feederSummaryPresent(capturedOutput, expectedFeederSummary)
     }
 
-    def 'placement with un-mapped component'() {
+    def 'placement with unmapped component'() {
         given:
             DPVGenerator generator = buildGenerator()
 
@@ -326,18 +326,20 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
                 name: "RES_0402"
             )
 
-            generator.mappedPlacements = [
-                new MappedPlacement(
-                    placement: componentPlacement,
-                    component: Optional.empty(),
-                )
-            ]
+        and:
+            MappedPlacement placementMapping = new MappedPlacement(
+                placement: componentPlacement,
+                component: Optional.empty(),
+            )
+
+        and:
+            generator.mappedPlacements = [ placementMapping ]
 
         when:
             generator.generate(outputStream)
 
         then:
-            noExceptionThrown()
+            generator.unmappedPlacements.contains(placementMapping)
     }
 
     @Ignore

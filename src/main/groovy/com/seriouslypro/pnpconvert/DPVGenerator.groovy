@@ -12,6 +12,7 @@ class DPVGenerator {
 
     DPVWriter writer
 
+    Set<MappedPlacement> unmappedPlacements
     Set<Component> unloadedComponents
 
     Optional<Panel> optionalPanel
@@ -19,6 +20,7 @@ class DPVGenerator {
 
     void generate(OutputStream outputStream) {
         unloadedComponents = []
+        unmappedPlacements = []
 
         Map<ComponentPlacement, MaterialSelectionEntry> materialSelections = selectMaterials()
         Map<ComponentPlacement, MaterialAssignment> materialAssignments = assignMaterials(materialSelections)
@@ -35,8 +37,23 @@ class DPVGenerator {
         System.out.println('*** ISSUES *** - Components that need loading')
         System.out.println('')
 
-        System.out.println()
-        System.out.println("unloadedComponents:\n" + unloadedComponents.join('\n'))
+        if (!unmappedPlacements.empty) {
+            System.out.println()
+            System.out.println("unmappedPlacements:\n" + unmappedPlacements.collect {MappedPlacement p -> [
+                refdes: p.placement.refdes,
+                name: p.placement.name,
+                value: p.placement.value,
+            ]}.join('\n'))
+        }
+
+        if (!unloadedComponents.empty) {
+            System.out.println()
+            System.out.println("unloadedComponents:\n" + unloadedComponents.collect {Component c -> [
+                partCode: c.partCode,
+                manufacturer: c.manufacturer,
+                description: c.description,
+            ]}.join('\n'))
+        }
 
         writer = new DPVWriter(outputStream, machine, offsetZ, dpvHeader)
         writer.setPanel(optionalPanel)
@@ -56,9 +73,12 @@ class DPVGenerator {
 
         Map<ComponentPlacement, MaterialSelectionEntry> materialSelections = [:]
 
-        mappedPlacements.findAll { MappedPlacement mappedPlacement ->
-            mappedPlacement.component.isPresent()
-        }.each { MappedPlacement mappedPlacement ->
+        mappedPlacements.each { MappedPlacement mappedPlacement ->
+
+            if (!mappedPlacement.component.isPresent()) {
+                unmappedPlacements << mappedPlacement
+                return
+            }
 
             Component component = mappedPlacement.component.get()
             Feeder feeder = feeders.findByComponent(component)
