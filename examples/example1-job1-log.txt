@@ -10,9 +10,14 @@ R1,RES_2512,RES_2512,7.8,95,Top,0.0,                                            
 
 rendered SVG, svgFileName: 'examples/example1-2x1-panel-with-rails-TOP.svg'
 
-part mappings:
+defined part substitutions:
+PartSubstitution(namePattern:CAP_0402, valuePattern:100nF 16V 0402 X5R 10%, name:CAP_0402, value:100nF 50V 0402 X7R 10%)
+PartSubstitution(namePattern:DIODE_0805, valuePattern:, name:DIODE_0805, value:40V 0.5A 0805)
+
+defined part mappings:
 PartMapping(namePattern:/RES_0402.*/, valuePattern:/10K 0402( (.*)%)?( (.*)mW)?/, partCode:CRG0402F10K, manufacturer:TE CONNECTIVITY)
 PartMapping(namePattern:/STM32F030C8T(6)?/, valuePattern:/.*/, partCode:STM32F030C8T6, manufacturer:ST)
+PartMapping(namePattern:DIODE_0805, valuePattern:40V 0.5A 0805, partCode:SD0805S040S0R5, manufacturer:KYOCERA)
 
 defined components:
 Component(partCode:R10K0402, manufacturer:TE, description:10K 0402 1%/RES_0402, width:0.50, length:1.00, height:0.50, placementOffsetX:0, placementOffsetY:0)
@@ -20,30 +25,34 @@ Component(partCode:C100N6V30402, manufacturer:FH, description:100nF 6.3V 0402/CA
 Component(partCode:C001U6V30402, manufacturer:Samsung, description:1uF 6.3V 0402/CAP_0402, width:0.50, length:1.00, height:0.50, placementOffsetX:0, placementOffsetY:0)
 Component(partCode:C010U16V0805, manufacturer:AVX, description:10uF 16V 0805/CAP_0805, width:1.25, length:2.00, height:1.00, placementOffsetX:0, placementOffsetY:0)
 Component(partCode:STM32F030C8T6, manufacturer:ST, description:STM32F030C8T, width:7.00, length:7.00, height:2.00, placementOffsetX:0, placementOffsetY:0)
-
+Component(partCode:SD0805S040S0R5, manufacturer:KYOCERA, description:DIODE 40V 0.5A 0805, width:1.20, length:2.00, height:0.80, placementOffsetX:0, placementOffsetY:0)
 
 defined trays:
 Tray(name:B-1-4-TL, firstComponentX:205.07, firstComponentY:61.05, lastComponentX:277.10, lastComponentY:61.11, rows:1, columns:4, firstComponentIndex:0)
 
 defined feeders:
-feeder: ReelFeeder(tapeWidth:8, fixedId:Optional[36], enabled:false, note:RH, manufacturer:TE CONNECTIVITY, partCode:CRG0402F10K, description:10K 0402 1%/RES_0402, pickSettings:PickSettings(xOffset:-0.07, yOffset:0.35, useVision:true, checkVacuum:true, separateMount:false, head:1, placeSpeedPercentage:100, placeDelay:0.50, takeHeight:0.25, takeDelay:0.00, packageAngle:0, tapeSpacing:2, pullSpeed:0), properties:null)
-feeder: TrayFeeder(tray:Tray(name:B-1-4-TL, firstComponentX:205.07, firstComponentY:61.05, lastComponentX:277.10, lastComponentY:61.11, rows:1, columns:4, firstComponentIndex:0), fixedId:Optional[88], enabled:true, note:, manufacturer:ST, partCode:STM32F030C8T6, description:STM32F030C8T, pickSettings:PickSettings(xOffset:0.00, yOffset:0.00, useVision:true, checkVacuum:true, separateMount:true, head:2, placeSpeedPercentage:100, placeDelay:0.00, takeHeight:0.00, takeDelay:0.20, packageAngle:0, tapeSpacing:4, pullSpeed:0), properties:null)
+feeder: ReelFeeder(tapeWidth:8, fixedId:Optional[1], enabled:true, note:LH, manufacturer:CMFR1, partCode:C1046V30402, description:100nF 6.3V 0402 10%/CAP_0402, pickSettings:PickSettings(xOffset:0.00, yOffset:0.00, useVision:true, checkVacuum:true, separateMount:false, head:1, placeSpeedPercentage:10, placeDelay:0.50, takeHeight:0.25, takeDelay:0.00, packageAngle:0, tapeSpacing:2, pullSpeed:0), properties:null)
+feeder: ReelFeeder(tapeWidth:8, fixedId:Optional[10], enabled:true, note:LH, manufacturer:KYOCERA, partCode:SD0805S040S0R5, description:DIODE 40V 0.5A 0805, pickSettings:PickSettings(xOffset:0.05, yOffset:0.25, useVision:true, checkVacuum:true, separateMount:false, head:1, placeSpeedPercentage:100, placeDelay:0.00, takeHeight:0.20, takeDelay:0.20, packageAngle:180, tapeSpacing:4, pullSpeed:0), properties:null)
+feeder: ReelFeeder(tapeWidth:8, fixedId:Optional[36], enabled:false, note:RH, manufacturer:TE CONNECTIVITY, partCode:CRG0402F10K, description:10K 0402 1%/RES_0402, pickSettings:PickSettings(xOffset:-0.07, yOffset:0.35, useVision:true, checkVacuum:true, separateMount:false, head:1, placeSpeedPercentage:10, placeDelay:0.50, takeHeight:0.25, takeDelay:0.00, packageAngle:0, tapeSpacing:2, pullSpeed:0), properties:null)
+feeder: TrayFeeder(tray:Tray(name:B-1-4-TL, firstComponentX:205.07, firstComponentY:61.05, lastComponentX:277.10, lastComponentY:61.11, rows:1, columns:4, firstComponentIndex:0), fixedId:Optional[88], enabled:true, note:T, manufacturer:ST, partCode:STM32F030C8T6, description:STM32F030C8T, pickSettings:PickSettings(xOffset:0.00, yOffset:0.00, useVision:true, checkVacuum:true, separateMount:true, head:2, placeSpeedPercentage:100, placeDelay:0.00, takeHeight:0.00, takeDelay:0.20, packageAngle:0, tapeSpacing:4, pullSpeed:0), properties:null)
+
+placement substitutions:
+[refdes:D1, name:DIODE_0805, value:] -> [name:DIODE_0805, value:40V 0.5A 0805] <- [name pattern:DIODE_0805, value pattern:]
+[refdes:D2, name:DIODE_0805, value:] -> [name:DIODE_0805, value:40V 0.5A 0805] <- [name pattern:DIODE_0805, value pattern:]
+[refdes:D3, name:DIODE_0805, value:] -> [name:DIODE_0805, value:40V 0.5A 0805] <- [name pattern:DIODE_0805, value pattern:]
+[refdes:D4, name:DIODE_0805, value:] -> [name:DIODE_0805, value:40V 0.5A 0805] <- [name pattern:DIODE_0805, value pattern:]
 
 placement component mappings:
-[refdes:D1, name:DIODE_0805, value:] -> error
-??? error: no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
+[refdes:D1, name:DIODE_0805, value:40V 0.5A 0805] -> [part code:SD0805S040S0R5, manufacturer:KYOCERA, description:DIODE 40V 0.5A 0805] <- [name pattern:DIODE_0805, value pattern:40V 0.5A 0805]'
 [refdes:R3, name:RES_2512, value:] -> error
 ??? error: no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
 [refdes:R4, name:RES_2512, value:] -> error
 ??? error: no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
 [refdes:R5, name:RES_2512, value:] -> error
 ??? error: no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
-[refdes:D2, name:DIODE_0805, value:] -> error
-??? error: no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
-[refdes:D3, name:DIODE_0805, value:] -> error
-??? error: no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
-[refdes:D4, name:DIODE_0805, value:] -> error
-??? error: no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
+[refdes:D2, name:DIODE_0805, value:40V 0.5A 0805] -> [part code:SD0805S040S0R5, manufacturer:KYOCERA, description:DIODE 40V 0.5A 0805] <- [name pattern:DIODE_0805, value pattern:40V 0.5A 0805]'
+[refdes:D3, name:DIODE_0805, value:40V 0.5A 0805] -> [part code:SD0805S040S0R5, manufacturer:KYOCERA, description:DIODE 40V 0.5A 0805] <- [name pattern:DIODE_0805, value pattern:40V 0.5A 0805]'
+[refdes:D4, name:DIODE_0805, value:40V 0.5A 0805] -> [part code:SD0805S040S0R5, manufacturer:KYOCERA, description:DIODE 40V 0.5A 0805] <- [name pattern:DIODE_0805, value pattern:40V 0.5A 0805]'
 [refdes:U1, name:STM32F030C8T, value:] -> [part code:STM32F030C8T6, manufacturer:ST, description:STM32F030C8T] <- [name pattern:/STM32F030C8T(6)?/, value pattern:/.*/]'
 [refdes:R1, name:RES_2512, value:] -> error
 ??? error: no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
@@ -53,24 +62,25 @@ placement component mappings:
 
 
 materialAssignments:
-placement: ComponentPlacement(enabled:true, refdes:U1, partCode:null, manufacturer:null, name:STM32F030C8T, value:, pattern:QFP-48/9x9x0.5, coordinate:[x: 40.00, y: 55.00], side:TOP, rotation:0.0, optionalJob:null), materialAssignment: MaterialAssignment(component:Component(partCode:STM32F030C8T6, manufacturer:ST, description:STM32F030C8T, width:7.00, length:7.00, height:2.00, placementOffsetX:0, placementOffsetY:0), feederId:88, feeder:TrayFeeder(tray:Tray(name:B-1-4-TL, firstComponentX:205.07, firstComponentY:61.05, lastComponentX:277.10, lastComponentY:61.11, rows:1, columns:4, firstComponentIndex:0), fixedId:Optional[88], enabled:true, note:, manufacturer:ST, partCode:STM32F030C8T6, description:STM32F030C8T, pickSettings:PickSettings(xOffset:0.00, yOffset:0.00, useVision:true, checkVacuum:true, separateMount:true, head:2, placeSpeedPercentage:100, placeDelay:0.00, takeHeight:0.00, takeDelay:0.20, packageAngle:0, tapeSpacing:4, pullSpeed:0), properties:null))
+placement: ComponentPlacement(enabled:true, refdes:D1, partCode:null, manufacturer:null, name:DIODE_0805, value:40V 0.5A 0805, pattern:DIO_0805, coordinate:[x: 10.00, y: 54.05], side:TOP, rotation:90.0, optionalJob:null), materialAssignment: MaterialAssignment(component:Component(partCode:SD0805S040S0R5, manufacturer:KYOCERA, description:DIODE 40V 0.5A 0805, width:1.20, length:2.00, height:0.80, placementOffsetX:0, placementOffsetY:0), feederId:10, feeder:ReelFeeder(tapeWidth:8, fixedId:Optional[10], enabled:true, note:LH, manufacturer:KYOCERA, partCode:SD0805S040S0R5, description:DIODE 40V 0.5A 0805, pickSettings:PickSettings(xOffset:0.05, yOffset:0.25, useVision:true, checkVacuum:true, separateMount:false, head:1, placeSpeedPercentage:100, placeDelay:0.00, takeHeight:0.20, takeDelay:0.20, packageAngle:180, tapeSpacing:4, pullSpeed:0), properties:null))
+placement: ComponentPlacement(enabled:true, refdes:D2, partCode:null, manufacturer:null, name:DIODE_0805, value:40V 0.5A 0805, pattern:DIO_0805, coordinate:[x: 39.05, y: 100.00], side:TOP, rotation:180.0, optionalJob:null), materialAssignment: MaterialAssignment(component:Component(partCode:SD0805S040S0R5, manufacturer:KYOCERA, description:DIODE 40V 0.5A 0805, width:1.20, length:2.00, height:0.80, placementOffsetX:0, placementOffsetY:0), feederId:10, feeder:ReelFeeder(tapeWidth:8, fixedId:Optional[10], enabled:true, note:LH, manufacturer:KYOCERA, partCode:SD0805S040S0R5, description:DIODE 40V 0.5A 0805, pickSettings:PickSettings(xOffset:0.05, yOffset:0.25, useVision:true, checkVacuum:true, separateMount:false, head:1, placeSpeedPercentage:100, placeDelay:0.00, takeHeight:0.20, takeDelay:0.20, packageAngle:180, tapeSpacing:4, pullSpeed:0), properties:null))
+placement: ComponentPlacement(enabled:true, refdes:D3, partCode:null, manufacturer:null, name:DIODE_0805, value:40V 0.5A 0805, pattern:DIO_0805, coordinate:[x: 70.00, y: 55.95], side:TOP, rotation:270.0, optionalJob:null), materialAssignment: MaterialAssignment(component:Component(partCode:SD0805S040S0R5, manufacturer:KYOCERA, description:DIODE 40V 0.5A 0805, width:1.20, length:2.00, height:0.80, placementOffsetX:0, placementOffsetY:0), feederId:10, feeder:ReelFeeder(tapeWidth:8, fixedId:Optional[10], enabled:true, note:LH, manufacturer:KYOCERA, partCode:SD0805S040S0R5, description:DIODE 40V 0.5A 0805, pickSettings:PickSettings(xOffset:0.05, yOffset:0.25, useVision:true, checkVacuum:true, separateMount:false, head:1, placeSpeedPercentage:100, placeDelay:0.00, takeHeight:0.20, takeDelay:0.20, packageAngle:180, tapeSpacing:4, pullSpeed:0), properties:null))
+placement: ComponentPlacement(enabled:true, refdes:D4, partCode:null, manufacturer:null, name:DIODE_0805, value:40V 0.5A 0805, pattern:DIO_0805, coordinate:[x: 40.95, y: 10.00], side:TOP, rotation:0.0, optionalJob:null), materialAssignment: MaterialAssignment(component:Component(partCode:SD0805S040S0R5, manufacturer:KYOCERA, description:DIODE 40V 0.5A 0805, width:1.20, length:2.00, height:0.80, placementOffsetX:0, placementOffsetY:0), feederId:10, feeder:ReelFeeder(tapeWidth:8, fixedId:Optional[10], enabled:true, note:LH, manufacturer:KYOCERA, partCode:SD0805S040S0R5, description:DIODE 40V 0.5A 0805, pickSettings:PickSettings(xOffset:0.05, yOffset:0.25, useVision:true, checkVacuum:true, separateMount:false, head:1, placeSpeedPercentage:100, placeDelay:0.00, takeHeight:0.20, takeDelay:0.20, packageAngle:180, tapeSpacing:4, pullSpeed:0), properties:null))
+placement: ComponentPlacement(enabled:true, refdes:U1, partCode:null, manufacturer:null, name:STM32F030C8T, value:, pattern:QFP-48/9x9x0.5, coordinate:[x: 40.00, y: 55.00], side:TOP, rotation:0.0, optionalJob:null), materialAssignment: MaterialAssignment(component:Component(partCode:STM32F030C8T6, manufacturer:ST, description:STM32F030C8T, width:7.00, length:7.00, height:2.00, placementOffsetX:0, placementOffsetY:0), feederId:88, feeder:TrayFeeder(tray:Tray(name:B-1-4-TL, firstComponentX:205.07, firstComponentY:61.05, lastComponentX:277.10, lastComponentY:61.11, rows:1, columns:4, firstComponentIndex:0), fixedId:Optional[88], enabled:true, note:T, manufacturer:ST, partCode:STM32F030C8T6, description:STM32F030C8T, pickSettings:PickSettings(xOffset:0.00, yOffset:0.00, useVision:true, checkVacuum:true, separateMount:true, head:2, placeSpeedPercentage:100, placeDelay:0.00, takeHeight:0.00, takeDelay:0.20, packageAngle:0, tapeSpacing:4, pullSpeed:0), properties:null))
 
 usedFeeders:
-88
+10,88
 
 feederSummary:
 feederId,componentsPerUnit,componentsPerPanel,refdes,feeder,component
-88,1,2,[U1],[tray:B-1-4-TL, note:],[partCode:STM32F030C8T6, manufacturer:ST, name:STM32F030C8T]
+10,4,8,[D1, D2, D3, D4],[id:10, note:LH],[partCode:SD0805S040S0R5, manufacturer:KYOCERA, name:DIODE 40V 0.5A 0805]
+88,1,2,[U1],[tray:B-1-4-TL, note:T],[partCode:STM32F030C8T6, manufacturer:ST, name:STM32F030C8T]
 
 *** ISSUES ***
 
 
 unmappedPlacements:
-[refdes:D1, name:DIODE_0805, value:]
 [refdes:R3, name:RES_2512, value:]
 [refdes:R4, name:RES_2512, value:]
 [refdes:R5, name:RES_2512, value:]
-[refdes:D2, name:DIODE_0805, value:]
-[refdes:D3, name:DIODE_0805, value:]
-[refdes:D4, name:DIODE_0805, value:]
 [refdes:R1, name:RES_2512, value:]

@@ -17,13 +17,13 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
     )
 
     List<PlacementMapping> placementMappings
-    Feeders feeders
+    FeedersLoader feeders
 
     OutputStream outputStream
 
     void setup() {
         placementMappings = []
-        feeders = new Feeders()
+        feeders = new FeedersLoader()
 
         outputStream = new ByteArrayOutputStream()
 
@@ -363,8 +363,8 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
             ]
 
         and:
-            Feeders mockFeeders = GroovyMock(Feeders)
-            generator.feeders = mockFeeders
+            FeedersLoader mockFeeders = GroovyMock(FeedersLoader)
+            generator.feedersLoader = mockFeeders
 
         when:
             generator.generate(outputStream)
@@ -388,7 +388,7 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
                 machine: new TestMachine(),
                 dpvHeader: dpvHeader,
                 placementMappings: placementMappings,
-                feeders: feeders,
+            feedersLoader: feeders,
                 optionalPanel: Optional.empty(),
                 optionalFiducials: Optional.empty(),
                 offsetZ: 0,

@@ -8,7 +8,7 @@ import com.seriouslypro.csv.CSVInputContext
 import com.seriouslypro.csv.CSVLineParser
 import com.seriouslypro.csv.CSVLineParserBase
 
-class Trays {
+class TraysLoader {
     List<Tray> trays = []
 
     Tray findByName(String name) {

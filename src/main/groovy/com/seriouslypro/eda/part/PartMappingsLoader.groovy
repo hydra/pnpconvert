@@ -3,7 +3,7 @@ package com.seriouslypro.eda.part
 import com.seriouslypro.csv.*
 import com.seriouslypro.pnpconvert.FileTools
 
-class PartMappings {
+class PartMappingsLoader {
 
     List<PartMapping> partMappings = []
 

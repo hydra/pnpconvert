@@ -7,7 +7,6 @@ import java.util.regex.Pattern
 
 class DipTracePartMapper {
 
-
     List<PartMapping> buildOptions(List<PartMapping> partMappings, String name, String value) {
         List<PartMapping> options = partMappings.findAll { partMapping ->
 
@@ -29,5 +28,4 @@ class DipTracePartMapper {
 
         options
     }
-
 }

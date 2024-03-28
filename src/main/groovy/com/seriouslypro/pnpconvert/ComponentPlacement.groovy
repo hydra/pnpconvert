@@ -1,5 +1,6 @@
 package com.seriouslypro.pnpconvert
 
+import groovy.transform.AutoClone
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
@@ -10,6 +11,7 @@ enum PCBSide {
 
 @ToString(includeNames = true, includePackage = false)
 @EqualsAndHashCode
+@AutoClone
 class ComponentPlacement {
     boolean enabled = true
     String refdes

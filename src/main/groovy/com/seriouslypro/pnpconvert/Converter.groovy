@@ -1,8 +1,10 @@
 package com.seriouslypro.pnpconvert
 
 import com.seriouslypro.csv.CSVProcessor
-import com.seriouslypro.eda.part.PartMappings
+import com.seriouslypro.eda.part.PartMappingsLoader
 import com.seriouslypro.eda.part.PartMapping
+import com.seriouslypro.eda.part.PartSubstitution
+import com.seriouslypro.eda.part.PartSubstitutionsLoader
 import com.seriouslypro.pnpconvert.machine.Machine
 
 import static FileTools.*
@@ -14,6 +16,7 @@ class Converter {
     String feedersFileName
     String componentsFileName
     String partMappingsFileName
+    String partSubstitutionsFileName
     String outputPrefix
 
     Machine machine
@@ -129,14 +132,26 @@ class Converter {
         }
 
         //
+        // Load Substitutions
+        //
+
+        PartSubstitutionsLoader partSubstitutionsLoader = loadPartSubstitutions()
+
+        System.out.println()
+        System.out.println("defined part substitutions:")
+        partSubstitutionsLoader.partSubstitutions.each { PartSubstitution partSubstitution ->
+            System.out.println(partSubstitution.toString())
+        }
+
+        //
         // Load Mappings
         //
 
-        PartMappings partMapper = loadPartMappings()
+        PartMappingsLoader partMappingsLoader = loadPartMappings()
 
         System.out.println()
-        System.out.println("part mappings:")
-        partMapper.partMappings.each { PartMapping partMapping ->
+        System.out.println("defined part mappings:")
+        partMappingsLoader.partMappings.each { PartMapping partMapping ->
             System.out.println(partMapping.toString())
         }
 
@@ -144,25 +159,23 @@ class Converter {
         // Load Components
         //
 
-        Components components = loadComponents()
+        ComponentsLoader componentsLoader = loadComponents()
 
         System.out.println()
         System.out.println("defined components:")
-        components.components.each { Component component ->
+        componentsLoader.components.each { Component component ->
             System.out.println(component)
         }
-
-        System.out.println()
 
         //
         // Load Trays
         //
 
-        Trays trays = loadTrays()
+        TraysLoader traysLoader = loadTrays()
 
         System.out.println()
         System.out.println("defined trays:")
-        trays.trays.each { Tray tray ->
+        traysLoader.trays.each { Tray tray ->
             System.out.println(tray)
         }
 
@@ -170,7 +183,7 @@ class Converter {
         // Load Feeders
         //
 
-        Feeders feeders = loadFeeders(trays)
+        FeedersLoader feeders = loadFeeders(traysLoader)
 
         System.out.println()
         System.out.println("defined feeders:")
@@ -179,10 +192,40 @@ class Converter {
         }
 
         //
+        // Substitute placements
+        //
+        List<PlacementSubstitution> placementSubstitutions = new ComponentPlacementSubstitutor().process(placements, partSubstitutionsLoader.partSubstitutions)
+        System.out.println()
+        System.out.println("placement substitutions:")
+
+        placementSubstitutions.each { placementSubstitution ->
+            if (placementSubstitution.appliedSubstitution.isPresent() && placementSubstitution.originalPlacement.isPresent()) {
+                ComponentPlacement originalPlacement = placementSubstitution.originalPlacement.get()
+                def placementSummary = [
+                    refdes: originalPlacement.refdes,
+                    name: originalPlacement.name,
+                    value: originalPlacement.value,
+                ]
+                System.out.print("${placementSummary} -> ")
+                PartSubstitution appliedSubstitution = placementSubstitution.appliedSubstitution.get()
+                def updatedPlacementSummary = [
+                    'name': placementSubstitution.placement.name,
+                    'value': placementSubstitution.placement.value,
+                ]
+                System.out.print("${updatedPlacementSummary}")
+                def patternSummary = [
+                    'name pattern': appliedSubstitution.namePattern,
+                    'value pattern': appliedSubstitution.valuePattern,
+                ]
+                System.out.println(" <- ${patternSummary}")
+            }
+        }
+
+        //
         // Generate a map of placements mapped to components
         //
 
-        List<PlacementMapping> placementMappings = new PlacementMapper().map(placements, components.components, partMapper.partMappings)
+        List<PlacementMapping> placementMappings = new PlacementMapper().map(placements, componentsLoader.components, partMappingsLoader.partMappings)
         System.out.println()
         System.out.println("placement component mappings:")
         placementMappings.each { PlacementMapping mappedPlacement ->
@@ -235,18 +278,18 @@ class Converter {
         OutputStream outputStream = new FileOutputStream(outputDPVFileName, append)
 
         DPVHeader dpvHeader = new DPVHeader(
-                fileName: outputDPVFileName,
-                pcbFileName: inputFileName
+            fileName: outputDPVFileName,
+            pcbFileName: inputFileName
         )
 
         DPVGenerator generator = new DPVGenerator(
-                machine: machine,
-                dpvHeader: dpvHeader,
-                placementMappings: placementMappings,
-                feeders: feeders,
-                optionalPanel: optionalPanel,
-                optionalFiducials: optionalFiducials,
-                offsetZ: offsetZ,
+            machine: machine,
+            dpvHeader: dpvHeader,
+            placementMappings: placementMappings,
+            feedersLoader: feeders,
+            optionalPanel: optionalPanel,
+            optionalFiducials: optionalFiducials,
+            offsetZ: offsetZ,
         )
 
         generator.generate(outputStream)
@@ -254,43 +297,54 @@ class Converter {
         outputStream.close()
     }
 
-    Trays loadTrays() {
+    TraysLoader loadTrays() {
         Reader reader = openFileOrUrl(traysFileName)
 
-        Trays trays = new Trays()
+        TraysLoader trays = new TraysLoader()
         trays.loadFromCSV(traysFileName, reader)
 
         trays
     }
 
-    Feeders loadFeeders(Trays trays) {
+    FeedersLoader loadFeeders(TraysLoader trays) {
         Reader reader = openFileOrUrl(feedersFileName)
 
-        Feeders feeders = new Feeders(
-            trays: trays
+        FeedersLoader feedersLoader = new FeedersLoader(
+            traysLoader: trays
         )
 
-        feeders.loadFromCSV(feedersFileName, reader)
-        feeders
+        feedersLoader.loadFromCSV(feedersFileName, reader)
+        feedersLoader
     }
 
-    private Components loadComponents() {
+    private ComponentsLoader loadComponents() {
         Reader reader = openFileOrUrl(componentsFileName)
 
-        Components components = new Components()
-        components.loadFromCSV(componentsFileName, reader)
+        ComponentsLoader componentsLoader = new ComponentsLoader()
+        componentsLoader.loadFromCSV(componentsFileName, reader)
 
-        components
+        componentsLoader
     }
 
-    private PartMappings loadPartMappings() {
-        PartMappings partMapper = new PartMappings()
+    private PartMappingsLoader loadPartMappings() {
+        PartMappingsLoader partMappingsLoader = new PartMappingsLoader()
 
         if (partMappingsFileName) {
             Reader reader = openFileOrUrl(partMappingsFileName)
-            partMapper.loadFromCSV(partMappingsFileName, reader)
+            partMappingsLoader.loadFromCSV(partMappingsFileName, reader)
         }
 
-        partMapper
+        partMappingsLoader
+    }
+
+    private PartSubstitutionsLoader loadPartSubstitutions() {
+        PartSubstitutionsLoader partSubstitutionsLoader = new PartSubstitutionsLoader()
+
+        if (partSubstitutionsFileName) {
+            Reader reader = openFileOrUrl(partSubstitutionsFileName)
+            partSubstitutionsLoader.loadFromCSV(partSubstitutionsFileName, reader)
+        }
+
+        partSubstitutionsLoader
     }
 }

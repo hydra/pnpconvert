@@ -1,10 +1,10 @@
 package com.seriouslypro.pnpconvert
 
 import com.seriouslypro.eda.part.PartMapping
-import com.seriouslypro.eda.part.PartMappings
+import com.seriouslypro.eda.part.PartMappingsLoader
 import spock.lang.Specification
 
-class PartMappingsSpec extends Specification {
+class PartMappingsLoaderSpec extends Specification {
 
     private static final String TEST_PART_CODE = "CRG0402F10K"
     private static final String TEST_MANUFACTURER = "TE CONNECTIVITY"
@@ -13,10 +13,10 @@ class PartMappingsSpec extends Specification {
 
     public static final String TEST_PART_MAPPINGS_RESOURCE = "/part-mappings1.csv"
 
-    PartMappings partMappings
+    PartMappingsLoader partMappings
 
     void setup() {
-        partMappings = new PartMappings()
+        partMappings = new PartMappingsLoader()
     }
 
     def 'load'() {

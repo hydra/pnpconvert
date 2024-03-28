@@ -8,10 +8,10 @@ import com.seriouslypro.csv.CSVInputContext
 import com.seriouslypro.csv.CSVLineParser
 import com.seriouslypro.csv.CSVLineParserBase
 
-class Feeders {
+class FeedersLoader {
 
     public static final String FLAG_IGNORE = "!"
-    Trays trays
+    TraysLoader traysLoader
 
     ArrayList<Feeder> feederList = []
 
@@ -179,7 +179,7 @@ class Feeders {
                 Optional<Feeder> feeder = Optional.empty()
 
                 if (trayName) {
-                    Tray tray = trays.findByName(trayName)
+                    Tray tray = traysLoader.findByName(trayName)
 
                     if (!tray) {
                         throw new IllegalArgumentException("unknown tray. name: '$trayName', reference: $context.reference, line: $context.lineIndex")

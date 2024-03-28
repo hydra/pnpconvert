@@ -8,7 +8,7 @@ import com.seriouslypro.csv.CSVInputContext
 import com.seriouslypro.csv.CSVLineParser
 import com.seriouslypro.csv.CSVLineParserBase
 
-class Components {
+class ComponentsLoader {
     List<Component> components = []
 
     void add(Component component) {

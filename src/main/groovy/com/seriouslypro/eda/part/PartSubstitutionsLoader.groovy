@@ -3,7 +3,7 @@ package com.seriouslypro.eda.part
 import com.seriouslypro.csv.*
 import com.seriouslypro.pnpconvert.FileTools
 
-class PartSubstitutor {
+class PartSubstitutionsLoader {
 
     List<PartSubstitution> partSubstitutions = []
 

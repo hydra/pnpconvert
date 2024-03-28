@@ -73,6 +73,8 @@ Usage: pnpconvert
                             Right rail width
       -prwt=<panelRailBottomWidth>
                             Top/Rear rail width
+      -ps=<partSubstitutions>
+                            part substitutions csv file/url
   -r=<rotation>             rotation degrees (positive is clockwise)
       -rr=<replaceRefdes>...
                             Replace components by refdes ("refdes,value,name"[
@@ -81,6 +83,8 @@ Usage: pnpconvert
       -st                   Show transforms in SVG
   -t=<trays>                trays csv file/url
   -v                        version
+
+Process finished with exit code -1
 ```
 
 PnPConvert also supports reading one or more files containing arguments, prefix each filename with an @ symbol.
@@ -235,24 +239,29 @@ No placement input file is required.  The names of the feeders are also used to 
 
 ## DPV Generation process
 
-4 input files are required to generate a DPV file for your design.
+A minimum of 6 input files are required to generate a DPV file for your design.
 
 Generate the DipTrace Pick and Place file
 Use "File/Export/Pick and Place...".  Ensure the fields as per the example files in the `examples` folder.
 The order of the CSV fields does not matter, the column headers are used to find the data.
 
-1. A DipTrace Pick and Place file is read.
+1. A DipTrace Pick and Place file is read containing placements.
 2. Any rotation and offset transformations are applied.
 3. An updated Pick and Place file, with transformed coordinates and rotation angles is generated.
-4. A SVG file is generated.
-5. A trays CSV file containing tray definitions is read.
-6. A feeders CSV file containing feeder and pick settings is read.
-7. A components CSV file which contains component definitions is read.
-8. Component and Material selection begins.
-9. Materials are assigned.
-10. A summary of feeder and tray load-out is presented.
-11. Issues are presented (placements with unknown components, duplicate components, multiple applicable mappings, unloaded components, etc)
-12. The DPV is generated.
+4. An SVG file is generated.
+5. Placements are replaced or disabled by reference designators (refdes) as per command arguments.
+6. A part substitutions file is read (regex name + value -> new-name + new-value).
+7. A part mapping file is read (regex name + value -> part code + manufacturer).
+8. A components CSV file which contains component definitions is read.
+9. A trays CSV file containing tray definitions is read.
+10. A feeders CSV file containing feeder and pick settings is read.
+11. Placements are substituted as per the part substitutions file, a summary is displayed.
+12. Placements are mapped to part code and manufacturer as per the mart mappings file, a summary is displayed.
+13. Components are selected for each placement by part code and manufacturer, as per the components file.
+14. Placements are assigned to materials, feeders and trays, as per the feeders/trays files.
+15. A summary of materials assignments, feeders and tray load-out is presented.
+16. Issues are presented (unmapped placements, unloaded components, etc)
+17. The DPV is generated.
 
 The process starts by reading the pick-and-place file cross-referencing each component name and value against
  entries in the components file, then it looks for feeders (reels or trays) that have the component.  When things match up the materials and components tables in the DPV file are generated.

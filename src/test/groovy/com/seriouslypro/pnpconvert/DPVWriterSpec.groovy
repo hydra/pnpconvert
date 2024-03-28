@@ -11,8 +11,8 @@ class DPVWriterSpec extends Specification implements DPVFileAssertions {
     OutputStream outputStream
 
     List<ComponentPlacement> componentPlacements
-    Components components
-    Feeders feeders
+    ComponentsLoader components
+    FeedersLoader feeders
     Map<ComponentPlacement, MaterialAssignment> materialAssignments
     List<String[]> placements
     List<String[]> trays
@@ -36,8 +36,8 @@ class DPVWriterSpec extends Specification implements DPVFileAssertions {
         optionalFiducials = Optional.empty()
 
         componentPlacements = []
-        components = new Components()
-        feeders = new Feeders()
+        components = new ComponentsLoader()
+        feeders = new FeedersLoader()
 
         offsetZ = 0
 
