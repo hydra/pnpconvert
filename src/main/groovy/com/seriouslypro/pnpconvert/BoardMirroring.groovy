@@ -6,7 +6,7 @@ class BoardMirroring {
 
     Coordinate applyMirroring(Coordinate coordinate) {
 
-        Coordinate m
+        Coordinate m = null // CLOVER assignment needed to prevent 'EmptyExpression.INSTANCE is immutable' error
 
         if (mode == Mirroring.Mode.HORIZONTAL) {
             m = new Coordinate(x: coordinate.x, y: origin.y - (coordinate.y - origin.y))
