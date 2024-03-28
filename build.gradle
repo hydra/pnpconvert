@@ -93,7 +93,6 @@ clover {
     testIncludes = ['**/*Spec.groovy']
     excludes = [
         // All the following cause: java.lang.UnsupportedOperationException: EmptyExpression.INSTANCE is immutable"
-        '**/RowMatcher.groovy',
     ]
     testExcludes = [
             // All the following cause: java.lang.UnsupportedOperationException: EmptyExpression.INSTANCE is immutable"
