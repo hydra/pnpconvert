@@ -181,26 +181,48 @@ class Converter {
         //
         // Generate a map of placements mapped to components
         //
-        String indentation = "\t"
 
         List<PlacementMapping> placementMappings = new PlacementMapper().map(placements, components.components, partMapper.partMappings)
         System.out.println()
         System.out.println("placement component mappings:")
         placementMappings.each { PlacementMapping mappedPlacement ->
-            System.out.print("${mappedPlacement.placement.refdes} -> ")
-            mappedPlacement.partMapping.ifPresent { partMapping ->
-                System.out.print("name pattern: '${partMapping.namePattern}', value pattern: '${partMapping.namePattern}' -> ")
-            }
+            def placementSummary = [
+                refdes: mappedPlacement.placement.refdes,
+                name: mappedPlacement.placement.name,
+                value: mappedPlacement.placement.value,
+            ]
+            System.out.print("${placementSummary} -> ")
             if (mappedPlacement.component.isPresent()) {
                 Component mappedComponent = mappedPlacement.component.get()
-                System.out.print("${mappedComponent.partCode} / ${mappedComponent.manufacturer}")
+                def componentSummary = [
+                    'part code': mappedComponent.partCode,
+                    'manufacturer': mappedComponent.manufacturer,
+                    'description': mappedComponent.description,
+                ]
+                System.out.print("${componentSummary}")
             } else {
-                System.out.println("error")
-                mappedPlacement.errors.each { error ->
-                    System.out.println(indentation + error)
+                System.out.print("error")
+            }
+            mappedPlacement.partMapping.ifPresent { partMapping ->
+                def partMappingSummary = [
+                    'name pattern': partMapping.namePattern,
+                    'value pattern': partMapping.valuePattern,
+                ]
+                System.out.print(" <- ${partMappingSummary}'")
+            }
+
+            System.out.println()
+            if (mappedPlacement.errors) {
+                mappedPlacement.errors.eachWithIndex { error, i ->
+                    String indentation
+                    if (i == mappedPlacement.errors.size() - 1) {
+                        indentation = '└── '
+                    } else {
+                        indentation = '├── '
+                    }
+                    System.out.println(indentation + "error: ${error}")
                 }
             }
-            System.out.println()
         }
         System.out.println()
 
