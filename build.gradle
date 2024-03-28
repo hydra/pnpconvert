@@ -55,7 +55,7 @@ dependencies {
     testImplementation 'org.spockframework:spock-junit4:2.0-groovy-3.0'
     testImplementation group: 'cglib', name: 'cglib-nodep', version: '2.2'
     testImplementation group: 'org.objenesis', name: 'objenesis', version: '3.0.1'
-    testImplementation 'org.springframework.boot:spring-boot:1.2.1.RELEASE' // For OutputCapture
+    testImplementation 'io.github.joke:spock-outputcapture:4.0.1'
 
     implementation 'info.picocli:picocli:4.6.1'
 

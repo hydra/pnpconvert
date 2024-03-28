@@ -1,16 +1,15 @@
 package com.seriouslypro.pnpconvert
 
 import com.seriouslypro.pnpconvert.machine.Machine
+import io.github.joke.spockoutputcapture.OutputCapture
 import spock.lang.Ignore
 import spock.lang.Specification
-import org.springframework.boot.test.OutputCapture
 
 // reference: https://github.com/sparkfunX/Desktop-PickAndPlace-CHMT36VA/blob/master/Eagle-Conversion/ConvertToCharm.ulp#L469-L498
 
 class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
 
-    @org.junit.Rule
-    OutputCapture capture = new OutputCapture()
+    @OutputCapture capture
 
     DPVHeader dpvHeader = new DPVHeader(
             fileName: "TEST-FILE",
