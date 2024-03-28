@@ -12,7 +12,7 @@ class DPVGenerator {
 
     DPVWriter writer
 
-    Set<PlacementMapping> unplacementMappings
+    Set<PlacementMapping> unmappedPlacements
     Set<Component> unloadedComponents
 
     Optional<Panel> optionalPanel
@@ -20,7 +20,7 @@ class DPVGenerator {
 
     void generate(OutputStream outputStream) {
         unloadedComponents = []
-        unplacementMappings = []
+        unmappedPlacements = []
 
         Map<ComponentPlacement, MaterialSelectionEntry> materialSelections = selectMaterials()
         Map<ComponentPlacement, MaterialAssignment> materialAssignments = assignMaterials(materialSelections)
@@ -37,9 +37,9 @@ class DPVGenerator {
         System.out.println('*** ISSUES *** - Components that need loading')
         System.out.println('')
 
-        if (!unplacementMappings.empty) {
+        if (!unmappedPlacements.empty) {
             System.out.println()
-            System.out.println("unplacementMappings:\n" + unplacementMappings.collect { PlacementMapping p -> [
+            System.out.println("unmappedPlacements:\n" + unmappedPlacements.collect { PlacementMapping p -> [
                 refdes: p.placement.refdes,
                 name: p.placement.name,
                 value: p.placement.value,
@@ -76,7 +76,7 @@ class DPVGenerator {
         placementMappings.each { PlacementMapping mappedPlacement ->
 
             if (!mappedPlacement.component.isPresent()) {
-                unplacementMappings << mappedPlacement
+                unmappedPlacements << mappedPlacement
                 return
             }
 

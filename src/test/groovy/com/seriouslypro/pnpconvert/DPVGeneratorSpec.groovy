@@ -339,7 +339,7 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
             generator.generate(outputStream)
 
         then:
-            generator.unplacementMappings.contains(placementMapping)
+            generator.unmappedPlacements.contains(placementMapping)
     }
 
     @Ignore
