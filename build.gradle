@@ -93,7 +93,6 @@ clover {
     testIncludes = ['**/*Spec.groovy']
     excludes = [
         // All the following cause: java.lang.UnsupportedOperationException: EmptyExpression.INSTANCE is immutable"
-        '**/CSVInput.groovy',
         '**/Feeders.groovy',
         '**/FeederTester.groovy',
         '**/BoardMirroring.groovy',
