@@ -4,9 +4,6 @@ import spock.lang.Specification
 
 class FeedersLoaderSpec extends Specification {
 
-    private static final String TEST_COMPONENT_DESCRIPTION = "TEST-COMPONENT"
-    private static final String TEST_COMPONENT_PART_CODE = "TEST-PART-CODE"
-    private static final String TEST_COMPONENT_MANUFACTURER = "TEST-MANUFACTURER"
     public static final String TEST_FEEDERS_RESOURCE_1 = "/feeders1.csv"
     public static final String TEST_FEEDERS_RESOURCE_2 = "/feeders2.csv"
     public static final String TEST_FEEDERS_RESOURCE_3 = "/feeders3.csv"
@@ -28,27 +25,6 @@ class FeedersLoaderSpec extends Specification {
     void setup() {
         mockTrays = Mock()
         feedersLoader = new FeedersLoader(traysLoader: mockTrays)
-    }
-
-    def 'find by component - no components'() {
-        expect:
-            feedersLoader.findByComponent(new Component(description: TEST_COMPONENT_DESCRIPTION)) == null
-    }
-
-    def 'find by component - matching part & manufacturer'() {
-        given:
-            PickSettings mockPickSettings = Mock()
-
-        and:
-            Feeder feeder = feedersLoader.createReelFeeder(1, 8, TEST_COMPONENT_PART_CODE, TEST_COMPONENT_MANUFACTURER, "UNMATCHED_DESCRIPTION", mockPickSettings, "TEST-NOTE")
-            feedersLoader.loadFeeder(feeder)
-
-        when:
-            Feeder result = feedersLoader.findByComponent(new Component(partCode: TEST_COMPONENT_PART_CODE, manufacturer: TEST_COMPONENT_MANUFACTURER, description: TEST_COMPONENT_DESCRIPTION))
-
-        then:
-            result
-            result.fixedId.get() == 1
     }
 
     def 'load'() {
@@ -169,7 +145,7 @@ class FeedersLoaderSpec extends Specification {
 
         and:
             feedersLoader.csvParseExceptions.empty
-            feedersLoader.feederList.sort() == expectedFeederList.sort()
+            feedersLoader.feeders.sort() == expectedFeederList.sort()
     }
 
     def 'ignore rows that have ignore flag'() {
@@ -188,7 +164,7 @@ class FeedersLoaderSpec extends Specification {
 
         and:
             feedersLoader.csvParseExceptions.empty
-            feedersLoader.feederList.empty
+            feedersLoader.feeders.empty
     }
 
     def 'allow rows with no fixed ID'() {
@@ -205,7 +181,7 @@ class FeedersLoaderSpec extends Specification {
 
         and:
             feedersLoader.csvParseExceptions.empty
-            !feedersLoader.feederList.empty
+            !feedersLoader.feeders.empty
     }
 
     def 'allow header aliases'() {
@@ -222,7 +198,7 @@ class FeedersLoaderSpec extends Specification {
 
         and:
             feedersLoader.csvParseExceptions.empty
-            !feedersLoader.feederList.empty
+            !feedersLoader.feeders.empty
     }
 
     void allPropertiesDifferent(Class aClass, Object a, Object b) {

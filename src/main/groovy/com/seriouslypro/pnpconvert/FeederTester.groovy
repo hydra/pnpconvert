@@ -49,7 +49,7 @@ class FeederTester {
 
         System.out.println()
         System.out.println("defined feeders:")
-        feeders.feederList.each { Feeder feeder ->
+        feeders.feeders.each { Feeder feeder ->
             System.out.println("feeder: $feeder")
         }
 
@@ -67,7 +67,7 @@ class FeederTester {
         )
 
         DPVWriter dpvWriter = new DPVWriter(outputStream, machine, 0.0, dpvHeader)
-        feeders.feederList.each { Feeder feeder ->
+        feeders.feeders.each { Feeder feeder ->
             feeder.fixedId.ifPresent { feederId ->
                 Component component = components.components.find { candidate ->
                     candidate.partCode == feeder.partCode && candidate.manufacturer == feeder.manufacturer &&

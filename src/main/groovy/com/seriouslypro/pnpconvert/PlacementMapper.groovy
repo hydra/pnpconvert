@@ -68,4 +68,13 @@ class PlacementMapper {
 class ComponentCriteria {
     String partCode
     String manufacturer
+
+    boolean matches(String partCode, String manufacturer) {
+        this.manufacturer && manufacturer && this.manufacturer.toLowerCase() == manufacturer.toLowerCase() &&
+            this.partCode && partCode && this.partCode == partCode
+    }
+
+    String toSummary() {
+        "[part code:${partCode}, manufacturer:${manufacturer}]"
+    }
 }

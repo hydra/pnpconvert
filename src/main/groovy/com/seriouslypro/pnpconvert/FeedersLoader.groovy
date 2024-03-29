@@ -13,54 +13,8 @@ class FeedersLoader {
     public static final String FLAG_IGNORE = "!"
     TraysLoader traysLoader
 
-    ArrayList<Feeder> feederList = []
-
+    List<Feeder> feeders = []
     List<Exception> csvParseExceptions = []
-
-    Feeder createReelFeeder(int id, int tapeWidth, String partCode, String manufacturer, String description, PickSettings pickSettings, String note) {
-        new ReelFeeder(
-            fixedId: Optional.of(id),
-            tapeWidth: tapeWidth,
-            partCode: partCode,
-            manufacturer: manufacturer,
-            description: description,
-            pickSettings: pickSettings,
-            note: note,
-        )
-    }
-
-    Feeder loadReel(ReelFeeder reelFeeder) {
-        feederList.add(reelFeeder)
-
-        reelFeeder
-    }
-
-    Feeder findByComponent(Component component) {
-        return feederList.findResult { Feeder feeder ->
-            feeder.hasComponent(component) ? feeder : null
-        }
-    }
-
-    Feeder loadTray(TrayFeeder trayFeeder) {
-        feederList.add(trayFeeder)
-
-        trayFeeder
-    }
-
-    void loadFeeder(Feeder feeder) {
-        feederList.add(feeder)
-    }
-
-    Feeder createTrayFeeder(Tray tray, String partCode, String manufacturer, String description, PickSettings pickSettings, String note) {
-        new TrayFeeder(
-            tray: tray,
-            partCode: partCode,
-            manufacturer: manufacturer,
-            description: description,
-            pickSettings: pickSettings,
-            note: note,
-        )
-    }
 
     static enum FeederCSVColumn implements CSVColumn<FeederCSVColumn> {
         ID,
@@ -235,7 +189,7 @@ class FeedersLoader {
                 if (!feederItem.flags.contains(FLAG_IGNORE)) {
 
                     Feeder feeder = feederItem.feeder.get()
-                    loadFeeder(feeder)
+                    feeders << feeder
                 }
             }
         }, { CSVInputContext context, String[] line, Exception cause ->

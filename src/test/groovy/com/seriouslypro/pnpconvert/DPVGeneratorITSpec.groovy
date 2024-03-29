@@ -3,12 +3,9 @@ package com.seriouslypro.pnpconvert
 import com.seriouslypro.eda.part.PartMapping
 import com.seriouslypro.pnpconvert.machine.Machine
 import io.github.joke.spockoutputcapture.OutputCapture
-import spock.lang.Ignore
 import spock.lang.Specification
 
-// reference: https://github.com/sparkfunX/Desktop-PickAndPlace-CHMT36VA/blob/master/Eagle-Conversion/ConvertToCharm.ulp#L469-L498
-
-class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
+class DPVGeneratorITSpec extends Specification implements DPVFileAssertions {
 
     @OutputCapture capture
 
@@ -279,19 +276,6 @@ class DPVGeneratorSpec extends Specification implements DPVFileAssertions {
             String capturedOutput = capture.toString()
             !capturedOutput.empty
             feederSummaryPresent(capturedOutput, expectedFeederSummary)
-    }
-
-
-    @Ignore
-    def 'materials should be sorted by feederId before assigning ids'() {
-        expect:
-            false
-    }
-
-    @Ignore
-    def 'error should be generated if no more tray ids are available when assigning IDs to trays'() {
-        expect:
-            false
     }
 
     private DPVGenerator buildGenerator() {

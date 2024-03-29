@@ -14,11 +14,4 @@ class Feeder {
     String description
     PickSettings pickSettings
     FeederProperties properties
-
-    boolean hasComponent(Component component) {
-        (
-            this.manufacturer && this.manufacturer == component.manufacturer &&
-            this.partCode && this.partCode == component.partCode
-        )
-    }
 }

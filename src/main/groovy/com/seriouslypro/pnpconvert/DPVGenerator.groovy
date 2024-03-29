@@ -4,25 +4,16 @@ import com.seriouslypro.pnpconvert.machine.Machine
 
 class DPVGenerator {
     DPVHeader dpvHeader
-    List<PlacementMapping> placementMappings
-    FeedersLoader feedersLoader
     BigDecimal offsetZ
 
     Machine machine
 
     DPVWriter writer
 
-    Set<PlacementMapping> unmappedPlacements
-    Set<Component> unloadedComponents
-
     Optional<Panel> optionalPanel
     Optional<List<Fiducial>> optionalFiducials
 
-    void generate(OutputStream outputStream) {
-        unloadedComponents = []
-        unmappedPlacements = []
-
-        Map<ComponentPlacement, MaterialSelectionEntry> materialSelections = selectMaterials()
+    void generate(OutputStream outputStream, Map<ComponentPlacement, MaterialSelectionEntry> materialSelections) {
         Map<ComponentPlacement, MaterialAssignment> materialAssignments = assignMaterials(materialSelections)
 
         MaterialAssignmentSorter materialAssignmentSorter = new MaterialAssignmentSorter()
@@ -32,31 +23,6 @@ class DPVGenerator {
 
         dumpMaterialAsignments(materialAssignments)
         dumpSummary(optionalPanel, materialAssignments)
-
-        boolean showIssues = !unmappedPlacements.empty || !unloadedComponents.empty
-        if (showIssues) {
-            System.out.println()
-            System.out.println('*** ISSUES ***')
-            System.out.println('')
-        }
-
-        if (!unmappedPlacements.empty) {
-            System.out.println()
-            System.out.println("unmappedPlacements:\n" + unmappedPlacements.collect { PlacementMapping p -> [
-                refdes: p.placement.refdes,
-                name: p.placement.name,
-                value: p.placement.value,
-            ]}.join('\n'))
-        }
-
-        if (!unloadedComponents.empty) {
-            System.out.println()
-            System.out.println("unloadedComponents:\n" + unloadedComponents.collect {Component c -> [
-                partCode: c.partCode,
-                manufacturer: c.manufacturer,
-                description: c.description,
-            ]}.join('\n'))
-        }
 
         writer = new DPVWriter(outputStream, machine, offsetZ, dpvHeader)
         writer.setPanel(optionalPanel)
@@ -70,35 +36,6 @@ class DPVGenerator {
         materialAssignments.each { ComponentPlacement cp, MaterialAssignment ma ->
             cp.coordinate = cp.coordinate.relocate(cp.rotation, ma.component.placementOffsetX, ma.component.placementOffsetY)
         }
-    }
-
-    Map<ComponentPlacement, MaterialSelectionEntry> selectMaterials() {
-
-        Map<ComponentPlacement, MaterialSelectionEntry> materialSelections = [:]
-
-        placementMappings.each { PlacementMapping mappedPlacement ->
-
-            if (!mappedPlacement.component.isPresent()) {
-                unmappedPlacements << mappedPlacement
-                return
-            }
-
-            Component component = mappedPlacement.component.get()
-            Feeder feeder = feedersLoader.findByComponent(component)
-            if (!feeder) {
-                unloadedComponents << component
-                return
-            }
-
-            MaterialSelectionEntry materialSelection = new MaterialSelectionEntry(
-                component: component,
-                feeder: feeder,
-            )
-
-            materialSelections[mappedPlacement.placement] = materialSelection
-        }
-
-        return materialSelections
     }
 
     Integer assignFeederID(NumberSequence trayIdSequence, Range trayIds, Set<Integer> usedIDs, Feeder feeder) throws IndexOutOfBoundsException {

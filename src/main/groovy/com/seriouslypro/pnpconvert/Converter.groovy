@@ -35,6 +35,8 @@ class Converter {
     List<RefdesReplacement> refdesReplacements
     Set<String> placementReferenceDesignatorsToDisable
 
+    MaterialSelector materialSelector = new MaterialSelector()
+
     boolean showTransforms = false
 
     private static final boolean append = false
@@ -183,11 +185,11 @@ class Converter {
         // Load Feeders
         //
 
-        FeedersLoader feeders = loadFeeders(traysLoader)
+        FeedersLoader feedersLoader = loadFeeders(traysLoader)
 
         System.out.println()
         System.out.println("defined feeders:")
-        feeders.feederList.each { Feeder feeder ->
+        feedersLoader.feeders.each { Feeder feeder ->
             System.out.println("feeder: $feeder")
         }
 
@@ -222,49 +224,10 @@ class Converter {
         }
 
         //
-        // Generate a map of placements mapped to components
+        // Select materials
         //
 
-        List<PlacementMapping> placementMappings = new PlacementMapper().map(placements, componentsLoader.components, partMappingsLoader.partMappings)
-        System.out.println()
-        System.out.println("placement component mappings:")
-        placementMappings.each { PlacementMapping mappedPlacement ->
-            def placementSummary = [
-                refdes: mappedPlacement.placement.refdes,
-                name: mappedPlacement.placement.name,
-                value: mappedPlacement.placement.value,
-            ]
-            System.out.print("${placementSummary} -> ")
-
-            Map<String, String> componentCriteria = [
-                'part code'   : mappedPlacement.componentCriteria.partCode,
-                'manufacturer': mappedPlacement.componentCriteria.manufacturer,
-            ]
-
-            System.out.print("${componentCriteria}")
-
-            mappedPlacement.partMapping.ifPresent { partMapping ->
-                def partMappingSummary = [
-                    'name pattern': partMapping.namePattern,
-                    'value pattern': partMapping.valuePattern,
-                ]
-                System.out.print(" <- ${partMappingSummary}'")
-            }
-
-            System.out.println()
-            if (mappedPlacement.errors) {
-                mappedPlacement.errors.eachWithIndex { error, i ->
-                    String indentation = '' // add unused assignment to prevent 'EmptyExpression.INSTANCE is immutable' error with clover
-                    if (i == mappedPlacement.errors.size() - 1) {
-                        indentation = '└── '
-                    } else {
-                        indentation = '├── '
-                    }
-                    System.out.println(indentation + "error: ${error}")
-                }
-            }
-        }
-        System.out.println()
+        Map<ComponentPlacement, MaterialSelectionEntry> materialSelections = materialSelector.selectMaterials(placements, componentsLoader.components, partMappingsLoader.partMappings, feedersLoader.feeders)
 
         //
         // Generate DPV
@@ -282,14 +245,13 @@ class Converter {
         DPVGenerator generator = new DPVGenerator(
             machine: machine,
             dpvHeader: dpvHeader,
-            placementMappings: placementMappings,
-            feedersLoader: feeders,
+            feedersLoader: feedersLoader,
             optionalPanel: optionalPanel,
             optionalFiducials: optionalFiducials,
             offsetZ: offsetZ,
         )
 
-        generator.generate(outputStream)
+        generator.generate(outputStream, materialSelections)
 
         outputStream.close()
     }

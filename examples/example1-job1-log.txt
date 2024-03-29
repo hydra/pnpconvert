@@ -58,6 +58,15 @@ placement component mappings:
 ??? error: no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
 
 
+*** ISSUES ***
+
+
+unmappedPlacements:
+[refdes:R3, name:RES_2512, value:]
+[refdes:R4, name:RES_2512, value:]
+[refdes:R5, name:RES_2512, value:]
+[refdes:R1, name:RES_2512, value:]
+
 *** MATERIAL ASSIGNMENTS *** - Components from the design that matched the components and feeders/trays
 
 
@@ -75,12 +84,3 @@ feederSummary:
 feederId,componentsPerUnit,componentsPerPanel,refdes,feeder,component
 10,4,8,[D1, D2, D3, D4],[id:10, note:LH],[partCode:SD0805S040S0R5, manufacturer:KYOCERA, name:DIODE 40V 0.5A 0805]
 88,1,2,[U1],[tray:B-1-4-TL, note:T],[partCode:STM32F030C8T6, manufacturer:ST, name:STM32F030C8T]
-
-*** ISSUES ***
-
-
-unmappedPlacements:
-[refdes:R3, name:RES_2512, value:]
-[refdes:R4, name:RES_2512, value:]
-[refdes:R5, name:RES_2512, value:]
-[refdes:R1, name:RES_2512, value:]
