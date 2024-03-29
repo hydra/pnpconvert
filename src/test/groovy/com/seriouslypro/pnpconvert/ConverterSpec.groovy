@@ -102,7 +102,6 @@ class ConverterSpec extends Specification implements TestResources {
     /**
      * This demonstrates using explicit part codes in the placements, which requires very strict schematic/BOM configuration
      * which is usually not what you want for things like resistors, capacitors, which is where part substitutions and mappings increases BOM flexibility.
-     * @return
      */
     def 'converter generates expected output files - with explicit placements, no-substitutions, no-mappings, components, trays and feeders'() {
         given:
@@ -135,6 +134,48 @@ class ConverterSpec extends Specification implements TestResources {
         and:
             String svgContent = new File(expectedSVGFileName).text
             !svgContent.empty
+    }
+
+    /**
+     * This demonstrates what happens when substitutions are not found
+     */
+    def 'converter generates expected output files - with explicit placements, without-substitutions, mappings, components, trays and feeders'() {
+        given:
+            configureConverter('some', 'some', 'none', 'some', 'some', 'some')
+
+            String outputPrefix = converter.outputPrefix
+
+        and:
+            String expectedTransformedFileName = outputPrefix + '-transformed.csv'
+            String expectedDPVFileName = outputPrefix + '.dpv'
+            String expectedSVGFileName = outputPrefix + '.svg'
+
+        when:
+            converter.convert()
+
+        then:
+            String transformedContent = new File(expectedTransformedFileName).text
+            dumpContent(transformedContent)
+
+            !transformedContent.empty
+
+        and:
+            String dpvContent = new File(expectedDPVFileName).text
+            dumpContent(dpvContent)
+            !dpvContent.empty
+
+            dpvContent.contains("Station,0,36,-0.07,0.35,2,CRG0402F10K;TE CONNECTIVITY;RES 10K 0402 1%;RH,0.5,100,14,50,100,0,25,100")
+            dpvContent.contains("EComponent,0,1,1,36,7.8,95,180,0.5,14,100,R1,10K 0402 1%/RES_0402;10K 0402 1,50")
+
+        and:
+            String svgContent = new File(expectedSVGFileName).text
+            !svgContent.empty
+
+        and:
+            String capturedOutput = capture.toString()
+
+            capturedOutput ==~ /(?s)(.*)placement component mappings(.*)refdes:C1(.*)no matching components(.*)/
+            capturedOutput ==~ /(?s)(.*)ISSUES(.*)unmappedPlacements(.*)refdes:C1(.*)/
     }
 
     /**

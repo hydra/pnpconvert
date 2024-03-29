@@ -43,18 +43,18 @@ placement substitutions:
 [refdes:D4, name:DIODE_0805, value:] -> [name:DIODE_0805, value:40V 0.5A 0805] <- [name pattern:DIODE_0805, value pattern:]
 
 placement component mappings:
-[refdes:D1, name:DIODE_0805, value:40V 0.5A 0805] -> [part code:SD0805S040S0R5, manufacturer:KYOCERA, description:DIODE 40V 0.5A 0805] <- [name pattern:DIODE_0805, value pattern:40V 0.5A 0805]'
-[refdes:R3, name:RES_2512, value:] -> error
+[refdes:D1, name:DIODE_0805, value:40V 0.5A 0805] -> [part code:SD0805S040S0R5, manufacturer:KYOCERA] <- [name pattern:DIODE_0805, value pattern:40V 0.5A 0805]'
+[refdes:R3, name:RES_2512, value:] -> [part code:null, manufacturer:null]
 ??? error: no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
-[refdes:R4, name:RES_2512, value:] -> error
+[refdes:R4, name:RES_2512, value:] -> [part code:null, manufacturer:null]
 ??? error: no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
-[refdes:R5, name:RES_2512, value:] -> error
+[refdes:R5, name:RES_2512, value:] -> [part code:null, manufacturer:null]
 ??? error: no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
-[refdes:D2, name:DIODE_0805, value:40V 0.5A 0805] -> [part code:SD0805S040S0R5, manufacturer:KYOCERA, description:DIODE 40V 0.5A 0805] <- [name pattern:DIODE_0805, value pattern:40V 0.5A 0805]'
-[refdes:D3, name:DIODE_0805, value:40V 0.5A 0805] -> [part code:SD0805S040S0R5, manufacturer:KYOCERA, description:DIODE 40V 0.5A 0805] <- [name pattern:DIODE_0805, value pattern:40V 0.5A 0805]'
-[refdes:D4, name:DIODE_0805, value:40V 0.5A 0805] -> [part code:SD0805S040S0R5, manufacturer:KYOCERA, description:DIODE 40V 0.5A 0805] <- [name pattern:DIODE_0805, value pattern:40V 0.5A 0805]'
-[refdes:U1, name:STM32F030C8T, value:] -> [part code:STM32F030C8T6, manufacturer:ST, description:STM32F030C8T] <- [name pattern:/STM32F030C8T(6)?/, value pattern:/.*/]'
-[refdes:R1, name:RES_2512, value:] -> error
+[refdes:D2, name:DIODE_0805, value:40V 0.5A 0805] -> [part code:SD0805S040S0R5, manufacturer:KYOCERA] <- [name pattern:DIODE_0805, value pattern:40V 0.5A 0805]'
+[refdes:D3, name:DIODE_0805, value:40V 0.5A 0805] -> [part code:SD0805S040S0R5, manufacturer:KYOCERA] <- [name pattern:DIODE_0805, value pattern:40V 0.5A 0805]'
+[refdes:D4, name:DIODE_0805, value:40V 0.5A 0805] -> [part code:SD0805S040S0R5, manufacturer:KYOCERA] <- [name pattern:DIODE_0805, value pattern:40V 0.5A 0805]'
+[refdes:U1, name:STM32F030C8T, value:] -> [part code:STM32F030C8T6, manufacturer:ST] <- [name pattern:/STM32F030C8T(6)?/, value pattern:/.*/]'
+[refdes:R1, name:RES_2512, value:] -> [part code:null, manufacturer:null]
 ??? error: no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings
 
 

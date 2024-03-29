@@ -2,6 +2,8 @@ package com.seriouslypro.pnpconvert
 
 import com.seriouslypro.eda.diptrace.placement.DipTracePartMapper
 import com.seriouslypro.eda.part.PartMapping
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.ToString
 
 class PlacementMapper {
     List<PlacementMapping> map(List<ComponentPlacement> placements, List<Component> components, List<PartMapping> partMappings) {
@@ -10,10 +12,12 @@ class PlacementMapper {
 
         List<PlacementMapping> placementMappings = placements.findResults { placement ->
 
-            String partCode = placement.partCode
-            String manufacturer = placement.manufacturer
+            ComponentCriteria componentCriteria = new ComponentCriteria(
+                partCode: placement.partCode,
+                manufacturer: placement.manufacturer,
+            )
 
-            PlacementMapping mappedPlacement = new PlacementMapping(placement: placement)
+            PlacementMapping mappedPlacement = new PlacementMapping(placement: placement, componentCriteria: componentCriteria)
 
             List<PartMapping> applicableMappings = mapper.buildOptions(partMappings, placement.name, placement.value)
             if (applicableMappings.size() > 1) {
@@ -22,13 +26,16 @@ class PlacementMapper {
             } else if (applicableMappings.size() == 1) {
                 PartMapping selectedMapping = applicableMappings.first()
 
-                partCode = selectedMapping.partCode
-                manufacturer = selectedMapping.manufacturer
+                componentCriteria = new ComponentCriteria(
+                    partCode: selectedMapping.partCode,
+                    manufacturer: selectedMapping.manufacturer,
+                )
 
+                mappedPlacement.componentCriteria = componentCriteria
                 mappedPlacement.partMapping = Optional.of(selectedMapping)
             }
 
-            List<Component> applicableComponents = findComponents(components, partCode, manufacturer)
+            List<Component> applicableComponents = findComponents(components, componentCriteria)
 
             if (applicableComponents.size() == 0) {
                 mappedPlacement.errors << "no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings"
@@ -46,12 +53,19 @@ class PlacementMapper {
     }
 
     // TODO add tests for case insensitive manufacturer comparison, also this method doesn't belong here now
-    List<Component> findComponents(List<Component> components, partCode, manufacturer) {
+    List<Component> findComponents(List<Component> components, ComponentCriteria criteria) {
         components.findAll { candidate ->
-            candidate.partCode && partCode &&
-                candidate.manufacturer && manufacturer &&
-                candidate.partCode == partCode &&
-                candidate.manufacturer.toLowerCase() == manufacturer.toLowerCase()
+            candidate.partCode && criteria.partCode &&
+                candidate.manufacturer && criteria.manufacturer &&
+                candidate.partCode == criteria.partCode &&
+                candidate.manufacturer.toLowerCase() == criteria.manufacturer.toLowerCase()
         }
     }
+}
+
+@ToString(includeNames = true, includePackage = false)
+@EqualsAndHashCode
+class ComponentCriteria {
+    String partCode
+    String manufacturer
 }

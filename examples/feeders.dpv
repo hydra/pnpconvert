@@ -1,8 +1,8 @@
 separated
 FILE,examples/feeders.dpv
 PCBFILE,NONE
-DATE,2024/03/28
-TIME,21:36:10
+DATE,2024/03/29
+TIME,11:33:32
 PANELYPE,0
 
 Table,No.,ID,DeltX,DeltY,FeedRates,Note,Height,Speed,Status,SizeX,SizeY,HeightTake,DelayTake,nPullStripSpeed

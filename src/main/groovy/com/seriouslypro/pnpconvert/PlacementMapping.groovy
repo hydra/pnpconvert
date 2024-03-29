@@ -12,5 +12,6 @@ class PlacementMapping {
     Optional<Component> component = Optional.empty()
     Optional<PartMapping> partMapping = Optional.empty()
 
+    ComponentCriteria componentCriteria
     List<String> errors = []
 }

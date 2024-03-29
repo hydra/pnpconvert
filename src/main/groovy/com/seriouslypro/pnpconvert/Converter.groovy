@@ -235,17 +235,14 @@ class Converter {
                 value: mappedPlacement.placement.value,
             ]
             System.out.print("${placementSummary} -> ")
-            if (mappedPlacement.component.isPresent()) {
-                Component mappedComponent = mappedPlacement.component.get()
-                def componentSummary = [
-                    'part code': mappedComponent.partCode,
-                    'manufacturer': mappedComponent.manufacturer,
-                    'description': mappedComponent.description,
-                ]
-                System.out.print("${componentSummary}")
-            } else {
-                System.out.print("error")
-            }
+
+            Map<String, String> componentCriteria = [
+                'part code'   : mappedPlacement.componentCriteria.partCode,
+                'manufacturer': mappedPlacement.componentCriteria.manufacturer,
+            ]
+
+            System.out.print("${componentCriteria}")
+
             mappedPlacement.partMapping.ifPresent { partMapping ->
                 def partMappingSummary = [
                     'name pattern': partMapping.namePattern,
