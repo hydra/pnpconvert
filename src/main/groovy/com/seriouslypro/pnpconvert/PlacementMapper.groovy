@@ -45,12 +45,13 @@ class PlacementMapper {
         placementMappings
     }
 
+    // TODO add tests for case insensitive manufacturer comparison, also this method doesn't belong here now
     List<Component> findComponents(List<Component> components, partCode, manufacturer) {
         components.findAll { candidate ->
             candidate.partCode && partCode &&
                 candidate.manufacturer && manufacturer &&
                 candidate.partCode == partCode &&
-                candidate.manufacturer == manufacturer
+                candidate.manufacturer.toLowerCase() == manufacturer.toLowerCase()
         }
     }
 }
