@@ -245,7 +245,6 @@ class Converter {
         DPVGenerator generator = new DPVGenerator(
             machine: machine,
             dpvHeader: dpvHeader,
-            feedersLoader: feedersLoader,
             optionalPanel: optionalPanel,
             optionalFiducials: optionalFiducials,
             offsetZ: offsetZ,

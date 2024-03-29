@@ -7,6 +7,7 @@ class DPVGenerator {
     BigDecimal offsetZ
 
     Machine machine
+    MaterialsAssigner materialsAssigner = new MaterialsAssigner()
 
     DPVWriter writer
 
@@ -14,7 +15,18 @@ class DPVGenerator {
     Optional<List<Fiducial>> optionalFiducials
 
     void generate(OutputStream outputStream, Map<ComponentPlacement, MaterialSelectionEntry> materialSelections) {
-        Map<ComponentPlacement, MaterialAssignment> materialAssignments = assignMaterials(materialSelections)
+
+        TrayFeederIDAssigner trayFeederIDAssigner = new TrayFeederIDAssigner(machine.trayIds)
+
+        Map<ComponentPlacement, MaterialAssignment> materialAssignments = [:]
+        try {
+            materialAssignments = materialsAssigner.assignMaterials(trayFeederIDAssigner, materialSelections)
+        } catch (MaterialAssignmentException e) {
+            dumpSummary(optionalPanel, e.assignments)
+
+            System.out.println("*** EXCEPTION - ${e}")
+            return
+        }
 
         MaterialAssignmentSorter materialAssignmentSorter = new MaterialAssignmentSorter()
         materialAssignments = materialAssignmentSorter.sort(materialAssignments)
@@ -36,77 +48,6 @@ class DPVGenerator {
         materialAssignments.each { ComponentPlacement cp, MaterialAssignment ma ->
             cp.coordinate = cp.coordinate.relocate(cp.rotation, ma.component.placementOffsetX, ma.component.placementOffsetY)
         }
-    }
-
-    Integer assignFeederID(NumberSequence trayIdSequence, Range trayIds, Set<Integer> usedIDs, Feeder feeder) throws IndexOutOfBoundsException {
-
-        // Assign Feeder ID if required, code assumes feeder is a tray.
-        // Trays may have a fixed id.  ID re-use needs to be avoided.
-
-        Integer feederId = feeder.fixedId.orElseGet( {
-            boolean found = false
-            while (!found) {
-                Integer candidateId = trayIdSequence.next()
-                if (candidateId > machine.trayIds.to) {
-                    throw new IndexOutOfBoundsException('No more tray IDs remaining, reduce the amount of trays required.  e.g. by splitting into multiple jobs.')
-                }
-                if (!usedIDs.contains(candidateId)) {
-                    return candidateId
-                }
-            }
-        })
-
-        usedIDs.add(feederId)
-
-        return feederId
-    }
-
-    Map<ComponentPlacement, MaterialAssignment> assignMaterials(Map<ComponentPlacement, MaterialSelectionEntry> materialSelections) {
-
-        Set<Integer> usedIDs = materialSelections.findAll { ComponentPlacement placement, MaterialSelectionEntry materialSelectionEntry ->
-            materialSelectionEntry.feeder.fixedId.present
-        }.findResults { ComponentPlacement placement, MaterialSelectionEntry materialSelectionEntry ->
-            materialSelectionEntry.feeder.fixedId.get()
-        }.sort()
-
-        Map<ComponentPlacement, MaterialAssignment> materialAssignments = [:]
-
-        NumberSequence trayIdSequence = new NumberSequence(machine.trayIds.getFrom())
-
-        materialSelections.each { ComponentPlacement placement, MaterialSelectionEntry materialSelectionEntry ->
-
-            Feeder feeder = materialSelectionEntry.feeder
-
-            Component component = materialSelectionEntry.component
-
-
-            MaterialAssignment existingMaterialAssignment = materialAssignments.values().find { MaterialAssignment candidate ->
-                candidate.feeder.is(feeder)
-            }
-
-            if (existingMaterialAssignment) {
-                materialAssignments[placement] = existingMaterialAssignment
-            } else {
-
-                Integer feederId = null
-
-                try {
-                    feederId = assignFeederID(trayIdSequence, machine.trayIds, usedIDs, feeder)
-                } catch (IndexOutOfBoundsException e ) {
-                    dumpSummary(optionalPanel, materialAssignments)
-                    throw e
-                }
-
-                MaterialAssignment materialAssignment = new MaterialAssignment(
-                    component: component,
-                    feederId: feederId,
-                    feeder: feeder
-                )
-                materialAssignments[placement] = materialAssignment
-            }
-        }
-
-        return materialAssignments
     }
 
     static def dumpMaterialAsignments(Map<ComponentPlacement, MaterialAssignment> materialAssignments) {
