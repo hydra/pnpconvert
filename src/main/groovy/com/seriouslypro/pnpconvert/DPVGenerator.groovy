@@ -4,15 +4,16 @@ import com.seriouslypro.pnpconvert.machine.Machine
 
 class DPVGenerator {
     DPVHeader dpvHeader
-    BigDecimal offsetZ
+    BigDecimal offsetZ = 0
 
     Machine machine
     MaterialsAssigner materialsAssigner = new MaterialsAssigner()
+    MaterialAssignmentSorter materialAssignmentSorter = new MaterialAssignmentSorter()
 
     DPVWriter writer
 
-    Optional<Panel> optionalPanel
-    Optional<List<Fiducial>> optionalFiducials
+    Optional<Panel> optionalPanel = Optional.empty()
+    Optional<List<Fiducial>> optionalFiducials = Optional.empty()
 
     void generate(OutputStream outputStream, Map<ComponentPlacement, MaterialSelectionEntry> materialSelections) {
 
@@ -28,7 +29,6 @@ class DPVGenerator {
             return
         }
 
-        MaterialAssignmentSorter materialAssignmentSorter = new MaterialAssignmentSorter()
         materialAssignments = materialAssignmentSorter.sort(materialAssignments)
 
         relocatePlacements(materialAssignments)
@@ -63,6 +63,9 @@ class DPVGenerator {
 
     static def dumpSummary(Optional<Panel> optionalPanel, Map<ComponentPlacement, MaterialAssignment> materialAssignments) {
 
+        System.out.println()
+        System.out.println("*** SUMMARY ***")
+
         List<Integer> usedFeederIds = materialAssignments.collect { ComponentPlacement placement, MaterialAssignment materialAssignment ->
             materialAssignment.feederId
         }.unique().sort()
@@ -71,8 +74,8 @@ class DPVGenerator {
         System.out.println("usedFeeders:\n" + usedFeederIds.join(','))
 
         ArrayList<FeederPrinter> feederPrinters = [
-                new TrayFeederPrinter(),
-                new ReelFeederPrinter()
+            new TrayFeederPrinter(),
+            new ReelFeederPrinter()
         ]
 
         int countOfUnitsInPanel = optionalPanel.map { panel -> panel.numberX * panel.numberY }.orElseGet { 1 }
@@ -92,16 +95,16 @@ class DPVGenerator {
             int countOfComponentsUsed = refdesList.size()
             int totalComponentsUserPerPanel = countOfComponentsUsed * countOfUnitsInPanel
             [
-                    feederId          : materialAssigment.value.feederId.toString(),
-                    componentsPerUnit : countOfComponentsUsed,
-                    componentsPerPanel: totalComponentsUserPerPanel,
-                    refdes            : refdesList,
-                    feeder            : feederPrinter.print(feeder),
-                    component         : [
-                            partCode     : materialAssigment.value.component.partCode,
-                            manufacturer : materialAssigment.value.component.manufacturer,
-                            name         : materialAssigment.value.component.description,
-                    ],
+                feederId          : materialAssigment.value.feederId.toString(),
+                componentsPerUnit : countOfComponentsUsed,
+                componentsPerPanel: totalComponentsUserPerPanel,
+                refdes            : refdesList,
+                feeder            : feederPrinter.print(feeder),
+                component         : [
+                    partCode     : materialAssigment.value.component.partCode,
+                    manufacturer : materialAssigment.value.component.manufacturer,
+                    name         : materialAssigment.value.component.description,
+                ],
             ]
         }
 
@@ -112,7 +115,6 @@ class DPVGenerator {
             System.out.println(summaryItems.collect { it.values().join(',') }.join('\n'))
         }
     }
-
 }
 
 
