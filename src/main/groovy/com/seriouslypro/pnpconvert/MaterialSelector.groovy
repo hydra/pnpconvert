@@ -141,17 +141,6 @@ class MaterialSelector {
         "placement ${placementSummary}"
     }
 
-    private String buildTree(int i, int total) {
-        String indentation = ''
-        // add unused assignment to prevent 'EmptyExpression.INSTANCE is immutable' error with clover
-        if (i == total - 1) {
-            indentation = '└── '
-        } else {
-            indentation = '├── '
-        }
-        indentation
-    }
-
     Optional<Feeder> findFeederByComponent(List<Feeder> feeders, ComponentCriteria criteria) {
         Feeder feeder = feeders.findResult { Feeder feeder ->
             criteria.matches(feeder.partCode, feeder.manufacturer) ? feeder : null
