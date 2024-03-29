@@ -33,12 +33,14 @@ class PlacementMapperSpec extends Specification {
 
         and:
             PlacementMapping expectedMappedPlacement = new PlacementMapping(
-                // input
                 placement: placements[0],
-                // results
-                component: Optional.of(components[0]),
-                partMapping: Optional.of(partMappings[0]),
-                componentCriteria: new ComponentCriteria(partCode: 'PC2', manufacturer: 'MFR2'),
+                mappingResults: [
+                    new MappingResult(
+                        criteria: new ComponentCriteria(partCode: 'PC2', manufacturer: 'MFR2'),
+                        component: Optional.of(components[0]),
+                        partMapping: Optional.of(partMappings[0])
+                    ),
+                ],
             )
 
         when:
@@ -46,7 +48,7 @@ class PlacementMapperSpec extends Specification {
 
 
         then:
-            result.first() == expectedMappedPlacement
+            result == [expectedMappedPlacement]
     }
 
     def 'matching component, no mapping'() {
@@ -63,12 +65,14 @@ class PlacementMapperSpec extends Specification {
 
         and:
             PlacementMapping expectedMappedPlacement = new PlacementMapping(
-                // input
                 placement: placements[0],
-                // results
-                component: Optional.of(components[0]),
-                partMapping: Optional<PartMapping>.empty(),
-                componentCriteria: new ComponentCriteria(partCode: 'PC1', manufacturer: 'MFR1'),
+                mappingResults: [
+                    new MappingResult(
+                        criteria: new ComponentCriteria(partCode: 'PC1', manufacturer: 'MFR1'),
+                        component: Optional.of(components[0]),
+                        partMapping: Optional.empty(),
+                    ),
+                ],
             )
 
         when:
@@ -76,10 +80,10 @@ class PlacementMapperSpec extends Specification {
 
 
         then:
-            result.first() == expectedMappedPlacement
+            result == [expectedMappedPlacement]
     }
 
-    def 'unmatched component, no mapping'() {
+    def 'unmatched component, no mappings'() {
         given:
             List<ComponentPlacement> placements = [
                 new ComponentPlacement(refdes: 'R1', name: '', value: '', partCode: 'PC1', manufacturer: 'MFR1'),
@@ -92,55 +96,61 @@ class PlacementMapperSpec extends Specification {
             PlacementMapping expectedMappedPlacement = new PlacementMapping(
                 // input
                 placement: placements[0],
-                // results
-                component: Optional<Component>.empty(),
-                partMapping: Optional<PartMapping>.empty(),
+                mappingResults: [
+                    new MappingResult(
+                        criteria: new ComponentCriteria(partCode: 'PC1', manufacturer: 'MFR1'),
+                        component: Optional.empty(),
+                        partMapping: Optional.empty(),
+                    ),
+                ],
                 errors: ['no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings'],
-                componentCriteria: new ComponentCriteria(partCode: 'PC1', manufacturer: 'MFR1'),
             )
         when:
             List<PlacementMapping> result = new PlacementMapper().map(placements, components, partMappings)
 
         then:
-            result.first() == expectedMappedPlacement
+            result == [expectedMappedPlacement]
     }
 
-    def 'placement with multiple matching components generates error'() {
+    def 'placement with multiple matching components, no mappings'() {
         given:
             List<ComponentPlacement> placements = [
                 new ComponentPlacement(refdes: 'R1', name: '', value: '10K', partCode: 'PC1', manufacturer: 'MFR1'),
             ]
 
-            List<PartMapping> partMappings = [
-            ]
+            List<PartMapping> partMappings = []
 
             List<Component> components = [
                 new Component(partCode: 'PC1', manufacturer: 'MFR1', description: "A"),
                 new Component(partCode: 'PC2', manufacturer: 'MFR2'),
                 new Component(partCode: 'PC1', manufacturer: 'MFR1', description: "B"),
             ]
+
         and:
-            List<Component> expectedApplicableComponents = [
-                components[0],
-                components[2],
-            ]
             PlacementMapping expectedMappedPlacement = new PlacementMapping(
-                // input
                 placement: placements[0],
-                // results
-                component: Optional<Component>.empty(),
-                partMapping: Optional<PartMapping>.empty(),
-                errors: ["multiple matching components found, check for component duplicates. applicableComponents: '${expectedApplicableComponents}'"],
-                componentCriteria: new ComponentCriteria(partCode: 'PC1', manufacturer: 'MFR1'),
+                mappingResults: [
+                    new MappingResult(
+                        criteria: new ComponentCriteria(partCode: 'PC1', manufacturer: 'MFR1'),
+                        component: Optional.of(components[0]),
+                        partMapping: Optional.empty(),
+                    ),
+                    new MappingResult(
+                        criteria: new ComponentCriteria(partCode: 'PC1', manufacturer: 'MFR1'),
+                        component: Optional.of(components[2]),
+                        partMapping: Optional.empty(),
+                    ),
+                ],
+                errors: ['multiple matching components found, check for component duplicates.'],
             )
         when:
             List<PlacementMapping> result = new PlacementMapper().map(placements, components, partMappings)
 
         then:
-            result.first() == expectedMappedPlacement
+            result == [expectedMappedPlacement]
     }
 
-    def 'placement with multiple applicable mappings generates error'() {
+    def 'placement with multiple applicable mappings'() {
         given:
             List<ComponentPlacement> placements = [
                 new ComponentPlacement(refdes: 'R1', name: '', value: '10K'),
@@ -153,23 +163,32 @@ class PlacementMapperSpec extends Specification {
             ]
 
             List<Component> components = [
-                new Component(partCode: 'PC2', manufacturer: 'MFR2'), // <-- this component should match, but not be included in the result.
+                new Component(partCode: 'PC2', manufacturer: 'MFR2'),
                 new Component(partCode: 'PC3', manufacturer: 'MFR3'),
-                new Component(partCode: 'PC4', manufacturer: 'MFR4'), // <-- this component should match, but not be included in the result.
+                new Component(partCode: 'PC4', manufacturer: 'MFR4'),
             ]
         and:
-            List<PartMapping> expectedApplicablePartMappings = [
-                partMappings[0],
-                partMappings[2],
+
+            Map<Component, Optional<PartMapping>> expectedApplicablePartMappings = [
+                (components[0]): Optional.of(partMappings[0]),
+                (components[2]): Optional.of(partMappings[2]),
             ]
+
             PlacementMapping expectedMappedPlacement = new PlacementMapping(
                 // input
                 placement: placements[0],
-                // results
-                component: Optional<Component>.empty(),
-                partMapping: Optional<PartMapping>.empty(),
-                errors: ["multiple matching mappings found, be more specific with mappings or use refdes replacements. applicableMappings: '${expectedApplicablePartMappings}'"],
-                componentCriteria: new ComponentCriteria(partCode: null, manufacturer: null),
+                mappingResults: [
+                    new MappingResult(
+                        criteria: new ComponentCriteria(partCode: 'PC2', manufacturer: 'MFR2'),
+                        component: Optional.of(components[0]),
+                        partMapping: Optional.of(partMappings[0]),
+                    ),
+                    new MappingResult(
+                        criteria: new ComponentCriteria(partCode: 'PC4', manufacturer: 'MFR4'),
+                        component: Optional.of(components[2]),
+                        partMapping: Optional.of(partMappings[2]),
+                    ),
+                ],
             )
         when:
             List<PlacementMapping> result = new PlacementMapper().map(placements, components, partMappings)
