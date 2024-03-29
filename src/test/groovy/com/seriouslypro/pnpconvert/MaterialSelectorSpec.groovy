@@ -16,7 +16,7 @@ class MaterialSelectorSpec extends Specification {
 
     def 'find by component - no feeders, no components'() {
         expect:
-            materialSelector.findFeederByComponent([], new ComponentCriteria()) == null
+            materialSelector.findFeederByComponent([], new ComponentCriteria()) == Optional.empty()
     }
 
     def 'find by component - matching part & manufacturer'() {
@@ -31,14 +31,13 @@ class MaterialSelectorSpec extends Specification {
         and:
             ComponentCriteria componentCriteria = new ComponentCriteria(partCode: TEST_COMPONENT_PART_CODE, manufacturer: TEST_COMPONENT_MANUFACTURER)
         when:
-            Feeder result = materialSelector.findFeederByComponent(feedersLoader.feeders, componentCriteria)
+            Optional<Feeder> result = materialSelector.findFeederByComponent(feedersLoader.feeders, componentCriteria)
 
         then:
-            result
-            result.fixedId.get() == 1
+            result == Optional.of(feeder)
     }
 
-    def 'placement with unmapped component'() {
+    def 'unmapped placement'() {
         given:
             List<Feeder> feeders = []
             List<Component> components = []
@@ -61,7 +60,13 @@ class MaterialSelectorSpec extends Specification {
             List<PlacementMapping> expectedPlacementMappings = [
                 new PlacementMapping(
                     placement: componentPlacements[0],
-                    componentCriteria: new ComponentCriteria(partCode:null, manufacturer:null),
+                    mappingResults: [
+                        new MappingResult(
+                            criteria: new ComponentCriteria(partCode: null, manufacturer: null),
+                            component: Optional.empty(),
+                            partMapping: Optional.empty()
+                        ),
+                    ],
                     errors:[ "no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings" ],
                 )
             ]
@@ -85,13 +90,70 @@ class MaterialSelectorSpec extends Specification {
             ]
 
         and:
-            ComponentPlacement componentPlacement = new ComponentPlacement(partCode: TEST_COMPONENT_PART_CODE, manufacturer: TEST_COMPONENT_MANUFACTURER)
+            ComponentPlacement componentPlacement = new ComponentPlacement(name: 'name', value: 'value', partCode: TEST_COMPONENT_PART_CODE, manufacturer: TEST_COMPONENT_MANUFACTURER)
             List<ComponentPlacement> componentPlacements = [componentPlacement]
+
+        and:
+            Set<PlacementMapping> expectedUnloadedPlacements = [
+                new PlacementMapping(
+                    placement: componentPlacements[0],
+                    mappingResults: [
+                        new MappingResult(
+                            criteria: new ComponentCriteria(partCode: TEST_COMPONENT_PART_CODE, manufacturer: TEST_COMPONENT_MANUFACTURER),
+                            component: Optional.of(components[0]),
+                            partMapping: Optional.empty()
+                        ),
+                    ],
+                )
+            ]
 
         when:
             materialSelector.selectMaterials(componentPlacements, components, partMappings, feeders)
 
         then:
-            materialSelector.unloadedComponents.contains(components[0])
+            materialSelector.unloadedPlacements == expectedUnloadedPlacements
+    }
+
+    /**
+     * It's entirely plausible that someone would stock two different 10K 0402 reels from different manufacturers
+     * and that either can be used without having to disable mappings and that any given time either or both reels could
+     * be in a feeder.
+     */
+    // TODO other test scenarios: only one feeder loaded, no feeder loaded
+    def 'placement with two matching part mappings'() {
+        given:
+            List<Feeder> feeders = [
+                new Feeder(fixedId: Optional.of(1), partCode: 'PC1', manufacturer: 'MFR1', description: '10K 0402 1%'),
+                new Feeder(fixedId: Optional.of(2), partCode: 'PC2', manufacturer: 'MFR2', description: '10K 0402 1%'),
+            ]
+
+        and:
+            List<PartMapping> partMappings = [
+                new PartMapping(namePattern: 'RES_0402', valuePattern: '10K 0402 1%', partCode: 'PC1', manufacturer: 'MFR1'),
+                new PartMapping(namePattern: 'RES_0402', valuePattern: '10K 0402 1%', partCode: 'PC2', manufacturer: 'MFR2')
+            ]
+
+        and:
+            List<Component> components = [
+                new Component(partCode: 'PC1', manufacturer: 'MFR1'),
+                new Component(partCode: 'PC2', manufacturer: 'MFR2'),
+            ]
+
+        and:
+            ComponentPlacement componentPlacement = new ComponentPlacement(name: 'RES_0402', value: '10K 0402 1%')
+            List<ComponentPlacement> componentPlacements = [componentPlacement]
+
+        and:
+            Map<ComponentPlacement, MaterialSelectionEntry> expectedMaterials = [
+                (componentPlacement): new MaterialSelectionEntry(
+                    component:  components[0], // first matching component used
+                    feeder: feeders[0], // first feeder used
+                )
+            ]
+        when:
+            Map<ComponentPlacement, MaterialSelectionEntry> materials = materialSelector.selectMaterials(componentPlacements, components, partMappings, feeders)
+
+        then:
+            materials == expectedMaterials
     }
 }

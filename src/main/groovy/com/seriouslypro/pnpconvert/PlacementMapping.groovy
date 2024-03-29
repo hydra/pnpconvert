@@ -6,12 +6,16 @@ import groovy.transform.ToString
 
 @ToString(includeNames = true, includePackage = false)
 @EqualsAndHashCode
+class MappingResult {
+    ComponentCriteria criteria
+    Optional<PartMapping> partMapping
+    Optional<Component> component
+}
+
+@ToString(includeNames = true, includePackage = false)
+@EqualsAndHashCode
 class PlacementMapping {
     ComponentPlacement placement
-
-    Optional<Component> component = Optional.empty()
-    Optional<PartMapping> partMapping = Optional.empty()
-
-    ComponentCriteria componentCriteria
+    List<MappingResult> mappingResults = []
     List<String> errors = []
 }

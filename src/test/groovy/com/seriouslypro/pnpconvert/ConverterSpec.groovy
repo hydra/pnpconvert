@@ -97,6 +97,7 @@ class ConverterSpec extends Specification implements TestResources {
             String capturedOutput = capture.toString()
 
             !capturedOutput.contains("*** ISSUES ***")
+            capturedOutput ==~ /(?s)(.*)mappedPlacements:(.*)placement(.*)refdes:R1(.*)component(.*)CRG0402F10K(.*)placement(.*)refdes:C1(.*)component(.*)0402B104K500CT(.*)/
     }
 
     /**
@@ -134,6 +135,11 @@ class ConverterSpec extends Specification implements TestResources {
         and:
             String svgContent = new File(expectedSVGFileName).text
             !svgContent.empty
+
+        and:
+            String capturedOutput = capture.toString()
+            !capturedOutput.contains("*** ISSUES ***")
+            capturedOutput ==~ /(?s)(.*)mappedPlacements:(.*)placement(.*)refdes:R1(.*)component(.*)CRG0402F10K(.*)/
     }
 
     /**
@@ -174,8 +180,8 @@ class ConverterSpec extends Specification implements TestResources {
         and:
             String capturedOutput = capture.toString()
 
-            capturedOutput ==~ /(?s)(.*)placement component mappings(.*)refdes:C1(.*)no matching components(.*)/
-            capturedOutput ==~ /(?s)(.*)ISSUES(.*)unmappedPlacements(.*)refdes:C1(.*)/
+            capturedOutput ==~ /(?s)(.*)mappedPlacements:(.*)refdes:C1(.*)/
+            capturedOutput ==~ /(?s)(.*)ISSUES(.*)unmappedPlacements:(.*)refdes:C1(.*)no matching components(.*)/
     }
 
     /**
@@ -210,6 +216,10 @@ class ConverterSpec extends Specification implements TestResources {
         and:
             String svgContent = new File(expectedSVGFileName).text
             !svgContent.empty
+
+        and:
+            String capturedOutput = capture.toString()
+            capturedOutput ==~ /(?s)(.*)ISSUES(.*)unmappedPlacements:(.*)refdes:R1(.*)no matching components(.*)refdes:C1(.*)no matching components(.*)/
     }
 
     @Ignore

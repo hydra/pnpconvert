@@ -12,38 +12,56 @@ class PlacementMapper {
 
         List<PlacementMapping> placementMappings = placements.findResults { placement ->
 
-            ComponentCriteria componentCriteria = new ComponentCriteria(
-                partCode: placement.partCode,
-                manufacturer: placement.manufacturer,
-            )
 
-            PlacementMapping mappedPlacement = new PlacementMapping(placement: placement, componentCriteria: componentCriteria)
+            PlacementMapping mappedPlacement = new PlacementMapping(placement: placement)
 
             List<PartMapping> applicableMappings = mapper.buildOptions(partMappings, placement.name, placement.value)
-            if (applicableMappings.size() > 1) {
-                mappedPlacement.errors << "multiple matching mappings found, be more specific with mappings or use refdes replacements. applicableMappings: '${applicableMappings}'".toString()
-                return mappedPlacement
-            } else if (applicableMappings.size() == 1) {
-                PartMapping selectedMapping = applicableMappings.first()
 
-                componentCriteria = new ComponentCriteria(
-                    partCode: selectedMapping.partCode,
-                    manufacturer: selectedMapping.manufacturer,
-                )
+            List<Optional<PartMapping>> workList = applicableMappings.collect { Optional.of(it) }
 
-                mappedPlacement.componentCriteria = componentCriteria
-                mappedPlacement.partMapping = Optional.of(selectedMapping)
+            if (!applicableMappings) {
+                // only search for placement's original part code and manufacturer
+                workList.add(Optional.empty())
             }
 
-            List<Component> applicableComponents = findComponents(components, componentCriteria)
+            workList.each {optionalMapping ->
+                ComponentCriteria componentCriteria = null // keep clover happy
 
-            if (applicableComponents.size() == 0) {
-                mappedPlacement.errors << "no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings"
-            } else if (applicableComponents.size() > 1) {
-                mappedPlacement.errors << "multiple matching components found, check for component duplicates. applicableComponents: '${applicableComponents}'".toString()
-            } else {
-                Component selectedComponent = applicableComponents.first()
-                mappedPlacement.component = Optional.of(selectedComponent)
+                if (optionalMapping.isPresent()) {
+                    optionalMapping.ifPresent {selectedMapping->
+                        componentCriteria = new ComponentCriteria(
+                            partCode: selectedMapping.partCode,
+                            manufacturer: selectedMapping.manufacturer,
+                        )
+                    }
+                } else {
+                    componentCriteria = new ComponentCriteria(
+                        partCode: placement.partCode,
+                        manufacturer: placement.manufacturer,
+                    )
+                }
+
+                List<Optional<Component>> applicableComponents = findComponents(components, componentCriteria).collect { Optional.of(it) }
+                if (!applicableComponents) {
+                    applicableComponents.add(Optional.empty())
+                    if (!optionalMapping.isPresent()) {
+                        // processing the placement itself
+                        mappedPlacement.errors << "no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings"
+                    }
+                }
+                applicableComponents.each {optionalComponent ->
+
+                    MappingResult mappingResult = new MappingResult(
+                        criteria: componentCriteria,
+                        partMapping: optionalMapping,
+                        component: optionalComponent
+                    )
+
+                    mappedPlacement.mappingResults << mappingResult
+                }
+                if (applicableComponents.size() > 1) {
+                    mappedPlacement.errors << "multiple matching components found, check for component duplicates."
+                }
             }
 
             mappedPlacement

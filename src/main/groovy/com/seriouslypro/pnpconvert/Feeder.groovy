@@ -3,7 +3,7 @@ package com.seriouslypro.pnpconvert
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
-@ToString
+@ToString(includeNames = true, includePackage = false)
 @EqualsAndHashCode
 class Feeder {
     Optional<Integer> fixedId = Optional.empty()
