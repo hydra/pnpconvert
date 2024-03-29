@@ -3,3 +3,4 @@
 /out/
 
 /projects/
+src/main/resources/version.properties
