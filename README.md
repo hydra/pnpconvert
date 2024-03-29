@@ -422,7 +422,6 @@ Still, that doesn't help with square components, like ICs, inductors, etc.
   3) definition of datasheet measurement codes used for X/Y/Z, e.g. X=L;Y=W;Z=T as there doesn't appear to be a standard, and it varies by manufacturer and component type.
 * Override vision X/Y/Z from components file, since the camera bounding box often applies to the shiny pads, and not the case or maximum dimensions.  Datasheet X=W/Y=H/Z=D should be the primary values for cross-referencing with component outline, etc
 * Check and report components that are too tall for the machine (>5mm for CHMT48VB/CHMT43VB/CHMT43VA)
-* Instead of showing an error if multiple component mappings are found, remember them all and then check the feeders to see which one is loaded, if any. Currently, you have to disable unused mappings, e.g. by prefixing the mapping with an '_' so it doesn't match.
 
 # DPVToGoogleSheets
 
