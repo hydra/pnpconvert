@@ -243,9 +243,7 @@ class PNPConvert {
 
         if (options.fm) {
             String[] fiducialMarkerValues = options.parseResult.matchedOption("fm").typedValues().flatten()
-            if (fiducialMarkerValues.size() == 2) {
-                optionalFiducials = parseFiducials(fiducialMarkerValues)
-            }
+            optionalFiducials = parseFiducials(fiducialMarkerValues)
         }
 
         if (options.rr) {
@@ -323,12 +321,19 @@ class PNPConvert {
         List<Fiducial> fiducials = fiducialsValues.findResults { fiducialsValue ->
             String[] fiducialValues = fiducialsValue.split(',')
             if (fiducialValues.size() != 3) {
-                return null
+                throw new IllegalArgumentException("Invalid fiducial specification; Use '<name>,<x.xx>,<y.yy>'")
             }
 
             DecimalFormat twoDigitDecimalFormat = new DecimalFormat("#0.##")
 
             return new Fiducial(note: fiducialValues[0], coordinate: new Coordinate(x: twoDigitDecimalFormat.parse(fiducialValues[1]), y: twoDigitDecimalFormat.parse(fiducialValues[2])))
+        }
+
+        final String FIDUCIAL_NOTE = 'For 2 point calibration 2 are required (RL, FR), for 3 point calibration 3 are required (RL, FR, FL).'
+        if (fiducials.size() < 2) {
+            throw new IllegalArgumentException("Insufficient fiducial markers; ${FIDUCIAL_NOTE}")
+        } else if (fiducials.size() > 3) {
+            throw new IllegalArgumentException("Too many fiducial markers; ${FIDUCIAL_NOTE}")
         }
 
         return Optional.of(fiducials)

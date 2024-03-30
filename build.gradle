@@ -57,6 +57,8 @@ dependencies {
     testImplementation group: 'org.objenesis', name: 'objenesis', version: '3.0.1'
     testImplementation 'io.github.joke:spock-outputcapture:4.0.1'
 
+    testImplementation 'com.github.stefanbirkner:system-lambda:1.2.1'
+
     implementation 'info.picocli:picocli:4.6.1'
 
     implementation 'net.sf.opencsv:opencsv:2.3'

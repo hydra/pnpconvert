@@ -211,7 +211,14 @@ Fiducial marks can be used for calibration instead of components.
 
 In the example above, `-fm` has two arguments, `RL,10,87` and `FR,105,3` which correspond to Rear-Left and Front-Right markers, the numerical values being X/Y co-ordinates.
 
-Note: Currently only two fiducial markers are supported.
+For calibration either 2 or 3 fiducial markers are required.
+
+Fiducial modes for CHMT machines:
+
+| Calibration mode | Point locations and ordering       |
+|------------------|------------------------------------|
+| 2 point          | Rear Left, Front Right             |
+| 3 point          | Rear Left, Front Right, Front Left |
 
 Fiducial markers are useful when you send gerbers files off to a PCB manufacturer who then produce a panel and add markers.  Ask them to send you the panel gerber files
 and extract the co-ordinates from the received gerber files.
