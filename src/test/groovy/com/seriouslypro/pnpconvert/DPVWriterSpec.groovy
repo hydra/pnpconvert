@@ -105,14 +105,18 @@ class DPVWriterSpec extends Specification implements DPVFileAssertions {
             panelArrayPresent(content, panel)
     }
 
+    /** Fiducials
+     * @See https://github.com/hydra/pnpconvert/issues/23
+     */
     def 'generate fiducial markers'() {
         given:
             DPVWriter writer = new DPVWriter(outputStream, machine, offsetZ, dpvHeader)
 
         and:
             List<Fiducial> fiducialList = [
-                new Fiducial(note: "Mark1", coordinate: new Coordinate(x: 10, y: 3)),
-                new Fiducial(note: "Mark2", coordinate: new Coordinate(x: 90, y: 97)),
+                new Fiducial(note: "RL", coordinate: new Coordinate(x: 10, y: 100)),
+                new Fiducial(note: "FR", coordinate: new Coordinate(x: 100, y: 10)),
+                new Fiducial(note: "FL", coordinate: new Coordinate(x: 10, y: 10)),
             ]
 
             optionalFiducials = Optional.of(fiducialList)
@@ -131,8 +135,9 @@ class DPVWriterSpec extends Specification implements DPVFileAssertions {
         and:
             content.contains(
                 "Table,No.,ID,offsetX,offsetY,Note" + TEST_TABLE_LINE_ENDING +
-                    "CalibPoint,0,1,10,3,Mark1" + CRLF +
-                    "CalibPoint,1,2,90,97,Mark2" + CRLF
+                    "CalibPoint,0,1,10,100,RL" + CRLF +
+                    "CalibPoint,1,2,100,10,FR" + CRLF +
+                    "CalibPoint,2,3,10,10,FL" + CRLF
             )
 
     }

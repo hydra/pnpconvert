@@ -371,6 +371,13 @@ class DPVWriter {
         }
     }
 
+//    /**
+//     * Note: this writes all the fiducial markers, regardless of how many there should be, checking for the correct
+//     *       amount happens during argument processing, which may or may not be correct for the mode of the machine
+//     *       i.e. need 2 for 2 point calibration, but the machine might be in 3 point calibration
+//     *       nothing can be done about potential mismatches here.
+//     * @param optionalFiducials
+//     */
     void writeFiducials(Optional<List<Fiducial>> optionalFiducials) {
         DecimalFormat twoDigitDecimalFormat = new DecimalFormat("#0.##")
 
