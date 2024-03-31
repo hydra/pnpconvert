@@ -6,6 +6,24 @@ import java.nio.charset.StandardCharsets
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 
+enum FormatVersion {
+    // Firmware < 2725B
+    LEGACY(
+        "Table,No.,ID,DeltX,DeltY,FeedRates,Note,Height,Speed,Status,SizeX,SizeY,HeightTake,DelayTake,nPullStripSpeed".split(',')
+    ),
+
+    // Firmware >= 2725B
+    LATEST(
+        "Table,No.,ID,DeltX,DeltY,FeedRates,Note,Height,Speed,Status,nPixSizeX,nPixSizeY,HeightTake,DelayTake,nPullStripSpeed,nThreshold,nVisualRadio".split(',')
+    )
+
+    String[] materialKeys
+
+    FormatVersion(materialKeys) {
+        this.materialKeys = materialKeys
+    }
+}
+
 class DPVWriter {
 
     private String lineEnding
@@ -13,9 +31,10 @@ class DPVWriter {
 
     private PrintStream stream
     NumberSequence materialNumberSequence
+    FormatVersion format = FormatVersion.LATEST
 
     List<String[]> placements = []
-    Map<Integer, String[]> materials = [:]
+    Map<Integer, Map<String, String>> materials = [:]
     List<String[]> trays = []
 
     OutputStream outputStream
@@ -56,7 +75,7 @@ class DPVWriter {
     }
 
     public addMaterial(Integer feederId, Feeder feeder, Component component) {
-        String[] material = buildMaterial(feederId, feeder, component)
+        Map<String, String> material = buildMaterial(feederId, feeder, component)
         materials[feederId] = material
     }
 
@@ -75,11 +94,11 @@ class DPVWriter {
         writeFiducials(optionalFiducials)
     }
 
-    Map<Integer, String[]> buildMaterials(Machine machine, Map<ComponentPlacement, MaterialAssignment> materialAssignments) {
-        Map<Integer, String[]> materials = materialAssignments.collectEntries { ComponentPlacement placement, MaterialAssignment materialAssignment ->
-            [materialAssignment.feederId, buildMaterial(materialAssignment.feederId, materialAssignment.feeder, materialAssignment.component)]
+    Map<Integer, Map<String, String>> buildMaterials(Machine machine, Map<ComponentPlacement, MaterialAssignment> materialAssignments) {
+        Map<Integer, Map<String, String>> materials = materialAssignments.collectEntries { ComponentPlacement placement, MaterialAssignment materialAssignment ->
+            Map<String, String> material = buildMaterial(materialAssignment.feederId, materialAssignment.feeder, materialAssignment.component)
+            [materialAssignment.feederId, material]
         }
-
         materials
     }
 
@@ -200,22 +219,33 @@ class DPVWriter {
     }
 
 
-    String[] buildMaterial(Integer feederId, Feeder feeder, Component component) {
+    Map<String, String> buildMaterial(Integer feederId, Feeder feeder, Component component) {
 
+        //
+        // Firmware < 2725B:
+        //
         /*
         Table,No.,ID,DeltX,DeltY,FeedRates,Note,Height,Speed,Status,SizeX,SizeY,HeightTake,DelayTake,nPullStripSpeed
         Station,0,29,4.17,0,12,??,3.75,0,6,0,0,0,0,0
          */
-
+        //
         // SizeX/SizeY are INTEGER, machine accepts a range of 0.00 to 30.00 in the UI.
         // The when the BigDecimal (mm) values are stored in the DPV file they need to be multiplied by 100.  e.g. "0.01" -> "1" and "30.00" -> "3000"
-
+        //
+        // Firmware >= 2725B
+        //
+        /*
+        Table,No.,ID,DeltX,DeltY,FeedRates,Note,Height,Speed,Status,nPixSizeX,nPixSizeY,HeightTake,DelayTake,nPullStripSpeed,nThreshold,nVisualRadio
+        Station,0,4,-1.78,1.61,2,0402B103K500CT;Walsin Tech Corp;10nF 50V 0402 X7R 10%/CAP_0402,0.5,25,6,344,151,0,20,25,61,200
+         */
+        // nPixSizeX,nPixSizeY are INTEGER, UI defaults come from the SizeX/SizeY fields.
+        // vision settings, when confirmed in UI, update nPixSizeX,nPixSizeY values.
+        // The when the BigDecimal (mm) values are stored in the DPV file they need to be multiplied by 100.  e.g. "0.01" -> "1" and "30.00" -> "3000"
+        //
+        // All firmware:
+        //
         // DelayTake is INTEGER, machine accepts a range of 0.00 to 3.00 in the UI.
         // The when the BigDecimal (second) values are stored in the DPV file they need to be multiplied by 100.  1 second = 100, 0.01 second = 1.
-
-        //
-        // Note: Table and No. are assigned later
-        // Note: this method may generate a duplicate material, duplicates are filtered before being written.
 
         PickSettings pickSettings = feeder.pickSettings
 
@@ -223,23 +253,87 @@ class DPVWriter {
 
         DecimalFormat twoDigitDecimalFormat = new DecimalFormat("#0.##")
         DecimalFormat zeroDigitDecimalFormat = new DecimalFormat("#0")
-        String[] material = [
-            feederId,
-            twoDigitDecimalFormat.format(pickSettings.xOffset),
-            twoDigitDecimalFormat.format(pickSettings.yOffset),
-            twoDigitDecimalFormat.format(pickSettings.tapeSpacing),
-            buildMaterialNote(component, feeder),
-            twoDigitDecimalFormat.format(component.height),
-            buildPlaceSpeed(pickSettings.placeSpeedPercentage),
-            statusFlags & 0xFF,
-            zeroDigitDecimalFormat.format(component.width * 100),
-            zeroDigitDecimalFormat.format(component.length * 100),
-            zeroDigitDecimalFormat.format(pickSettings.takeHeight * 100),
-            zeroDigitDecimalFormat.format(pickSettings.takeDelay * 100),
-            pickSettings.pullSpeed
-        ]
 
-        return material
+        Map<String, String> material = this.format.materialKeys.collectEntries { String key ->
+
+            String value = null
+            switch (key) {
+                case 'ID':
+                    value = feederId
+                    break
+                case 'DeltX':
+                    value = twoDigitDecimalFormat.format(pickSettings.xOffset)
+                    break
+                case 'DeltY':
+                    value = twoDigitDecimalFormat.format(pickSettings.yOffset)
+                    break
+                case 'FeedRates':
+                    value = twoDigitDecimalFormat.format(pickSettings.tapeSpacing)
+                    break
+                case 'Note':
+                    value = buildMaterialNote(component, feeder)
+                    break
+                case 'Height':
+                    value = twoDigitDecimalFormat.format(component.height)
+                    break
+                case 'Speed':
+                    value = buildPlaceSpeed(pickSettings.placeSpeedPercentage)
+                    break
+                case 'Status':
+                    value = statusFlags & 0xFF
+                    break
+                case 'SizeX':
+                case 'nPixSizeX':
+                    BigDecimal width = 0.0
+                    if (pickSettings.visionSize.isPresent()) {
+                        width = pickSettings.visionSize.get().width
+                    } else {
+                        width = component.width
+                    }
+                    value = zeroDigitDecimalFormat.format(width * 100)
+                    break
+                case 'SizeY':
+                case 'nPixSizeY':
+                    BigDecimal length = 0.0
+                    if (pickSettings.visionSize.isPresent()) {
+                        length = pickSettings.visionSize.get().length
+                    } else {
+                        length = component.length
+                    }
+                    value = zeroDigitDecimalFormat.format(length * 100)
+                    break
+                case 'HeightTake':
+                    value = zeroDigitDecimalFormat.format(pickSettings.takeHeight * 100)
+                    break
+                case 'DelayTake':
+                    value = zeroDigitDecimalFormat.format(pickSettings.takeDelay * 100)
+                    break
+                case 'nPullStripSpeed':
+                    value = pickSettings.pullSpeed
+                    break
+                case 'nThreshold':
+                    if (pickSettings.visionSettings.isPresent()) {
+                        value = pickSettings.visionSettings.get().visualThreshold
+                    } else {
+                        value = 0
+                    }
+                    break
+                case 'nVisualRadio':
+                    if (pickSettings.visionSettings.isPresent()) {
+                        value = pickSettings.visionSettings.get().visualRadio
+                    } else {
+                        value = 0
+                    }
+                    break
+            }
+            [key, value]
+        }
+
+        // 'Table' and 'No.' are assigned later
+        // Note: this method may generate a duplicate material, duplicates need to be removed before being written.
+        assert material.size() == this.format.materialKeys.size()
+
+        material
     }
 
     private String buildMaterialNote(Component component, Feeder feeder) {
@@ -314,19 +408,24 @@ class DPVWriter {
         return value.replace(',', ';')
     }
 
-    def writeMaterials(Map<Integer, String[]> materials) {
-        String sectionHeader =
-            "Table,No.,ID,DeltX,DeltY,FeedRates,Note,Height,Speed,Status,SizeX,SizeY,HeightTake,DelayTake,nPullStripSpeed"
+    def writeMaterials(Map<Integer, Map<String, String>> materials) {
+
+        String sectionHeader = this.format.materialKeys.join(',')
         stream.print(sectionHeader + tableLineEnding)
 
         materials.toSorted { a, b ->
             a.key <=> b.key
-        }.each { Integer feederId, String[] material ->
-            String[] managedColumns = [
-                "Station",
-                materialNumberSequence.next()
+        }.each { Integer feederId, Map<String, String> material ->
+
+            Map<String, String> managedColumns = [
+                'Table': 'Station',
+                'No.': materialNumberSequence.next().toString(),
             ]
-            stream.print((managedColumns + material).collect(this.&replaceCommasWithSemicolons).join(",") + tableLineEnding)
+            managedColumns.each {k, v ->
+                material[k] = v
+            }
+
+            stream.print(material.values().collect(this.&replaceCommasWithSemicolons).join(",") + tableLineEnding)
         }
         stream.print(tableLineEnding)
     }

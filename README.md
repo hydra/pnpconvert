@@ -302,19 +302,42 @@ Fields requiring additional documentation are as below.
 
 ## Feeders CSV file
 
+```csv
+"ID","Enabled","Part Code","Manufacturer","Description","Tape Width","Note","Tape Spacing","X Offset","Y Offset","Head","Separate Mount","Package Angle","Use Vision","Check Vacuum", "Place Speed","Place Delay","Take Height","Take Delay","Tape Pull Speed","Tray Name","Flags","Vision Width", "Vision Length", "Vision Threshold", "Vision Radio"
+```
+
 ### Columns
 
-| Column       | Unit                  | Notes                                                                                                                           |
-|--------------|-----------------------|---------------------------------------------------------------------------------------------------------------------------------|
-| FLAGS        | comma separated list  | List of flags                                                                                                                   |
-| ID           | Integer               | Required for left/right/front/vibration feeders, optional for "IC tray" feeders.                                                |
-| Enabled      | Boolean               | Allows the component to be skipped                                                                                              |
-| Tray Name    | String                | Value should correspond with the name of a tray in the Trays CSV file.  A feeder is a 'Tray Feeder' if this field is specified' |
-| Tape Width   | Integer, Centimeters  | Ignored for Tray feeders.  Still useful for Tray Feeders when using cut-tape in tray feeders.                                   |
-| Tape Spacing | Integer, Centimeters  | Ignored for Tray feeders.  Still useful for Tray Feeders when using cut-tape in tray feeders.                                   |
-| Place Speed  | Integer, Percentage   | 0 is invalid.                                                                                                                   |
-| Place Delay  | Integer, Milliseconds | Delay after extending head and before retracting head.                                                                          |
-| Take Delay   | Integer, Milliseconds | Delay in milliseconds.                                                                                                          |
+| Column           | Unit                  | Notes                                                                                                                                                                                                                      |
+|------------------|-----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Flags            | comma separated list  | List of flags (see below)                                                                                                                                                                                                  |
+| ID               | Integer               | Required for left/right/front/vibration feeders, leave blank for "IC tray" feeders.                                                                                                                                        |
+| Enabled          | Boolean               | Allows the component to be skipped                                                                                                                                                                                         |
+| Tray Name        | String                | Value should correspond with the name of a tray in the Trays CSV file.  A feeder is a 'Tray Feeder' if this field is specified'                                                                                            |
+| Tape Width       | Integer, Centimeters  | Ignored for Tray feeders.  Still useful for Tray Feeders when using cut-tape in tray feeders.                                                                                                                              |
+| Tape Spacing     | Integer, Centimeters  | Ignored for Tray feeders.  Still useful for Tray Feeders when using cut-tape in tray feeders.                                                                                                                              |
+| Place Speed      | Integer, Percentage   | 0 is invalid.                                                                                                                                                                                                              |
+| Place Delay      | Integer, Milliseconds | Delay after extending head and before retracting head.                                                                                                                                                                     |
+| Take Delay       | Integer, Milliseconds | Delay in milliseconds.                                                                                                                                                                                                     |
+| Part Code        | String                | Used together with Manufacturer for looking up components                                                                                                                                                                  |
+| Manufacturer     | String                | Used together with Part Code for looking up components                                                                                                                                                                     |
+| Note             | String                | A note                                                                                                                                                                                                                     |
+| X Offset         | Decimal               | applied to the head's pickup X position                                                                                                                                                                                    |
+| Y Offset         | Decimal               | applied to the head's pickup Y position                                                                                                                                                                                    |
+| Head             | Integer               | Which head to use (1 or 2)                                                                                                                                                                                                 |
+| Separate Mount   | Boolean               | Avoid picking up this component at the same time as another component when using two heads                                                                                                                                 |
+| Package angle    | Integer, Degrees      | Allows changing of the angle, e.g. depending how it's loaded into a tray or feeder and/or where 'pin 1' is in relation to the EDA angle                                                                                    |
+| Use Vision       | Boolean               | Bring to component to the camera and check it before placing                                                                                                                                                               | 
+| Check Vacuum     | Boolean               | Check the vacuum, doesn't work great on all parts. The vacuum settings are configured per-head on the machine.                                                                                                             |
+| Place Speed      | Integer, Percentage   | Default 100, use low values large parts so they don't move around on the nozzles                                                                                                                                           |
+| Place Delay      | Decimal               | how long to wait after extending the pick nozzle when PLACING component, 0-5 seconds, resolution of 0.01 seconds                                                                                                           |
+| Take Height      | Decimal               | 0-5mm. how much to reduce the distance the nozzle travels vertically for the component (verification clarification required)                                                                                               |
+| Take Delay       | Decimal               | how long to wait after extending the pick nozzle when PICKING component, 0-3 seconds, resolution of 0.01 seconds.<br/> using short takeDelay of around 0.25 seconds can prevent small components bouncing out of the tape. | 
+| Tape Pull Speed  | Integer, Percentage   | Default 100, use low values on small components (e.g. 0402 resistors) or components like diodes in plastic trays to prevent them bouncing out                                                                              |
+| Vision Width     | Decimal               | Use to override the component's width, must be specifed with 'Vision Length' or left blank                                                                                                                                 |
+| Vision Length    | Decimal               | Use to override the component's length, must be specifed with 'Vision Width' or left blank                                                                                                                                 |
+| Vision Threshold | Integer               | Use to override the default vision threshold value, must be specified with 'Vision Radio' or left blank                                                                                                                    |
+| Vision Radio     | Integer               | Use to override the default vision 'radio' value, must be specified with 'Vision Threshold' or left blank                                                                                                                  |
 
 ### Values
 
@@ -335,17 +358,89 @@ the component on the PCB.
 #### ID
 Feeder IDs for the CHMT48VB are as below, they are FIXED by the software in the CHMT48VB.
 
-| ID    | Purpose                               |
-| ----- | ------------------------------------- |  
-| 0-35  | left feeders                          |
-| 36-70 | right feeders                         |
-| 71-77 | rear left to rear right tray 1-7      |
-| 78-83 | front left to front right tray 1-6    |
-| 84    | right hand double tray 1/1            |
-| 85-90 | vibration feeder, front left.         |
-| 91-99 | ic tray                               |
+| ID    | Purpose                            |
+| ----- |------------------------------------|  
+| 0-35  | left feeders                       |
+| 36-70 | right feeders                      |
+| 71-77 | rear left to rear right tray 1-7   |
+| 78-83 | front left to front right tray 1-6 |
+| 84    | right hand double tray 1/1         |
+| 85-90 | vibration feeder, front left.      |
+| 91-99 | I.C. tray                          |
 
 Feeder IDs over 100 are reserved for the machine and must NOT be used otherwise machine configuration is overwritten and head crashes can occur!
+
+
+## Trays
+
+```csv
+"Name","First component X","First component Y","Last component X","Last component Y","Columns","Rows","First component index","Notes"
+```
+
+| Column                | Unit    | Notes                                                                                                        |
+|-----------------------|---------|--------------------------------------------------------------------------------------------------------------|
+| Name                  | String  | The name of the tray, used from the Feeders to look-up the tray by name, e.g 'F-1-6-RL', 'F-7-CT-8MM-6', etc |
+| First component X     | Decimal | Center of the first component in the left-to-right, front-to-back grid                                       |
+| First component Y     | Decimal | Center of the first component in the left-to-right, front-to-back grid                                       |
+| Last component X      | Decimal | Center of the last component in the left-to-right, front-to-back grid                                        |
+| Last component Y      | Decimal | Center of the last component in the left-to-right, front-to-back grid                                        |
+| Columns               | Integer | How many columns there are in the grid                                                                       |
+| Rows                  | Integer | How many rows there are in the grid                                                                          |
+| First component index | Integer | 0-x where x is the amount of components in the grid/tray - 1                                                 |
+| Notes                 | String  | Notes to help, e.g. 'pin one is rear-left'                                                                   |
+
+## Components CSV file
+
+```csv
+"Part Code","Manufacturer","Description","Width","Length","Height","Offset X","Offset Y"
+```
+
+### Columns
+
+| Column       | Unit    | Notes                                                                                                  |
+|--------------|---------|--------------------------------------------------------------------------------------------------------|
+| Part Code    | String  | Used together with Manufacturer for looking up components                                              |
+| Manufacturer | String  | Used together with Part Code for looking up components                                                 |
+| Description  | String  | A description of the component                                                                         |
+| Width        | Decimal | Used as the default for the vision width, can be overriden per-feeder, Width = X in EDA pattern        |
+| Length       | Decimal | Used as the default for the vision legnth, can be overriden per-feeder, Length = Y in EDA pattern      |
+| Offset X     | Decimal | applied to the placement X position, useful when the EDA origin and pickup origin are not the same     |
+| Offset Y     | Decimal | applied to the head's pickup Y position, useful when the EDA origin and pickup origin are not the same |
+
+Note that datasheet width might be EDA pattern height, and vice-versa.  See also 'Package Angle' for the feeder.
+
+## Part Mappings
+
+```csv
+"Name Pattern","Value Pattern","Part Code","Manufacturer"
+```
+
+### Columns
+
+| Column        | Unit                   | Notes                                                     |
+|---------------|------------------------|-----------------------------------------------------------|
+| Name Pattern  | RegExp or Exact String | Used to match the EDA placement name, e.g. /RES_0402(.*)/ |
+| Value Pattern | RegExp or Exact String | Used to match the EDA placement value, e.g. /10K(.*)/     |
+| Part Code     | String                 | Used together with Manufacturer for looking up components |
+| Manufacturer  | String                 | Used together with Part Code for looking up components    |
+| Description   | String                 | A description of the component                            |
+
+
+## Part Substitutions
+
+```csv
+"Name Pattern","Value Pattern","Name","Value","Notes"
+```
+
+### Columns
+
+| Column        | Unit                   | Notes                                                                                                |
+|---------------|------------------------|------------------------------------------------------------------------------------------------------|
+| Name Pattern  | RegExp or Exact String | Used to match the EDA placement name, e.g. /RES_0402(.*)/                                            |
+| Value Pattern | RegExp or Exact String | Used to match the EDA placement value, e.g. /10K(.*)/                                                |
+| Name          | String                 | Used to replace the name on matching placements                                                      |
+| Value         | String                 | Used to replace the value on matching placements                                                     |
+| Notes         | String                 | Notes to remind you why the substution exists, e.g. '50V X7R parts were same price as 16V X5R parts' |
 
 ## Why
 * The existing tools don't support DipTrace.
@@ -418,16 +513,14 @@ Still, that doesn't help with square components, like ICs, inductors, etc.
 
 ## Would-be-nice
 
-* apply rotation/mirroring to panel, fiducials, currently rotation/mirroring only applies to components.
+* Apply rotation/mirroring to panel & fiducials; Currently rotation/mirroring only applies to components.
 * Set units for SVG display
-* Replace specific components by reference designator.
 * Display a summary of applied substitutions maybe instead of, or addition to, all the per-refdes component substitutions, include list of refdes that the substitutions applied to.
 * Display a summary of applied mappings maybe instead of, or addition to, all the per-refdes component mappings, include list of refdes that the mappings applied to.
 * Improvement of automatically determining the rotation by recording: 
   1) definition of EDA pattern rotation vs datasheet (needs to be per-pattern) 
   2) cut-tape orientation, many manufacturers specify the pin-1 location in the packaging specification.
   3) definition of datasheet measurement codes used for X/Y/Z, e.g. X=L;Y=W;Z=T as there doesn't appear to be a standard, and it varies by manufacturer and component type.
-* Override vision X/Y/Z from components file, since the camera bounding box often applies to the shiny pads, and not the case or maximum dimensions.  Datasheet X=W/Y=H/Z=D should be the primary values for cross-referencing with component outline, etc
 * Check and report components that are too tall for the machine (>5mm for CHMT48VB/CHMT43VB/CHMT43VA)
 
 # DPVToGoogleSheets

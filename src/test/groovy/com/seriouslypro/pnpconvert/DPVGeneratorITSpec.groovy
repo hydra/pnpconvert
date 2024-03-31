@@ -63,6 +63,8 @@ class DPVGeneratorITSpec extends Specification implements DPVFileAssertions {
                     description: "RJ45CN",
                     partCode: "CAT24C32WI-GT3",
                     manufacturer: "JM1",
+                    width: 5.55,
+                    length: 6.66,
                 ),
                 new Component(
                     description: "Micro USB Socket With Very Long Name",
@@ -85,6 +87,9 @@ class DPVGeneratorITSpec extends Specification implements DPVFileAssertions {
                 takeDelay: 0.25G
             )
             PickSettings fastPickSettings = new PickSettings()
+            PickSettings specialPickSettings = new PickSettings()
+            specialPickSettings.visionSize = Optional.of(new VisionSize(width: 3.33, length: 4.44))
+            specialPickSettings.visionSettings = Optional.of(new VisionSettings(visualThreshold: 60, visualRadio: 200))
 
         and:
             FeedersLoader feedersLoader = new FeedersLoader()
@@ -114,7 +119,7 @@ class DPVGeneratorITSpec extends Specification implements DPVFileAssertions {
             )
 
             Feeder feeder4 = FeedersHelper.createTrayFeeder(tray1, components[2].partCode, components[2].manufacturer, components[2].description, slowPickSettings, "Back 1-4 Top-Left, Pin 1 Top-Left")
-            Feeder feeder5 = FeedersHelper.createTrayFeeder(tray2, components[3].partCode, components[3].manufacturer, components[3].description, fastPickSettings,"Back 6-7 Top-Left, Pin 1 Bottom-Right")
+            Feeder feeder5 = FeedersHelper.createTrayFeeder(tray2, components[3].partCode, components[3].manufacturer, components[3].description, specialPickSettings,"Back 6-7 Top-Left, Pin 1 Bottom-Right")
             feedersLoader.feeders.addAll([feeder4, feeder5])
 
         and:
@@ -225,11 +230,11 @@ class DPVGeneratorITSpec extends Specification implements DPVFileAssertions {
 
         and:
             List<List<String>> expectedMaterials = [
-                ["Station","0","1","0","0","4","R10K00402;RM1;10K 0402 1%/RES_0402;Cheap","0.5","100","6","1","3000","0","25","0"],
-                ["Station","1","33","0","0","4","MUSBSWVLN;JM2;Micro USB Socket With Very Long Name;Special","3.5","100","14","800","500","200","0","0"],
-                ["Station","2","36","0","0","4","C10404026V3;CM1;100nF 6.3V 0402/CAP_0402;Expensive","0.5","100","6","0","0","0","0","0"],
-                ["Station","3","1001","0","0","4","MAX14851;UM1;MAX14851;Back 1-4 Top-Left; Pin 1 Top-Left","0.5","100","6","0","0","0","25","0"],
-                ["Station","4","1002","0","0","4","CAT24C32WI-GT3;JM1;RJ45CN;Back 6-7 Top-Left; Pin 1 Bottom-Right","0.5","100","6","0","0","0","0","0"],
+                ["Station","0","1","0","0","4","R10K00402;RM1;10K 0402 1%/RES_0402;Cheap","0.5","100","6","1","3000","0","25","0","0","0"],
+                ["Station","1","33","0","0","4","MUSBSWVLN;JM2;Micro USB Socket With Very Long Name;Special","3.5","100","14","800","500","200","0","0","0","0"],
+                ["Station","2","36","0","0","4","C10404026V3;CM1;100nF 6.3V 0402/CAP_0402;Expensive","0.5","100","6","0","0","0","0","0","0","0"],
+                ["Station","3","1001","0","0","4","MAX14851;UM1;MAX14851;Back 1-4 Top-Left; Pin 1 Top-Left","0.5","100","6","0","0","0","25","0","0","0"],
+                ["Station","4","1002","0","0","4","CAT24C32WI-GT3;JM1;RJ45CN;Back 6-7 Top-Left; Pin 1 Bottom-Right","0.5","100","6","333","444","0","0","0","60","200"],
             ]
 
         and:
@@ -237,9 +242,9 @@ class DPVGeneratorITSpec extends Specification implements DPVFileAssertions {
                 ["EComponent","0","1","1","36","24.89","21.64","45","0.5","6","100","C1","100nF 6.3V 0402/CAP_0402;100nF ","0"],
                 ["EComponent","1","2","1","1001","21.3","35.07","90","0.5","6","100","U1","MAX14851;","50"],
                 ["EComponent","2","3","1","1001","21.5","19.5","157.5","0.5","6","100","U2","MAX14851;","50"],
-                ["EComponent","3","4","1","1002","16","45","90","0.5","6","100","U3","RJ45CN;","0"],
-                ["EComponent","4","5","1","1","14.44","13.9","0","0.5","6","100","R1","10K 0402 1%/RES_0402;10K 0402 1","50"],
-                ["EComponent","5","6","1","1","15.72","25.2","-90","0.5","6","100","R2","10K 0402 1%/RES_0402;10K 0402 1","50"],
+                ["EComponent","3","4","1","1","14.44","13.9","0","0.5","6","100","R1","10K 0402 1%/RES_0402;10K 0402 1","50"],
+                ["EComponent","4","5","1","1","15.72","25.2","-90","0.5","6","100","R2","10K 0402 1%/RES_0402;10K 0402 1","50"],
+                ["EComponent","5","6","1","1002","16","45","90","0.5","6","100","U3","RJ45CN;","0"],
                 ["EComponent","6","7","1","33","50.83","23.97","0","3.5","15","100","J1","Micro USB Socket With Very Long","0"],
             ]
 

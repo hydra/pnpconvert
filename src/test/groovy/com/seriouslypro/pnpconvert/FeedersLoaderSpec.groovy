@@ -78,6 +78,8 @@ class FeedersLoaderSpec extends Specification {
                 takeHeight: 2.5G,
                 takeDelay: 0G,
                 pullSpeed: 25,
+                visionSettings: Optional.of(new VisionSettings(visualThreshold: 60, visualRadio: 200)),
+                visionSize: Optional.of(new VisionSize(width: 5.55, length: 6.66)),
             )
 
             Feeder feeder2 = new ReelFeeder(

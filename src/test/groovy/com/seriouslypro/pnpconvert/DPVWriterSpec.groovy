@@ -6,6 +6,8 @@ import spock.lang.Ignore
 import spock.lang.Specification
 import spock.lang.Unroll
 
+// FUTURE Testing is only performed on latest file format for firmware >= 2725B, expand coverage to the older version
+
 class DPVWriterSpec extends Specification implements DPVFileAssertions {
 
     OutputStream outputStream
@@ -213,7 +215,7 @@ class DPVWriterSpec extends Specification implements DPVFileAssertions {
 
         and:
             List<List<String>> expectedMaterials = [
-                ["Station","0","1","0","0","4","C0DE;MFR;Feeder Description;Feeder Note","0.5","100","6","0","0","0","0","0"],
+                ["Station","0","1","0","0","4","C0DE;MFR;Feeder Description;Feeder Note","0.5","100","6","0","0","0","0","0","0","0"],
             ]
 
         and:
@@ -245,4 +247,84 @@ class DPVWriterSpec extends Specification implements DPVFileAssertions {
             defaultPanelPresent(content)
     }
 
+    @Unroll
+    def 'feeder vision settings'(visionSettings, expectedMaterial) {
+        given:
+            DPVWriter writer = new DPVWriter(outputStream, machine, offsetZ, dpvHeader)
+
+        and:
+            ComponentPlacement cp1 = new ComponentPlacement(enabled: true, refdes: "Z1", partCode: "C0DE", manufacturer: "MFR", name: "Placement Name 1", value: "Value 1", pattern: "Pattern 1", coordinate: new Coordinate(x: 3, y: 4), side: PCBSide.TOP, rotation: 0)
+            Component c1 = new Component(description: "Component Description", partCode: "C0DE", manufacturer: "MFR")
+            PickSettings pickSettings1 = new PickSettings()
+            pickSettings1.visionSettings = visionSettings
+            FeederProperties feederProperties = new FeederProperties()
+            Optional<Integer> noFixedId = Optional.empty()
+            Feeder feeder1 = new Feeder(fixedId: noFixedId, enabled: true, note: "Feeder Note", description: "Feeder Description",  pickSettings: pickSettings1, properties: feederProperties)
+            MaterialAssignment ma1 = new MaterialAssignment(component: c1, feederId: 1, feeder: feeder1)
+            materialAssignments = [
+                (cp1): ma1,
+            ]
+
+        and:
+            List<List<String>> expectedMaterials = [
+                expectedMaterial,
+            ]
+
+        and:
+            writer.assignMaterials(materialAssignments)
+
+        when:
+            writer.write()
+
+        then:
+            // Just testing the difference in materials here
+            String content = outputStream.toString()
+            materialsPresent(content, expectedMaterials)
+
+        where:
+            visionSettings                                                         | expectedMaterial
+            Optional.of(new VisionSettings(visualThreshold: 60, visualRadio: 200)) | ["Station", "0", "1", "0", "0", "4", "C0DE;MFR;Feeder Description;Feeder Note", "0.5", "100", "6", "0", "0", "0", "0", "0", "60", "200"]
+            Optional.empty()                                                       | ["Station", "0", "1", "0", "0", "4", "C0DE;MFR;Feeder Description;Feeder Note", "0.5", "100", "6", "0", "0", "0", "0", "0", "0", "0"]
+    }
+
+    @Unroll
+    def 'component width/height or feeder vision width/height'(visionSize, expectedMaterial) {
+        given:
+            DPVWriter writer = new DPVWriter(outputStream, machine, offsetZ, dpvHeader)
+
+        and:
+            ComponentPlacement cp1 = new ComponentPlacement(enabled: true, refdes: "Z1", partCode: "C0DE", manufacturer: "MFR", name: "Placement Name 1", value: "Value 1", pattern: "Pattern 1", coordinate: new Coordinate(x: 3, y: 4), side: PCBSide.TOP, rotation: 0)
+            Component c1 = new Component(description: "Component Description", partCode: "C0DE", manufacturer: "MFR", width: 10.0, length: 8.0)
+            PickSettings pickSettings1 = new PickSettings()
+            pickSettings1.visionSize = visionSize
+            FeederProperties feederProperties = new FeederProperties()
+            Optional<Integer> noFixedId = Optional.empty()
+            Feeder feeder1 = new Feeder(fixedId: noFixedId, enabled: true, note: "Feeder Note", description: "Feeder Description",  pickSettings: pickSettings1, properties: feederProperties)
+            MaterialAssignment ma1 = new MaterialAssignment(component: c1, feederId: 1, feeder: feeder1)
+            materialAssignments = [
+                (cp1): ma1,
+            ]
+
+        and:
+            List<List<String>> expectedMaterials = [
+                expectedMaterial,
+            ]
+
+        and:
+            writer.assignMaterials(materialAssignments)
+
+        when:
+            writer.write()
+
+        then:
+            // Just testing the difference in materials here
+            String content = outputStream.toString()
+            materialsPresent(content, expectedMaterials)
+
+        where:
+            visionSize                                           | expectedMaterial
+            Optional.of(new VisionSize(width: 9.5, length: 7.5)) | ["Station", "0", "1", "0", "0", "4", "C0DE;MFR;Feeder Description;Feeder Note", "0.5", "100", "6", "950", "750", "0", "0", "0", "0", "0"]
+            Optional.empty()                                     | ["Station", "0", "1", "0", "0", "4", "C0DE;MFR;Feeder Description;Feeder Note", "0.5", "100", "6", "1000", "800", "0", "0", "0", "0", "0"]
+    }
 }
+
