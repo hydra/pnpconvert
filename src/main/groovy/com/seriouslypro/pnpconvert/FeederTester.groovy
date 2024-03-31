@@ -72,7 +72,7 @@ class FeederTester {
                 Component component = components.components.find { candidate ->
                     candidate.partCode == feeder.partCode && candidate.manufacturer == feeder.manufacturer &&
                         feeder.partCode && candidate.partCode &&
-                        feeder.manufacturer && candidate.manufacturer
+                        feeder.manufacturer.toLowerCase() && candidate.manufacturer.toLowerCase()
                 }
 
                 if (component) {
