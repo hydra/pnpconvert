@@ -479,6 +479,31 @@ e.g.
 
 Reference: https://docs.gradle.org/current/userguide/application_plugin.html
 
+## Running examples
+
+There's a script to rebuild the examples:
+
+`./build-examples.sh`
+
+## Generating coverage reports
+
+Clover is used to create code-coverage reports. As of 2024/03/21 coverage is over 80%.
+
+```
+./gradlew clean test cloverAggregateDatabases cloverGenerateReport 
+```
+
+Then view HTML report files: `build\reports\clover-root\html\index.html`
+
+If you want to contribute, tests that increase code coverage would be welcomed.
+
+## Common runes
+
+```
+./gradlew clean build installDist && ./build-examples.sh
+```
+
+
 ## Known issues
 
 ### Diptrace 3.x does not quote strings in CSV files
