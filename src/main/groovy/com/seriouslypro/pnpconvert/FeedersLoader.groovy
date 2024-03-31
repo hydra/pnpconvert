@@ -45,7 +45,15 @@ class FeedersLoader {
         TRAY_NAME,
 
         // Optional Columns
-        FLAGS
+        FLAGS,
+
+        // Optional Vision Settings
+        VISION_THRESHOLD,
+        VISION_RADIO,
+
+        // Optional Vision Overrides
+        VISION_WIDTH,
+        VISION_LENGTH
 
         FeederCSVColumn(List<String> aliases = []) {
             this.aliases = aliases
@@ -105,6 +113,21 @@ class FeedersLoader {
                     pickSettings.takeDelay = rowValues[columnIndex(context, FeederCSVColumn.TAKE_DELAY)] as BigDecimal
                 }
 
+                if (hasColumn(FeederCSVColumn.VISION_THRESHOLD) && rowValues[columnIndex(context, FeederCSVColumn.VISION_THRESHOLD)] &&
+                    hasColumn(FeederCSVColumn.VISION_RADIO) && rowValues[columnIndex(context, FeederCSVColumn.VISION_RADIO)]) {
+                    pickSettings.visionSettings = Optional.of(new VisionSettings(
+                        visualThreshold: rowValues[columnIndex(context, FeederCSVColumn.VISION_THRESHOLD)] as int,
+                        visualRadio: rowValues[columnIndex(context, FeederCSVColumn.VISION_RADIO)] as int,
+                    ))
+                }
+
+                if (hasColumn(FeederCSVColumn.VISION_LENGTH) && rowValues[columnIndex(context, FeederCSVColumn.VISION_LENGTH)] &&
+                    hasColumn(FeederCSVColumn.VISION_WIDTH) && rowValues[columnIndex(context, FeederCSVColumn.VISION_WIDTH)]) {
+                    pickSettings.visionSize = Optional.of(new VisionSize(
+                        length: rowValues[columnIndex(context, FeederCSVColumn.VISION_LENGTH)] as BigDecimal,
+                        width: rowValues[columnIndex(context, FeederCSVColumn.VISION_WIDTH)] as BigDecimal,
+                    ))
+                }
 
                 String note = ""
                 if (hasColumn(FeederCSVColumn.NOTE) && rowValues[columnIndex(context, FeederCSVColumn.NOTE)]) {

@@ -7,16 +7,20 @@ trait DPVFileAssertions {
     final CRLF = "\r\n"
     final TEST_TABLE_LINE_ENDING = (CRLF * 2)
 
-    static final int MATERIAL_COLUMN_COUNT = 15
     static final int COMPONENT_COLUMN_COUNT = 14
     static final int TRAY_COLUMN_COUNT = 10
     static final int FEEDER_SUMMARY_COLUMN_COUNT = 6
 
+    final String MATERIAL_HEADER_LEGACY = "Table,No.,ID,DeltX,DeltY,FeedRates,Note,Height,Speed,Status,SizeX,SizeY,HeightTake,DelayTake,nPullStripSpeed"
+    final int MATERIAL_HEADER_COUNT_LEGACY = 15
+    final String MATERIAL_HEADER_LATEST = "Table,No.,ID,DeltX,DeltY,FeedRates,Note,Height,Speed,Status,nPixSizeX,nPixSizeY,HeightTake,DelayTake,nPullStripSpeed,nThreshold,nVisualRadio"
+    final int MATERIAL_HEADER_COUNT_LATEST = 17
+
     void materialsPresent(String content, List<List<String>> materialRows) {
-        assert content.contains("Table,No.,ID,DeltX,DeltY,FeedRates,Note,Height,Speed,Status,SizeX,SizeY,HeightTake,DelayTake,nPullStripSpeed")
+        assert content.contains(MATERIAL_HEADER_LATEST)
 
         materialRows.each { List<String> materialRow ->
-            assert(materialRow.size() == MATERIAL_COLUMN_COUNT)
+            assert(materialRow.size() == MATERIAL_HEADER_COUNT_LATEST)
             String row = materialRow.join(",")
             assert content.contains(row)
         }
