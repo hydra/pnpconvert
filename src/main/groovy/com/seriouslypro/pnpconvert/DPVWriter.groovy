@@ -33,6 +33,9 @@ class DPVWriter {
     NumberSequence materialNumberSequence
     FormatVersion format = FormatVersion.LATEST
 
+    // when enabled, disabled placements are created for each fiducial, allowing for nozzle calibration on latest firmware since the 'Head' button is broken in the latest firmware when doing calibration.
+    boolean addPlacementsForFiducialsEnabled = false
+
     List<String[]> placements = []
     Map<Integer, Map<String, String>> materials = [:]
     List<String[]> trays = []
@@ -119,6 +122,34 @@ class DPVWriter {
         NumberSequence placementNumberSequence = new NumberSequence(0)
         NumberSequence placementIDSequence = new NumberSequence(1)
 
+        Integer firstFeederId = firstFeederId(materialAssignments)
+
+        if (addPlacementsForFiducialsEnabled && firstFeederId) {
+            optionalFiducials.ifPresent { fiducials ->
+                fiducials.eachWithIndex { fiducial, index ->
+                    String refdes = "FID${index + 1}"
+
+                    String[] placement = [
+                        "EComponent",
+                        placementNumberSequence.next(),
+                        placementIDSequence.next(),
+                        "1", // PHead
+                        firstFeederId, // STNo.
+                        twoDigitDecimalFormat.format(fiducial.coordinate.x), // DeltX
+                        twoDigitDecimalFormat.format(fiducial.coordinate.y), // DeltY
+                        "0", // Angle
+                        "0", // Height
+                        "1", // Skip
+                        "0", // Speed
+                        refdes, // Explain
+                        fiducial.note, // Note
+                        "0", // Delay
+                    ]
+                    placements << placement
+                }
+            }
+        }
+
         materialAssignments.each { ComponentPlacement componentPlacement, MaterialAssignment materialAssignment ->
 
             PickSettings pickSettings = materialAssignment.feeder.pickSettings
@@ -151,6 +182,13 @@ class DPVWriter {
         }
 
         return placements
+    }
+
+    private static Integer firstFeederId(Map<ComponentPlacement, MaterialAssignment> materialAssignments) {
+        if (materialAssignments.size() == 0) {
+            return null
+        }
+        materialAssignments.values().first().feederId
     }
 
     private int buildPlaceSpeed(int placeSpeedPercentage) {
@@ -516,5 +554,9 @@ class DPVWriter {
             }
             stream.print(lineEnding) // Note: NOT tableLineEnding
         }
+    }
+
+    void setAddPlacementsForFiducials(boolean addPlacementsForFiducialsEnabled) {
+        this.addPlacementsForFiducialsEnabled = addPlacementsForFiducialsEnabled
     }
 }

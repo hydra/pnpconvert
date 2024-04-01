@@ -59,6 +59,7 @@ class PNPConvert {
         builder.rr(args:'+', argName: 'replaceRefdes', 'Replace components by refdes ("refdes,value,name"[ ...])')
 
         builder.fm(args:'+', argName: 'fiducialMarkers','Fiducial marker list (note,x,y[ ...])')
+        builder.fp(argName: 'addPlacementsForFiducialsEnabled', 'Add dummy placements for each fiducial')
 
         builder.st('Show transforms in SVG')
 
@@ -99,6 +100,8 @@ class PNPConvert {
         String componentsFileName = config.getOrDefault("components","components.csv")
         String partMappingsFileName  = config.getOrDefault("partMappings","part-mappings.csv")
         String partSubstitutionsFileName  = config.getOrDefault("partSubstitutions","part-substitutions.csv")
+
+        boolean addPlacementsForFiducialsEnabled = false
 
         Board board = new Board()
         BoardRotation boardRotation = new BoardRotation()
@@ -246,6 +249,10 @@ class PNPConvert {
             optionalFiducials = parseFiducials(fiducialMarkerValues)
         }
 
+        if (options.fp) {
+            addPlacementsForFiducialsEnabled = true
+        }
+
         if (options.rr) {
             String[] refdesReplacementValues = options.parseResult.matchedOption("rr").typedValues().flatten()
             refdesReplacements = parseRefdesReplacements(refdesReplacementValues)
@@ -280,6 +287,7 @@ class PNPConvert {
                 placementReferenceDesignatorsToDisable: placementReferenceDesignatorsToDisable,
                 optionalJob: optionalJob,
                 showTransforms: showTransforms,
+                addPlacementsForFiducialsEnabled: addPlacementsForFiducialsEnabled,
             )
             converter.convert()
             System.exit(0);
