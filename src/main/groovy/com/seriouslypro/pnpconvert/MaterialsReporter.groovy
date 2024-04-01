@@ -28,8 +28,7 @@ class MaterialsReporter {
 
     void report(MaterialsSelectionsResult result) {
         System.out.println()
-        List<String> lines = new TreePrinter().print(mappedPlacementsRoot)
-        lines.each { line -> System.out.println(line) }
+        dumpTree(mappedPlacementsRoot)
 
         System.out.println()
         boolean showIssues = !result.unmappedPlacements.empty || !result.unloadedPlacements.empty
@@ -47,6 +46,11 @@ class MaterialsReporter {
         if (!result.unloadedPlacements.empty) {
             System.out.println()
             dumpPlacementMappings("unloadedComponents:", result.unloadedPlacements)
+
+            Map<Component, List<String>> componentsToRefdesMap = buildComponentsToRefdesMap(result.unloadedPlacements)
+
+            System.out.println()
+            dumpComponentsToRefdesMap("unloadedComponentsToRefDes:", componentsToRefdesMap)
         }
     }
 
@@ -78,6 +82,10 @@ class MaterialsReporter {
             }
         }
 
+        dumpTree(root)
+    }
+
+    private void dumpTree(TreeNode root) {
         List<String> lines = new TreePrinter().print(root)
         lines.each { line -> System.out.println(line) }
     }
@@ -98,5 +106,31 @@ class MaterialsReporter {
             value : pm.placement.value,
         ]
         "placement ${placementSummary}"
+    }
+
+    Map<Component, List<String>> buildComponentsToRefdesMap(Set<PlacementMapping> placementMappings) {
+        Map<Component, List<String>> map = [:]
+        placementMappings.each {pm ->
+            List<Component> components = pm.mappingResults.findResults {mr -> mr.component.orElse( null )}
+            components.each { c ->
+                if (!map.containsKey(c)) {
+                    map[c] = []
+                }
+                map[c] << pm.placement.refdes
+            }
+        }
+        map
+    }
+
+    void dumpComponentsToRefdesMap(String title, Map<Component, List<String>> map) {
+
+        TreeNode<String> root = new TreeNode(title)
+        map.each { c, refdesList ->
+            TreeNode<String> componentNode = new TreeNode(buildComponentSummary(c))
+            root.addChild(componentNode)
+            TreeNode<String> refDesListNode = new TreeNode('refdesList: ' + refdesList.toString())
+            componentNode.addChild(refDesListNode)
+        }
+        dumpTree(root)
     }
 }
