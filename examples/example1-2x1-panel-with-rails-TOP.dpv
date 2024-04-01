@@ -1,15 +1,15 @@
 separated
 FILE,examples/example1-2x1-panel-with-rails-TOP.dpv
 PCBFILE,examples/example1.csv
-DATE,2024/03/31
-TIME,21:05:25
+DATE,2024/04/01
+TIME,21:44:20
 PANELYPE,1
 
 Table,No.,ID,DeltX,DeltY,FeedRates,Note,Height,Speed,Status,nPixSizeX,nPixSizeY,HeightTake,DelayTake,nPullStripSpeed,nThreshold,nVisualRadio
 
-Station,0,10,0.05,0.25,4,SD0805S040S0R5;KYOCERA;DIODE 40V 0.5A 0805;LH,0.8,100,6,120,200,20,20,0,0,0
+Station,0,10,0.05,0.25,4,SD0805S040S0R5;KYOCERA;DIODE 40V 0.5A 0805;LH,0.8,100,6,28,47,20,20,0,0,0
 
-Station,1,88,0,0,4,STM32F030C8T6;ST;STM32F030C8T;T,2,100,14,700,700,0,20,0,0,0
+Station,1,88,0,0,4,STM32F030C8T6;ST;STM32F030C8T;T,2,100,14,165,165,0,20,0,0,0
 
 
 

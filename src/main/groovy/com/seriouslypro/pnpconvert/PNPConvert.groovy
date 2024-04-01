@@ -308,6 +308,7 @@ class PNPConvert {
                 feedersFileName: feedersFileName,
                 componentsFileName: componentsFileName,
                 outputPrefix: outputPrefix,
+                visualCalibrationFactor: visualCalibrationFactor,
             )
             feederTester.generateFeederTest()
             System.exit(0);
