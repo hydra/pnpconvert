@@ -333,7 +333,7 @@ class DPVWriter {
                     } else {
                         width = component.width
                     }
-                    value = zeroDigitDecimalFormat.format(width.divide(visualCalibrationFactor))
+                    value = zeroDigitDecimalFormat.format((width.toFloat() / visualCalibrationFactor) as BigDecimal)
                     break
                 case 'SizeY':
                 case 'nPixSizeY':
@@ -343,7 +343,7 @@ class DPVWriter {
                     } else {
                         length = component.length
                     }
-                    value = zeroDigitDecimalFormat.format(length.divide(visualCalibrationFactor))
+                    value = zeroDigitDecimalFormat.format((length.toFloat() / visualCalibrationFactor) as BigDecimal)
                     break
                 case 'HeightTake':
                     value = zeroDigitDecimalFormat.format(pickSettings.takeHeight * 100)
