@@ -51,6 +51,8 @@ class PNPConvert {
         builder.pix(args:1, argName: 'panelIntervalX','Interval spacing on the X axis')
         builder.piy(args:1, argName: 'panelIntervalY','Interval spacing on the Y axis')
 
+        builder.vcf(args:1, argName: 'visionCalibrationFactor','Visual calibration factor')
+
         builder.j(args:1, argName: 'job', 'job number')
 
         builder.cfg(args:1, argName: 'config', 'configuration file (in "key=value" format)')
@@ -98,8 +100,9 @@ class PNPConvert {
         String traysFileName = config.getOrDefault("trays","trays.csv")
         String feedersFileName = config.getOrDefault("feeders","feeders.csv")
         String componentsFileName = config.getOrDefault("components","components.csv")
-        String partMappingsFileName  = config.getOrDefault("partMappings","part-mappings.csv")
-        String partSubstitutionsFileName  = config.getOrDefault("partSubstitutions","part-substitutions.csv")
+        String partMappingsFileName = config.getOrDefault("partMappings","part-mappings.csv")
+        String partSubstitutionsFileName = config.getOrDefault("partSubstitutions","part-substitutions.csv")
+        BigDecimal visualCalibrationFactor = config.getOrDefault("visualCalibrationFactor","0.042383") as BigDecimal
 
         boolean addPlacementsForFiducialsEnabled = false
 
@@ -263,6 +266,10 @@ class PNPConvert {
             sideInclusion = parseSideInclusion(options.s)
         }
 
+        if (options.vcf) {
+            visualCalibrationFactor = options.s as BigDecimal
+        }
+
         boolean showTransforms = (options.st)
 
         if (options.c) {
@@ -288,6 +295,7 @@ class PNPConvert {
                 optionalJob: optionalJob,
                 showTransforms: showTransforms,
                 addPlacementsForFiducialsEnabled: addPlacementsForFiducialsEnabled,
+                visualCalibrationFactor: visualCalibrationFactor,
             )
             converter.convert()
             System.exit(0);
