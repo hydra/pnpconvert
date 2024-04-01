@@ -264,11 +264,13 @@ class DPVGeneratorITSpec extends Specification implements DPVFileAssertions {
             ]
 
         when:
-            MaterialSelector materialSelector = new MaterialSelector()
-            Map<ComponentPlacement, MaterialSelectionEntry> materialSelections = materialSelector.selectMaterials(componentPlacements, components, partMappings, feedersLoader.feeders)
+            MaterialsSelector materialSelector = new MaterialsSelector()
+            MaterialsReporter materialsReporter = new MaterialsReporter()
+            MaterialsSelectionsResult result = materialSelector.selectMaterials(componentPlacements, components, partMappings, feedersLoader.feeders, materialsReporter)
+            materialsReporter.report(result)
 
             DPVGenerator generator = buildGenerator()
-            generator.generate(outputStream, materialSelections)
+            generator.generate(outputStream, result.materialSelections)
 
         then:
             String content = outputStream.toString()

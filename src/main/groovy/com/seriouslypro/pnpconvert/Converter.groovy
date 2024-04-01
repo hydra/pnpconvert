@@ -35,7 +35,8 @@ class Converter {
     List<RefdesReplacement> refdesReplacements
     Set<String> placementReferenceDesignatorsToDisable
 
-    MaterialSelector materialSelector = new MaterialSelector()
+    MaterialsSelector materialSelector = new MaterialsSelector()
+    MaterialsReporter materialsReporter = new MaterialsReporter()
 
     boolean showTransforms = false
 
@@ -228,7 +229,8 @@ class Converter {
         // Select materials
         //
 
-        Map<ComponentPlacement, MaterialSelectionEntry> materialSelections = materialSelector.selectMaterials(placements, componentsLoader.components, partMappingsLoader.partMappings, feedersLoader.feeders)
+        MaterialsSelectionsResult materialSelectionResult = materialSelector.selectMaterials(placements, componentsLoader.components, partMappingsLoader.partMappings, feedersLoader.feeders, materialsReporter)
+        materialsReporter.report(materialSelectionResult)
 
         //
         // Generate DPV
@@ -252,7 +254,7 @@ class Converter {
             addPlacementsForFiducialsEnabled: addPlacementsForFiducialsEnabled,
         )
 
-        generator.generate(outputStream, materialSelections)
+        generator.generate(outputStream, materialSelectionResult.materialSelections)
 
         outputStream.close()
     }

@@ -3,15 +3,15 @@ package com.seriouslypro.pnpconvert
 import com.seriouslypro.eda.part.PartMapping
 import spock.lang.Specification
 
-class MaterialSelectorSpec extends Specification {
+class MaterialsSelectorSpec extends Specification {
 
-    MaterialSelector materialSelector
+    MaterialsSelector materialSelector
 
     private static final String TEST_COMPONENT_PART_CODE = "TEST-PART-CODE"
     private static final String TEST_COMPONENT_MANUFACTURER = "TEST-MANUFACTURER"
 
     def setup() {
-        materialSelector = new MaterialSelector()
+        materialSelector = new MaterialsSelector()
     }
 
     def 'find by component - no feeders, no components'() {
@@ -70,12 +70,15 @@ class MaterialSelectorSpec extends Specification {
                     errors:[ "no matching components, check part code and manufacturer is correct, check or add components, use refdes replacements or part mappings" ],
                 )
             ]
+        and:
+            MaterialsReporter reporter = new MaterialsReporter()
 
         when:
-            materialSelector.selectMaterials(componentPlacements, components, partMappings, feeders)
+            MaterialsSelectionsResult result = materialSelector.selectMaterials(componentPlacements, components, partMappings, feeders, reporter)
+            reporter.report(result)
 
         then:
-            materialSelector.unmappedPlacements.containsAll(expectedPlacementMappings)
+            result.unmappedPlacements.containsAll(expectedPlacementMappings)
     }
 
 
@@ -106,12 +109,15 @@ class MaterialSelectorSpec extends Specification {
                     ],
                 )
             ]
+        and:
+            MaterialsReporter reporter = new MaterialsReporter()
 
         when:
-            materialSelector.selectMaterials(componentPlacements, components, partMappings, feeders)
+            MaterialsSelectionsResult result = materialSelector.selectMaterials(componentPlacements, components, partMappings, feeders, reporter)
+            reporter.report(result)
 
         then:
-            materialSelector.unloadedPlacements == expectedUnloadedPlacements
+            result.unloadedPlacements == expectedUnloadedPlacements
     }
 
     /**
@@ -150,10 +156,14 @@ class MaterialSelectorSpec extends Specification {
                     feeder: feeders[0], // first feeder used
                 )
             ]
+        and:
+            MaterialsReporter reporter = new MaterialsReporter()
+
         when:
-            Map<ComponentPlacement, MaterialSelectionEntry> materials = materialSelector.selectMaterials(componentPlacements, components, partMappings, feeders)
+            MaterialsSelectionsResult result = materialSelector.selectMaterials(componentPlacements, components, partMappings, feeders, reporter)
+            reporter.report(result)
 
         then:
-            materials == expectedMaterials
+            result.materialSelections == expectedMaterials
     }
 }
