@@ -547,6 +547,7 @@ Still, that doesn't help with square components, like ICs, inductors, etc.
   2) cut-tape orientation, many manufacturers specify the pin-1 location in the packaging specification.
   3) definition of datasheet measurement codes used for X/Y/Z, e.g. X=L;Y=W;Z=T as there doesn't appear to be a standard, and it varies by manufacturer and component type.
 * Check and report components that are too tall for the machine (>5mm for CHMT48VB/CHMT43VB/CHMT43VA)
+* A summary of /unique/ components that are not loaded, with a list of applicable refdes.  e.g. 0479480001 = [A1, A201]  Currently the unloaded components shows each placement, but it's required to trawl over all placements, find all potential components, then add each refdes to a list of potential components and display a summary.  
 
 # DPVToGoogleSheets
 
