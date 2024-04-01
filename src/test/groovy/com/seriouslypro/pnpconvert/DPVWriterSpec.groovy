@@ -3,6 +3,7 @@ package com.seriouslypro.pnpconvert
 import com.seriouslypro.pnpconvert.machine.DefaultMachine
 import com.seriouslypro.pnpconvert.machine.Machine
 import spock.lang.Ignore
+import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -110,7 +111,8 @@ class DPVWriterSpec extends Specification implements DPVFileAssertions {
     /** Fiducials
      * @See https://github.com/hydra/pnpconvert/issues/23
      */
-    def 'generate fiducial markers'() {
+    @Unroll
+    def 'generate fiducial markers'(boolean addPlacementsForFiducialsEnabled, def fiducialComponentAssertion, def materialAssignmentsBuilder) {
         given:
             DPVWriter writer = new DPVWriter(outputStream, machine, offsetZ, dpvHeader)
 
@@ -122,13 +124,18 @@ class DPVWriterSpec extends Specification implements DPVFileAssertions {
             ]
 
             optionalFiducials = Optional.of(fiducialList)
+            writer.setAddPlacementsForFiducialsEnabled(addPlacementsForFiducialsEnabled)
             writer.setFiducials(optionalFiducials)
+
+            Map<ComponentPlacement, MaterialAssignment> materials = materialAssignmentsBuilder()
+            writer.assignMaterials(materials)
 
         when:
             writer.write()
 
         then:
             String content = outputStream.toString()
+            System.out.println(content)
             content.contains(
                 "Table,No.,nType,nAlg,nFinished" + TEST_TABLE_LINE_ENDING +
                     "PcbCalib,0,1,0,0" + TEST_TABLE_LINE_ENDING
@@ -141,8 +148,41 @@ class DPVWriterSpec extends Specification implements DPVFileAssertions {
                     "CalibPoint,1,2,100,10,FR" + CRLF +
                     "CalibPoint,2,3,10,10,FL" + CRLF
             )
+        and:
+            fiducialComponentAssertion(content)
 
+        where:
+            addPlacementsForFiducialsEnabled | fiducialComponentAssertion           | materialAssignmentsBuilder
+            true                             | this.&fiducialComponentAssertionSome | this.&materialsBuilderSome
+            true                             | this.&fiducialComponentAssertionNone | this.&materialsBuilderNone
+            false                            | this.&fiducialComponentAssertionNone | this.&materialsBuilderNone
     }
+
+    private boolean fiducialComponentAssertionSome(String content) {
+        assert content.contains("Table,No.,ID,PHead,STNo.,DeltX,DeltY,Angle,Height,Skip,Speed,Explain,Note,Delay" + TEST_TABLE_LINE_ENDING +
+            "EComponent,0,1,1,1,10,100,0,0,1,0,FID1,RL,0" + TEST_TABLE_LINE_ENDING +
+            "EComponent,1,2,1,1,100,10,0,0,1,0,FID2,FR,0" + TEST_TABLE_LINE_ENDING +
+            "EComponent,2,3,1,1,10,10,0,0,1,0,FID3,FL,0" + TEST_TABLE_LINE_ENDING
+        )
+        true
+    }
+
+    private boolean fiducialComponentAssertionNone(String content) { true }
+
+    private Map<ComponentPlacement, MaterialAssignment> materialsBuilderSome() {
+        ComponentPlacement cp1 = new ComponentPlacement(enabled: false, refdes: "Z2", partCode: "C0DE", manufacturer: "MFR", name: "Placement Name 2", value: "Value 2", pattern: "Pattern 2", coordinate: new Coordinate(x: 5, y: 6), side: PCBSide.BOTTOM, rotation: 90)
+        Component c1 = new Component(description: "Component Description", partCode: "C0DE", manufacturer: "MFR")
+        PickSettings pickSettings1 = new PickSettings()
+        FeederProperties feederProperties = new FeederProperties()
+        Optional<Integer> noFixedId = Optional.empty()
+        Feeder feeder1 = new Feeder(fixedId: noFixedId, enabled: true, note: "Feeder Note", description: "Feeder Description",  pickSettings: pickSettings1, properties: feederProperties)
+        MaterialAssignment ma1 = new MaterialAssignment(component: c1, feederId: 1, feeder: feeder1)
+        materialAssignments = [
+            (cp1): ma1,
+        ]
+        materialAssignments
+    }
+    private Map<ComponentPlacement, MaterialAssignment> materialsBuilderNone() { [:] }
 
     @Ignore
     def 'trays should be sorted by id'() {

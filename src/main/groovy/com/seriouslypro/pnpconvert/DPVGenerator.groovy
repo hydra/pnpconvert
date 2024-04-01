@@ -14,6 +14,7 @@ class DPVGenerator {
 
     Optional<Panel> optionalPanel = Optional.empty()
     Optional<List<Fiducial>> optionalFiducials = Optional.empty()
+    boolean addPlacementsForFiducialsEnabled = false
 
     void generate(OutputStream outputStream, Map<ComponentPlacement, MaterialSelectionEntry> materialSelections) {
 
@@ -39,6 +40,7 @@ class DPVGenerator {
         writer = new DPVWriter(outputStream, machine, offsetZ, dpvHeader)
         writer.setPanel(optionalPanel)
         writer.setFiducials(optionalFiducials)
+        writer.setAddPlacementsForFiducials(addPlacementsForFiducialsEnabled)
         writer.assignMaterials(materialAssignments)
         writer.write()
     }

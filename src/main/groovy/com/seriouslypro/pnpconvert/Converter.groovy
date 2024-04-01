@@ -40,6 +40,7 @@ class Converter {
     boolean showTransforms = false
 
     private static final boolean append = false
+    boolean addPlacementsForFiducialsEnabled = false
 
     void convert() {
 
@@ -248,6 +249,7 @@ class Converter {
             optionalPanel: optionalPanel,
             optionalFiducials: optionalFiducials,
             offsetZ: offsetZ,
+            addPlacementsForFiducialsEnabled: addPlacementsForFiducialsEnabled,
         )
 
         generator.generate(outputStream, materialSelections)
