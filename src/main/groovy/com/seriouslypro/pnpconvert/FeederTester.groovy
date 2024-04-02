@@ -10,6 +10,7 @@ class FeederTester {
     String feedersFileName
     String componentsFileName
     String outputPrefix
+    BigDecimal visualCalibrationFactor
 
     private static final boolean append = false
 
@@ -66,7 +67,7 @@ class FeederTester {
             pcbFileName: "NONE"
         )
 
-        DPVWriter dpvWriter = new DPVWriter(outputStream, machine, 0.0, dpvHeader)
+        DPVWriter dpvWriter = new DPVWriter(outputStream, machine, 0.0, visualCalibrationFactor, dpvHeader)
         feeders.feeders.each { Feeder feeder ->
             feeder.fixedId.ifPresent { feederId ->
                 Component component = components.components.find { candidate ->

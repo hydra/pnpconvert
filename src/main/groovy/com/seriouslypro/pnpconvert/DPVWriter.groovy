@@ -41,8 +41,11 @@ class DPVWriter {
     List<String[]> trays = []
 
     OutputStream outputStream
+
     Machine machine
     BigDecimal offsetZ
+    BigDecimal visualCalibrationFactor
+
     DPVHeader dpvHeader
     Optional<Panel> optionalPanel = Optional<Panel>.empty()
     Optional<List<Fiducial>> optionalFiducials = Optional<List<Fiducial>>.empty()
@@ -51,12 +54,14 @@ class DPVWriter {
         OutputStream outputStream,
         Machine machine,
         BigDecimal offsetZ,
+        BigDecimal visualCalibrationFactor,
         DPVHeader dpvHeader
     ) {
         this.outputStream = outputStream
         this.machine = machine
         this.offsetZ = offsetZ
         this.dpvHeader = dpvHeader
+        this.visualCalibrationFactor = visualCalibrationFactor
 
         materialNumberSequence = new NumberSequence(0)
     }
@@ -328,7 +333,7 @@ class DPVWriter {
                     } else {
                         width = component.width
                     }
-                    value = zeroDigitDecimalFormat.format(width * 100)
+                    value = zeroDigitDecimalFormat.format((width.toFloat() / visualCalibrationFactor) as BigDecimal)
                     break
                 case 'SizeY':
                 case 'nPixSizeY':
@@ -338,7 +343,7 @@ class DPVWriter {
                     } else {
                         length = component.length
                     }
-                    value = zeroDigitDecimalFormat.format(length * 100)
+                    value = zeroDigitDecimalFormat.format((length.toFloat() / visualCalibrationFactor) as BigDecimal)
                     break
                 case 'HeightTake':
                     value = zeroDigitDecimalFormat.format(pickSettings.takeHeight * 100)

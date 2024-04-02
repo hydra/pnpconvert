@@ -44,7 +44,7 @@ class DPVGeneratorITSpec extends Specification implements DPVFileAssertions {
             List<Component> components = [
                 new Component(
                     description: "10K 0402 1%/RES_0402",
-                    width: 0.01,
+                    width: 0.05,
                     length: 30,
                     partCode: "R10K00402",
                     manufacturer: "RM1",
@@ -199,6 +199,9 @@ class DPVGeneratorITSpec extends Specification implements DPVFileAssertions {
             ]
 
         and: // test data expectations
+            // given a visual calibration threshold of 0.05 and a formula of nPixSizeX = width / vcf, and the fact that the result must have no decimal digits, the smallest width allowed is 0.05 because 0.05 / 0.05 = 1
+            assert components[0].width / TEST_VISUAL_CALIBRATION_FACTOR == 1
+
             boolean haveTwoIdenticalComponents = (
                 componentPlacements[0].value == componentPlacements[1].value &&
                 componentPlacements[0].name == componentPlacements[1].name
@@ -230,11 +233,11 @@ class DPVGeneratorITSpec extends Specification implements DPVFileAssertions {
 
         and:
             List<List<String>> expectedMaterials = [
-                ["Station","0","1","0","0","4","R10K00402;RM1;10K 0402 1%/RES_0402;Cheap","0.5","100","6","1","3000","0","25","0","0","0"],
-                ["Station","1","33","0","0","4","MUSBSWVLN;JM2;Micro USB Socket With Very Long Name;Special","3.5","100","14","800","500","200","0","0","0","0"],
+                ["Station","0","1","0","0","4","R10K00402;RM1;10K 0402 1%/RES_0402;Cheap","0.5","100","6","1","600","0","25","0","0","0"],
+                ["Station","1","33","0","0","4","MUSBSWVLN;JM2;Micro USB Socket With Very Long Name;Special","3.5","100","14","160","100","200","0","0","0","0"],
                 ["Station","2","36","0","0","4","C10404026V3;CM1;100nF 6.3V 0402/CAP_0402;Expensive","0.5","100","6","0","0","0","0","0","0","0"],
                 ["Station","3","1001","0","0","4","MAX14851;UM1;MAX14851;Back 1-4 Top-Left; Pin 1 Top-Left","0.5","100","6","0","0","0","25","0","0","0"],
-                ["Station","4","1002","0","0","4","CAT24C32WI-GT3;JM1;RJ45CN;Back 6-7 Top-Left; Pin 1 Bottom-Right","0.5","100","6","333","444","0","0","0","60","200"],
+                ["Station","4","1002","0","0","4","CAT24C32WI-GT3;JM1;RJ45CN;Back 6-7 Top-Left; Pin 1 Bottom-Right","0.5","100","6","67","89","0","0","0","60","200"],
             ]
 
         and:
@@ -285,6 +288,8 @@ class DPVGeneratorITSpec extends Specification implements DPVFileAssertions {
             feederSummaryPresent(capturedOutput, expectedFeederSummary)
     }
 
+    static final BigDecimal TEST_VISUAL_CALIBRATION_FACTOR = 0.05
+
     private DPVGenerator buildGenerator() {
         DPVGenerator generator = new DPVGenerator(
             machine: new TestMachine(),
@@ -292,6 +297,7 @@ class DPVGeneratorITSpec extends Specification implements DPVFileAssertions {
             optionalPanel: Optional.empty(),
             optionalFiducials: Optional.empty(),
             offsetZ: 0,
+            visualCalibrationFactor: TEST_VISUAL_CALIBRATION_FACTOR,
         )
         generator
     }
