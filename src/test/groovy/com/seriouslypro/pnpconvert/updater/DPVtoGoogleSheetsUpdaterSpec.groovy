@@ -22,6 +22,8 @@ class DPVtoGoogleSheetsUpdaterSpec extends Specification implements TestResource
     private static final String TEST_SHEET_ID = "TEST"
     private static final String TEST_SHEET_TITLE_FEEDERS = "Feeders"
 
+    static final BigDecimal TEST_VISION_CALIBRATION_FACTOR = 0.05
+
     TestTransportFactory testTransportFactory
 
     void setup() {
@@ -37,6 +39,8 @@ class DPVtoGoogleSheetsUpdaterSpec extends Specification implements TestResource
 
             Set<MatchOption> expectedMatchOptions = [MatchOption.FEEDER_ID]
             updater.matchOptions = expectedMatchOptions
+
+            updater.visionCalibrationFactor = TEST_VISION_CALIBRATION_FACTOR
 
         and:
             CredentialFactory mockCredentialFactory = Mock(CredentialFactory)
@@ -59,7 +63,7 @@ class DPVtoGoogleSheetsUpdaterSpec extends Specification implements TestResource
             Sheets.Spreadsheets.Get mockGet = Mock(Sheets.Spreadsheets.Get)
 
             SpreadsheetProperties mockSpreadsheetProperties = GroovyMock(SpreadsheetProperties)
-            Spreadsheet mockSpreadsheet = GroovyMock(Spreadsheet, name: "mockSpreadsheet")
+            def mockSpreadsheet = GroovyMock(Spreadsheet, name: "mockSpreadsheet")
 
         and:
             SheetFinder mockSheetFinder = Mock(SheetFinder)
@@ -102,7 +106,7 @@ class DPVtoGoogleSheetsUpdaterSpec extends Specification implements TestResource
             1 * mockReporter.reportDPVSummary(_ as DPVFile)
 
         then:
-            1 * mockFeedersSheetProcessor.process(mockSheetsService, mockSpreadsheet, mockFeedersSheet, _ as DPVTable, expectedMatchOptions) >> mockSheetProcessorResult
+            1 * mockFeedersSheetProcessor.process(mockSheetsService, mockSpreadsheet, mockFeedersSheet, _ as DPVTable, expectedMatchOptions, TEST_VISION_CALIBRATION_FACTOR) >> mockSheetProcessorResult
 
         then:
             1 * mockReporter.reportSummary(TEST_SPREADSHEET_TITLE, mockSheetProcessorResult)

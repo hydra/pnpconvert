@@ -36,6 +36,7 @@ class DPVtoGoogleSheets {
         builder.i(args:1, argName: 'input', 'input dpv file/url')
         builder.s(args:1, argName: 'sheet', 'sheet id')
         builder.c(args:1, argName: 'credentials', 'credentials json file/url')
+        builder.vcf(args:1, argName: 'visionCalibrationFactor','Vision calibration factor')
 
         String matchOptionsSpecification = '<[' + MatchOption.values().each { it.toString() }.join("] [") + '] ...>'
         builder.mo(args:'+', argName: 'match-options', matchOptionsSpecification)
@@ -74,6 +75,7 @@ class DPVtoGoogleSheets {
         String inputFileName = config.getOrDefault("input", "input.dpv")
         String credentialsFileName = config.getOrDefault("credentials","credentials.json")
         String sheetId = config.getOrDefault("sheetId","")
+        BigDecimal visionCalibrationFactor = config.getOrDefault("visionCalibrationFactor","0.042383") as BigDecimal
 
         Set<MatchOption> matchOptions = [MatchOption.FEEDER_ID, MatchOption.DESCRIPTION]
 
@@ -87,6 +89,10 @@ class DPVtoGoogleSheets {
 
         if (options.c) {
             credentialsFileName = options.c
+        }
+
+        if (options.vcf) {
+            visionCalibrationFactor = options.vcf as BigDecimal
         }
 
 
@@ -104,6 +110,7 @@ class DPVtoGoogleSheets {
                     sheetId: sheetId,
                     credentialsFileName: credentialsFileName,
                     matchOptions: matchOptions,
+                    visionCalibrationFactor: visionCalibrationFactor,
                 )
                 updater.update()
                 System.exit(0);

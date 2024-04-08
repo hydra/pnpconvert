@@ -30,6 +30,7 @@ class DPVtoGoogleSheetsUpdater {
     SheetFinder sheetFinder = new SheetFinder()
     FeedersSheetProcessor feederSheetProcessor = new FeedersSheetProcessor()
     Set<MatchOption> matchOptions = []
+    BigDecimal visionCalibrationFactor
 
     def update() {
         def transport = transportFactory.build()
@@ -55,7 +56,7 @@ class DPVtoGoogleSheetsUpdater {
 
         reporter.reportDPVSummary(dpvFile)
 
-        SheetProcessorResult result = feederSheetProcessor.process(service, spreadsheet, feedersSheet, dpvFile.tables[DPV_TABLE_STATION], matchOptions)
+        SheetProcessorResult result = feederSheetProcessor.process(service, spreadsheet, feedersSheet, dpvFile.tables[DPV_TABLE_STATION], matchOptions, visionCalibrationFactor)
 
         reporter.reportSummary(sheetTitle, result)
     }

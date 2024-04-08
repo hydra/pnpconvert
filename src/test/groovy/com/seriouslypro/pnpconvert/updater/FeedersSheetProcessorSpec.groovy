@@ -17,6 +17,8 @@ class FeedersSheetProcessorSpec extends Specification {
     private static final String TEST_SHEET_TITLE = 'SHEET_TITLE'
     public static final String TEST_DESCRIPTION = 'DESCRIPTION'
 
+    static final BigDecimal TEST_VISION_CALIBRATION_FACTOR = 0.05
+
     def "process empty table"() {
         given:
             Sheets mockSheetsService = GroovyMock(Sheets)
@@ -44,7 +46,7 @@ class FeedersSheetProcessorSpec extends Specification {
             Set<MatchOption> matchOptions = [MatchOption.FEEDER_ID]
 
         when:
-            SheetProcessorResult result = processor.process(mockSheetsService, spreadsheet, sheet, feedersTable, matchOptions)
+            SheetProcessorResult result = processor.process(mockSheetsService, spreadsheet, sheet, feedersTable, matchOptions, TEST_VISION_CALIBRATION_FACTOR)
 
         then:
             result == new SheetProcessorResult(totalFeederCount: 0, updatedFeederCount: 0)
@@ -72,8 +74,8 @@ class FeedersSheetProcessorSpec extends Specification {
 
         and:
             DPVTable feedersTable = new DPVTable()
-            feedersTable.headers = ["ID", "Note", "DeltX", "DeltY"]
-            feedersTable.entries = [['1', TEST_DESCRIPTION + ';A NOTE', '0.12', '0.62']]
+            feedersTable.headers = ["ID", "Note", "DeltX", "DeltY", "nPixSizeX", "nPixSizeY"]
+            feedersTable.entries = [['1', TEST_DESCRIPTION + ';A NOTE', '0.12', '0.62', '47', '19']]
 
         and:
             Sheets.Spreadsheets mockSpreadsheets = Mock(Sheets.Spreadsheets)
@@ -82,18 +84,18 @@ class FeedersSheetProcessorSpec extends Specification {
 
         and: "use headers in a different order to the values in the dpv file"
             ValueRange headersValueRangeResponse = new ValueRange()
-            List<List<Object>> headerValues = [["X Offset", "Y Offset", "Description", "ID", "Flags"]]
+            List<List<Object>> headerValues = [["X Offset", "Y Offset", "Description", "ID", "Flags", "Vision Width", "Vision Length"]]
             headersValueRangeResponse.setValues(headerValues)
 
         and: "use data that corresponds to the a feeder, same component and feeder id, but with different x/y co-ordinates"
             ValueRange dataValueRangeResponse = new ValueRange()
-            List<List<Object>> dataValues = [['0.23', '0.73', TEST_DESCRIPTION, '1', '']]
+            List<List<Object>> dataValues = [['0.23', '0.73', TEST_DESCRIPTION, '1', '', '', '']]
             dataValueRangeResponse.setValues(dataValues)
 
         and: "use updated data for row to be updated"
             Sheets.Spreadsheets.Values.Update mockUpdate = Mock(Sheets.Spreadsheets.Values.Update)
             ValueRange expectedValueRange = new ValueRange()
-            List<List<Object>> updatedValues = [['0.12', '0.62', TEST_DESCRIPTION, '1', '']]
+            List<List<Object>> updatedValues = [['0.12', '0.62', TEST_DESCRIPTION, '1', '', '2.35', '0.95']]
             expectedValueRange.setValues(updatedValues)
             UpdateValuesResponse updateValuesResponse = new UpdateValuesResponse()
 
@@ -106,7 +108,7 @@ class FeedersSheetProcessorSpec extends Specification {
             Set<MatchOption> matchOptions = [MatchOption.FEEDER_ID, MatchOption.DESCRIPTION]
 
         when:
-            SheetProcessorResult result = processor.process(mockSheetsService, spreadsheet, sheet, feedersTable, matchOptions)
+            SheetProcessorResult result = processor.process(mockSheetsService, spreadsheet, sheet, feedersTable, matchOptions, TEST_VISION_CALIBRATION_FACTOR)
 
         then: "header row should be retrieved"
             1 * mockSheetsService.spreadsheets() >> mockSpreadsheets

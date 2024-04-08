@@ -10,13 +10,17 @@ import com.seriouslypro.googlesheets.GridRangeConverter
 import com.seriouslypro.pnpconvert.FeedersLoader
 import com.seriouslypro.pnpconvert.MatchOption
 
+import java.text.DecimalFormat
+
 class FeedersSheetProcessor {
 
     private static final int HEADER_ROW_COUNT = 1
     private static final int ROWS_PER_BATCH = 50
 
-    SheetProcessorResult process(Sheets service, Spreadsheet spreadsheet, Sheet sheet, DPVTable feedersTable, Set<MatchOption> matchOptions) {
+    SheetProcessorResult process(Sheets service, Spreadsheet spreadsheet, Sheet sheet, DPVTable feedersTable, Set<MatchOption> matchOptions, BigDecimal visionCalibrationFactor) {
         SheetProcessorResult sheetProcessorResult = new SheetProcessorResult()
+
+        VisionFormatter visionFormatter = new VisionFormatter(visionCalibrationFactor: visionCalibrationFactor)
 
         String spreadsheetId = spreadsheet.getSpreadsheetId()
         String sheetTitle = sheet.getProperties().getTitle()
@@ -72,7 +76,7 @@ class FeedersSheetProcessor {
                     gridRangeForRow.setEndRowIndex(rowIndex)
 
                     String rangeForUpdate = sheetTitle + '!' + GridRangeConverter.toString(gridRangeForRow)
-                    processEntry(service, spreadsheetId, rangeForUpdate, sheetToEntryHeaderMapping, feederRowValues as List<String>, dpvFeederEntryValues, matchOptions, sheetProcessorResult)
+                    processEntry(service, spreadsheetId, rangeForUpdate, sheetToEntryHeaderMapping, feederRowValues as List<String>, dpvFeederEntryValues, matchOptions, sheetProcessorResult, visionFormatter)
 
                     // TODO - Optimization; avoid processing each feedersTable.entries twice, once it's updated it's safe to ignore.
                 }
@@ -92,7 +96,7 @@ class FeedersSheetProcessor {
         }
     }
 
-    void processEntry(Sheets service, String spreadsheetId, String range, SheetToDPVHeaderMapping sheetToEntryHeaderMapping, List<String> sheetFeederRowValues, List<String> dpvFeederEntryValues, Set<MatchOption> matchOptions, SheetProcessorResult sheetProcessorResult) {
+    void processEntry(Sheets service, String spreadsheetId, String range, SheetToDPVHeaderMapping sheetToEntryHeaderMapping, List<String> sheetFeederRowValues, List<String> dpvFeederEntryValues, Set<MatchOption> matchOptions, SheetProcessorResult sheetProcessorResult, VisionFormatter visionFormatter) {
 
         if (!RowMatcher.match(matchOptions, sheetToEntryHeaderMapping, sheetFeederRowValues, dpvFeederEntryValues)) {
             return
@@ -103,6 +107,8 @@ class FeedersSheetProcessor {
         List<String> updatedRowValues = sheetFeederRowValues.collect()
         updatedRowValues.set(sheetToEntryHeaderMapping.sheetIndex(FeedersLoader.FeederCSVColumn.X_OFFSET), dpvFeederEntryValues[sheetToEntryHeaderMapping.dpvIndex(DPVStationTableColumn.DELTA_X)])
         updatedRowValues.set(sheetToEntryHeaderMapping.sheetIndex(FeedersLoader.FeederCSVColumn.Y_OFFSET), dpvFeederEntryValues[sheetToEntryHeaderMapping.dpvIndex(DPVStationTableColumn.DELTA_Y)])
+        updatedRowValues.set(sheetToEntryHeaderMapping.sheetIndex(FeedersLoader.FeederCSVColumn.VISION_WIDTH), visionFormatter.formatDimension(dpvFeederEntryValues[sheetToEntryHeaderMapping.dpvIndex(DPVStationTableColumn.VISION_WIDTH)]))
+        updatedRowValues.set(sheetToEntryHeaderMapping.sheetIndex(FeedersLoader.FeederCSVColumn.VISION_LENGTH), visionFormatter.formatDimension(dpvFeederEntryValues[sheetToEntryHeaderMapping.dpvIndex(DPVStationTableColumn.VISION_LENGTH)]))
 
         ValueRange valueRange = new ValueRange()
         List<List<Object>> updatedValues = [updatedRowValues]
@@ -131,5 +137,14 @@ class FeedersSheetProcessor {
 
 
         sheetProcessorResult.updatedFeederCount += updateValuesResponse.getUpdatedRows()
+    }
+}
+
+class VisionFormatter {
+    DecimalFormat twoDigitDecimalFormat = new DecimalFormat("#0.##")
+    BigDecimal visionCalibrationFactor
+
+    String formatDimension(String value) {
+        twoDigitDecimalFormat.format((value.toFloat() * visionCalibrationFactor) as BigDecimal)
     }
 }

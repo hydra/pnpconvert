@@ -15,6 +15,8 @@ enum DPVStationTableColumn {
     STATUS('Status'),
     SIZE_X('SizeX'),
     SIZE_Y('SizeY'),
+    VISION_WIDTH('nPixSizeX'),
+    VISION_LENGTH('nPixSizeY'),
     HEIGHT_TAKE('HeightTake'),
     DELAY_TAKE('DelayTake'),
     PULL_SPEED('nPullStripSpeed')
