@@ -96,6 +96,13 @@ class FeedersSheetProcessor {
         }
     }
 
+    static void updateRowValue(List<String> values, int index, String value) {
+        while (values.size() <= index) {
+            values.add('')
+        }
+        values.set(index, value)
+    }
+
     void processEntry(Sheets service, String spreadsheetId, String range, SheetToDPVHeaderMapping sheetToEntryHeaderMapping, List<String> sheetFeederRowValues, List<String> dpvFeederEntryValues, Set<MatchOption> matchOptions, SheetProcessorResult sheetProcessorResult, VisionFormatter visionFormatter) {
 
         if (!RowMatcher.match(matchOptions, sheetToEntryHeaderMapping, sheetFeederRowValues, dpvFeederEntryValues)) {
@@ -104,11 +111,20 @@ class FeedersSheetProcessor {
 
         // update the sheet with the new values, check the result
 
+        DecimalFormat twoDigitDecimalFormatFixedLengthDecimal = new DecimalFormat("#0.00")
+
         List<String> updatedRowValues = sheetFeederRowValues.collect()
-        updatedRowValues.set(sheetToEntryHeaderMapping.sheetIndex(FeedersLoader.FeederCSVColumn.X_OFFSET), dpvFeederEntryValues[sheetToEntryHeaderMapping.dpvIndex(DPVStationTableColumn.DELTA_X)])
-        updatedRowValues.set(sheetToEntryHeaderMapping.sheetIndex(FeedersLoader.FeederCSVColumn.Y_OFFSET), dpvFeederEntryValues[sheetToEntryHeaderMapping.dpvIndex(DPVStationTableColumn.DELTA_Y)])
-        updatedRowValues.set(sheetToEntryHeaderMapping.sheetIndex(FeedersLoader.FeederCSVColumn.VISION_WIDTH), visionFormatter.formatDimension(dpvFeederEntryValues[sheetToEntryHeaderMapping.dpvIndex(DPVStationTableColumn.VISION_WIDTH)]))
-        updatedRowValues.set(sheetToEntryHeaderMapping.sheetIndex(FeedersLoader.FeederCSVColumn.VISION_LENGTH), visionFormatter.formatDimension(dpvFeederEntryValues[sheetToEntryHeaderMapping.dpvIndex(DPVStationTableColumn.VISION_LENGTH)]))
+        updateRowValue(updatedRowValues, sheetToEntryHeaderMapping.sheetIndex(FeedersLoader.FeederCSVColumn.X_OFFSET), twoDigitDecimalFormatFixedLengthDecimal.format(dpvFeederEntryValues[sheetToEntryHeaderMapping.dpvIndex(DPVStationTableColumn.DELTA_X)].toBigDecimal()))
+        updateRowValue(updatedRowValues, sheetToEntryHeaderMapping.sheetIndex(FeedersLoader.FeederCSVColumn.Y_OFFSET), twoDigitDecimalFormatFixedLengthDecimal.format(dpvFeederEntryValues[sheetToEntryHeaderMapping.dpvIndex(DPVStationTableColumn.DELTA_Y)].toBigDecimal()))
+        updateRowValue(updatedRowValues, sheetToEntryHeaderMapping.sheetIndex(FeedersLoader.FeederCSVColumn.TAPE_PULL_SPEED), dpvFeederEntryValues[sheetToEntryHeaderMapping.dpvIndex(DPVStationTableColumn.PULL_SPEED)])
+        updateRowValue(updatedRowValues, sheetToEntryHeaderMapping.sheetIndex(FeedersLoader.FeederCSVColumn.PLACE_SPEED), dpvFeederEntryValues[sheetToEntryHeaderMapping.dpvIndex(DPVStationTableColumn.SPEED)])
+        updateRowValue(updatedRowValues, sheetToEntryHeaderMapping.sheetIndex(FeedersLoader.FeederCSVColumn.TAPE_SPACING), dpvFeederEntryValues[sheetToEntryHeaderMapping.dpvIndex(DPVStationTableColumn.FEED_RATE)])
+        updateRowValue(updatedRowValues, sheetToEntryHeaderMapping.sheetIndex(FeedersLoader.FeederCSVColumn.TAKE_HEIGHT), twoDigitDecimalFormatFixedLengthDecimal.format(dpvFeederEntryValues[sheetToEntryHeaderMapping.dpvIndex(DPVStationTableColumn.HEIGHT_TAKE)].toBigDecimal()))
+        updateRowValue(updatedRowValues, sheetToEntryHeaderMapping.sheetIndex(FeedersLoader.FeederCSVColumn.TAKE_DELAY), twoDigitDecimalFormatFixedLengthDecimal.format(dpvFeederEntryValues[sheetToEntryHeaderMapping.dpvIndex(DPVStationTableColumn.DELAY_TAKE)].toBigDecimal() / 100))
+        updateRowValue(updatedRowValues, sheetToEntryHeaderMapping.sheetIndex(FeedersLoader.FeederCSVColumn.VISION_THRESHOLD), dpvFeederEntryValues[sheetToEntryHeaderMapping.dpvIndex(DPVStationTableColumn.VISION_THRESHOLD)])
+        updateRowValue(updatedRowValues, sheetToEntryHeaderMapping.sheetIndex(FeedersLoader.FeederCSVColumn.VISION_RADIO), dpvFeederEntryValues[sheetToEntryHeaderMapping.dpvIndex(DPVStationTableColumn.VISION_RADIO)])
+        updateRowValue(updatedRowValues, sheetToEntryHeaderMapping.sheetIndex(FeedersLoader.FeederCSVColumn.VISION_WIDTH), visionFormatter.formatDimension(dpvFeederEntryValues[sheetToEntryHeaderMapping.dpvIndex(DPVStationTableColumn.VISION_WIDTH)]))
+        updateRowValue(updatedRowValues, sheetToEntryHeaderMapping.sheetIndex(FeedersLoader.FeederCSVColumn.VISION_LENGTH), visionFormatter.formatDimension(dpvFeederEntryValues[sheetToEntryHeaderMapping.dpvIndex(DPVStationTableColumn.VISION_LENGTH)]))
 
         ValueRange valueRange = new ValueRange()
         List<List<Object>> updatedValues = [updatedRowValues]
@@ -141,10 +157,10 @@ class FeedersSheetProcessor {
 }
 
 class VisionFormatter {
-    DecimalFormat twoDigitDecimalFormat = new DecimalFormat("#0.##")
+    DecimalFormat twoDigitDecimalFormatFixedLengthDecimal = new DecimalFormat("#0.00")
     BigDecimal visionCalibrationFactor
 
     String formatDimension(String value) {
-        twoDigitDecimalFormat.format((value.toFloat() * visionCalibrationFactor) as BigDecimal)
+        twoDigitDecimalFormatFixedLengthDecimal.format((value.toFloat() * visionCalibrationFactor) as BigDecimal)
     }
 }
