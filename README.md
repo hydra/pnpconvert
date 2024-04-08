@@ -49,6 +49,7 @@ Usage: pnpconvert
   -f=<feeders>              feeders csv file/url
       -fm=<fiducialMarkers>...
                             Fiducial marker list (note,x,y[ ...])
+      -fp                   Add dummy placements for each fiducial
       -ft                   Generate DPV containing all feeders
   -i=<input>                input csv file/url
   -j=<job>                  job number
@@ -83,8 +84,8 @@ Usage: pnpconvert
       -st                   Show transforms in SVG
   -t=<trays>                trays csv file/url
   -v                        version
-
-Process finished with exit code -1
+      -vcf=<visionCalibrationFactor>
+                            Vision calibration factor
 ```
 
 PnPConvert also supports reading one or more files containing arguments, prefix each filename with an @ symbol.
@@ -203,7 +204,7 @@ pnpconvert @machine-settings.pnpconvert @projects/my-project-bottom.pnpconvert -
 -fm RL,10,107.5 FR,145,2.5
 ```
 
-* Fiducial markers
+### Fiducial markers
 
 Fiducial marks can be used for calibration instead of components.
 
@@ -226,23 +227,31 @@ and extract the co-ordinates from the received gerber files.
 This is also particularly useful when you have one or more large component footprints in the corner of your PCB and/or cannot visually
 select the center of the pattern that the CharmHigh software selects.
 
-* Disable components by refdes
+### Disable components by refdes
 
 `pnpconvert ... -dr C36,R28`
 
-* Replace components by refdes
+### Replace components by refdes
 
 `pnpconvert ... -rr "C54,CAP_1206,47uF 10V 1206 X5R 20%" "R25,RES_0402,44k2 0402 1%"`
 
 In the example above, `-rr` has two arguments the order of the values in quotes is RefDes, Name, Value
 
-* Feeder Tester
+### Feeder Tester
 
 `pnpconvert -ft -cfg machine1.config -o feedertest`
 
 Generates a DPV with all the feeders populated but no placements, this is useful when verifying the contents of all the feeders on the machine.
 No placement input file is required.  The names of the feeders are also used to lookup components.
 
+## Visual Calibration Factor
+
+New firmware from CHMT requires vision width/length in 'pixels' instead of mm, this means the visual calibration factor stored in the machine
+must be given to PNPConvert so that it can calculate the 'pixel' values from the component width/length values.
+
+You can find this value in the machine's `System inner params` hidden menu (`System Set` -> code: `20090318`) in this Vision Calibration menu.  It's called `factor`.
+A value of `0.042383` is used by default if this is not specified, however this value is different per machine and based on the cameras used and how they
+are focussed and positioned within the machine.
 
 ## DPV Generation process
 
@@ -548,6 +557,7 @@ Still, that doesn't help with square components, like ICs, inductors, etc.
   3) definition of datasheet measurement codes used for X/Y/Z, e.g. X=L;Y=W;Z=T as there doesn't appear to be a standard, and it varies by manufacturer and component type.
 * Check and report components that are too tall for the machine (>5mm for CHMT48VB/CHMT43VB/CHMT43VA)
 * A summary of /unique/ components that are not loaded, with a list of applicable refdes.  e.g. 0479480001 = [A1, A201]  Currently the unloaded components shows each placement, but it's required to trawl over all placements, find all potential components, then add each refdes to a list of potential components and display a summary.  
+* A summary of trays used, in addition to feeders.
 
 # DPVToGoogleSheets
 
@@ -570,6 +580,8 @@ Usage: dpvtogooglesheets
   -s=<sheet>          sheet id
   -u                  update
   -v                  version
+      -vcf=<visionCalibrationFactor>
+                      Vision calibration factor
 ```
 
 Example:
