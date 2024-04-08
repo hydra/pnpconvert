@@ -200,7 +200,7 @@ class DPVGeneratorITSpec extends Specification implements DPVFileAssertions {
 
         and: // test data expectations
             // given a visual calibration threshold of 0.05 and a formula of nPixSizeX = width / vcf, and the fact that the result must have no decimal digits, the smallest width allowed is 0.05 because 0.05 / 0.05 = 1
-            assert components[0].width / TEST_VISUAL_CALIBRATION_FACTOR == 1
+            assert components[0].width / TEST_VISION_CALIBRATION_FACTOR == 1
 
             boolean haveTwoIdenticalComponents = (
                 componentPlacements[0].value == componentPlacements[1].value &&
@@ -288,7 +288,7 @@ class DPVGeneratorITSpec extends Specification implements DPVFileAssertions {
             feederSummaryPresent(capturedOutput, expectedFeederSummary)
     }
 
-    static final BigDecimal TEST_VISUAL_CALIBRATION_FACTOR = 0.05
+    static final BigDecimal TEST_VISION_CALIBRATION_FACTOR = 0.05
 
     private DPVGenerator buildGenerator() {
         DPVGenerator generator = new DPVGenerator(
@@ -297,7 +297,7 @@ class DPVGeneratorITSpec extends Specification implements DPVFileAssertions {
             optionalPanel: Optional.empty(),
             optionalFiducials: Optional.empty(),
             offsetZ: 0,
-            visualCalibrationFactor: TEST_VISUAL_CALIBRATION_FACTOR,
+            visionCalibrationFactor: TEST_VISION_CALIBRATION_FACTOR,
         )
         generator
     }

@@ -28,7 +28,7 @@ class ConverterSpec extends Specification implements TestResources {
         System.out.flush()
     }
 
-    static final BigDecimal TEST_VISUAL_CALIBRATION_FACTOR = 0.05
+    static final BigDecimal TEST_VISION_CALIBRATION_FACTOR = 0.05
 
     def 'converter generates expected output files - without placements, substitutions, mappings, components, trays and feeders'() {
         given:
@@ -265,7 +265,7 @@ class ConverterSpec extends Specification implements TestResources {
         converter.optionalFiducials = Optional.empty()
 
         converter.machine = new TestMachine()
-        converter.visualCalibrationFactor = TEST_VISUAL_CALIBRATION_FACTOR
+        converter.visionCalibrationFactor = TEST_VISION_CALIBRATION_FACTOR
 
         converter.optionalJob = Optional.empty()
     }

@@ -16,7 +16,7 @@ class DPVGenerator {
     Optional<List<Fiducial>> optionalFiducials = Optional.empty()
     boolean addPlacementsForFiducialsEnabled = false
 
-    BigDecimal visualCalibrationFactor
+    BigDecimal visionCalibrationFactor
 
     void generate(OutputStream outputStream, Map<ComponentPlacement, MaterialSelectionEntry> materialSelections) {
 
@@ -39,7 +39,7 @@ class DPVGenerator {
         dumpMaterialAsignments(materialAssignments)
         dumpSummary(optionalPanel, materialAssignments)
 
-        writer = new DPVWriter(outputStream, machine, offsetZ, visualCalibrationFactor, dpvHeader)
+        writer = new DPVWriter(outputStream, machine, offsetZ, visionCalibrationFactor, dpvHeader)
         writer.setPanel(optionalPanel)
         writer.setFiducials(optionalFiducials)
         writer.setAddPlacementsForFiducials(addPlacementsForFiducialsEnabled)

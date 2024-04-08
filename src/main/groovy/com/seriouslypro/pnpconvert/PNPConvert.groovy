@@ -51,7 +51,7 @@ class PNPConvert {
         builder.pix(args:1, argName: 'panelIntervalX','Interval spacing on the X axis')
         builder.piy(args:1, argName: 'panelIntervalY','Interval spacing on the Y axis')
 
-        builder.vcf(args:1, argName: 'visionCalibrationFactor','Visual calibration factor')
+        builder.vcf(args:1, argName: 'visionCalibrationFactor','Vision calibration factor')
 
         builder.j(args:1, argName: 'job', 'job number')
 
@@ -102,7 +102,7 @@ class PNPConvert {
         String componentsFileName = config.getOrDefault("components","components.csv")
         String partMappingsFileName = config.getOrDefault("partMappings","part-mappings.csv")
         String partSubstitutionsFileName = config.getOrDefault("partSubstitutions","part-substitutions.csv")
-        BigDecimal visualCalibrationFactor = config.getOrDefault("visualCalibrationFactor","0.042383") as BigDecimal
+        BigDecimal visionCalibrationFactor = config.getOrDefault("visionCalibrationFactor","0.042383") as BigDecimal
 
         boolean addPlacementsForFiducialsEnabled = false
 
@@ -267,7 +267,7 @@ class PNPConvert {
         }
 
         if (options.vcf) {
-            visualCalibrationFactor = options.s as BigDecimal
+            visionCalibrationFactor = options.vcf as BigDecimal
         }
 
         boolean showTransforms = (options.st)
@@ -295,7 +295,7 @@ class PNPConvert {
                 optionalJob: optionalJob,
                 showTransforms: showTransforms,
                 addPlacementsForFiducialsEnabled: addPlacementsForFiducialsEnabled,
-                visualCalibrationFactor: visualCalibrationFactor,
+                visionCalibrationFactor: visionCalibrationFactor,
             )
             converter.convert()
             System.exit(0);
@@ -308,7 +308,7 @@ class PNPConvert {
                 feedersFileName: feedersFileName,
                 componentsFileName: componentsFileName,
                 outputPrefix: outputPrefix,
-                visualCalibrationFactor: visualCalibrationFactor,
+                visionCalibrationFactor: visionCalibrationFactor,
             )
             feederTester.generateFeederTest()
             System.exit(0);

@@ -55,6 +55,8 @@ class VisionSettings {
  * Used to override the width/length settings from the component.
  * Often the camera only picks up the shiny leads resulting in a difference between the component's maximum width
  * and maximum length and the required vision width/length.
+ *
+ * Note: the CHMT machines store this in pixels, which must be multipled by the vision calibration factor to get the size in mm
  */
 @ToString(includeNames = true, includePackage = false)
 @EqualsAndHashCode

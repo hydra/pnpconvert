@@ -42,7 +42,7 @@ class Converter {
 
     private static final boolean append = false
     boolean addPlacementsForFiducialsEnabled = false
-    BigDecimal visualCalibrationFactor
+    BigDecimal visionCalibrationFactor
 
     void convert() {
 
@@ -253,7 +253,7 @@ class Converter {
             optionalFiducials: optionalFiducials,
             offsetZ: offsetZ,
             addPlacementsForFiducialsEnabled: addPlacementsForFiducialsEnabled,
-            visualCalibrationFactor: visualCalibrationFactor,
+            visionCalibrationFactor: visionCalibrationFactor,
         )
 
         generator.generate(outputStream, materialSelectionResult.materialSelections)

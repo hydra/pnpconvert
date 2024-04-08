@@ -24,7 +24,7 @@ class DPVWriterSpec extends Specification implements DPVFileAssertions {
     BigDecimal offsetZ
     Machine machine
 
-    static final BigDecimal TEST_VISUAL_CALIBRATION_FACTOR = 0.05
+    static final BigDecimal TEST_VISION_CALIBRATION_FACTOR = 0.05
 
     void setup() {
         dpvHeader = new DPVHeader(
@@ -52,7 +52,7 @@ class DPVWriterSpec extends Specification implements DPVFileAssertions {
 
     def 'generate empty dpv'() {
         given:
-            DPVWriter writer = new DPVWriter(outputStream, machine, offsetZ, TEST_VISUAL_CALIBRATION_FACTOR, dpvHeader)
+            DPVWriter writer = new DPVWriter(outputStream, machine, offsetZ, TEST_VISION_CALIBRATION_FACTOR, dpvHeader)
 
         when:
             writer.write()
@@ -76,7 +76,7 @@ class DPVWriterSpec extends Specification implements DPVFileAssertions {
 
     def 'generate default panel'() {
         given:
-            DPVWriter writer = new DPVWriter(outputStream, machine, offsetZ, TEST_VISUAL_CALIBRATION_FACTOR, dpvHeader)
+            DPVWriter writer = new DPVWriter(outputStream, machine, offsetZ, TEST_VISION_CALIBRATION_FACTOR, dpvHeader)
 
         when:
             writer.write()
@@ -91,7 +91,7 @@ class DPVWriterSpec extends Specification implements DPVFileAssertions {
 
     def 'generate array panel'() {
         given:
-            DPVWriter writer = new DPVWriter(outputStream, machine, offsetZ, TEST_VISUAL_CALIBRATION_FACTOR, dpvHeader)
+            DPVWriter writer = new DPVWriter(outputStream, machine, offsetZ, TEST_VISION_CALIBRATION_FACTOR, dpvHeader)
 
         and:
             Panel panel = new Panel(intervalX: 1.501, intervalY: 2.759, numberX: 3, numberY: 4)
@@ -115,7 +115,7 @@ class DPVWriterSpec extends Specification implements DPVFileAssertions {
     @Unroll
     def 'generate fiducial markers'(boolean addPlacementsForFiducialsEnabled, def fiducialComponentAssertion, def materialAssignmentsBuilder) {
         given:
-            DPVWriter writer = new DPVWriter(outputStream, machine, offsetZ, TEST_VISUAL_CALIBRATION_FACTOR, dpvHeader)
+            DPVWriter writer = new DPVWriter(outputStream, machine, offsetZ, TEST_VISION_CALIBRATION_FACTOR, dpvHeader)
 
         and:
             List<Fiducial> fiducialList = [
@@ -238,7 +238,7 @@ class DPVWriterSpec extends Specification implements DPVFileAssertions {
 
     def 'write dpv for one component placed 2 times'() {
         given:
-            DPVWriter writer = new DPVWriter(outputStream, machine, offsetZ, TEST_VISUAL_CALIBRATION_FACTOR, dpvHeader)
+            DPVWriter writer = new DPVWriter(outputStream, machine, offsetZ, TEST_VISION_CALIBRATION_FACTOR, dpvHeader)
 
         and:
             ComponentPlacement cp1 = new ComponentPlacement(enabled: true, refdes: "Z1", partCode: "C0DE", manufacturer: "MFR", name: "Placement Name 1", value: "Value 1", pattern: "Pattern 1", coordinate: new Coordinate(x: 3, y: 4), side: PCBSide.TOP, rotation: 0)
@@ -291,7 +291,7 @@ class DPVWriterSpec extends Specification implements DPVFileAssertions {
     @Unroll
     def 'feeder vision settings'(visionSettings, expectedMaterial) {
         given:
-            DPVWriter writer = new DPVWriter(outputStream, machine, offsetZ, TEST_VISUAL_CALIBRATION_FACTOR, dpvHeader)
+            DPVWriter writer = new DPVWriter(outputStream, machine, offsetZ, TEST_VISION_CALIBRATION_FACTOR, dpvHeader)
 
         and:
             ComponentPlacement cp1 = new ComponentPlacement(enabled: true, refdes: "Z1", partCode: "C0DE", manufacturer: "MFR", name: "Placement Name 1", value: "Value 1", pattern: "Pattern 1", coordinate: new Coordinate(x: 3, y: 4), side: PCBSide.TOP, rotation: 0)
@@ -331,7 +331,7 @@ class DPVWriterSpec extends Specification implements DPVFileAssertions {
     @Unroll
     def 'component width/height or feeder vision width/height'(visionSize, expectedMaterial) {
         given:
-            DPVWriter writer = new DPVWriter(outputStream, machine, offsetZ, TEST_VISUAL_CALIBRATION_FACTOR, dpvHeader)
+            DPVWriter writer = new DPVWriter(outputStream, machine, offsetZ, TEST_VISION_CALIBRATION_FACTOR, dpvHeader)
 
         and:
             ComponentPlacement cp1 = new ComponentPlacement(enabled: true, refdes: "Z1", partCode: "C0DE", manufacturer: "MFR", name: "Placement Name 1", value: "Value 1", pattern: "Pattern 1", coordinate: new Coordinate(x: 3, y: 4), side: PCBSide.TOP, rotation: 0)
