@@ -75,7 +75,7 @@ class FeedersSheetProcessorSpec extends Specification {
         and:
             DPVTable feedersTable = new DPVTable()
             feedersTable.headers = ["ID", "Note", "DeltX", "DeltY", "nPixSizeX", "nPixSizeY", "nPullStripSpeed", "Speed", "FeedRates", "HeightTake", "DelayTake", "nThreshold", "nVisualRadio"]
-            feedersTable.entries = [['1', TEST_DESCRIPTION + ';A NOTE', '0.1', '0.6', '47', '19', '50', '33', '2', '0.75', '20', '80', '200']]
+            feedersTable.entries = [['1', TEST_DESCRIPTION + ';A NOTE', '0.1', '0.6', '47', '19', '50', '33', '2', '75', '20', '80', '200']]
 
         and:
             Sheets.Spreadsheets mockSpreadsheets = Mock(Sheets.Spreadsheets)
