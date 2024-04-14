@@ -556,8 +556,11 @@ Still, that doesn't help with square components, like ICs, inductors, etc.
   2) cut-tape orientation, many manufacturers specify the pin-1 location in the packaging specification.
   3) definition of datasheet measurement codes used for X/Y/Z, e.g. X=L;Y=W;Z=T as there doesn't appear to be a standard, and it varies by manufacturer and component type.
 * Check and report components that are too tall for the machine (>5mm for CHMT48VB/CHMT43VB/CHMT43VA)
-* A summary of /unique/ components that are not loaded, with a list of applicable refdes.  e.g. 0479480001 = [A1, A201]  Currently the unloaded components shows each placement, but it's required to trawl over all placements, find all potential components, then add each refdes to a list of potential components and display a summary.  
+* A summary of /unique/ components that are not loaded, with a list of applicable refdes.  e.g. `0479480001 = [A1, A201]`  Currently the unloaded components shows each placement, but it's required to trawl over all placements, find all potential components, then add each refdes to a list of potential components and display a summary.  
+* A summary of used placement substitutions, with a list of applicable refdes for each.  e.g. `[C1, C2] = [name:CAP_0402, value:10nF 6.3V 0402] -> [name:CAP_0402, value:10nF 50V 0402 X7R 10%]`
+* A summary of mapped placements, with a list of applicable refdes for each.  e.g. `[R203, R204] = [name:RES_0402, value:10K 0402 1% 50V] -> [partCode:RC0402FR-0710KL, manufacturer:YAGEO, description:10K 0402 1% 50V/RES_0402]`
 * A summary of trays used, in addition to feeders.
+* The `unloadedComponentsToRefDes` list should show refdes first, currently is doesn't show refdes for components that were not found.
 
 # DPVToGoogleSheets
 
