@@ -129,11 +129,11 @@ class Converter {
         }
 
         if (unmatchedRefdesReplacements) {
-            System.out.println("Unmatched refdes replacements")
+            System.out.println()
+            System.out.println("unmatched refdes replacements:")
             unmatchedRefdesReplacements.each { refdesReplacement ->
                 System.out.println(refdesReplacement)
             }
-            System.exit(-1)
         }
 
         //
