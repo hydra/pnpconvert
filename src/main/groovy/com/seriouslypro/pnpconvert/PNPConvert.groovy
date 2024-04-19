@@ -57,8 +57,9 @@ class PNPConvert {
 
         builder.cfg(args:1, argName: 'config', 'configuration file (in "key=value" format)')
 
-        builder.dr(args:1, argName: 'disableRefdes', 'Disable components by refdes (comma separated list)')
-        builder.rr(args:'+', argName: 'replaceRefdes', 'Replace components by refdes ("refdes,value,name"[ ...])')
+        builder.dr(args:1, argName: 'disableRefdes', 'Disable placements by refdes (comma separated list)')
+        builder.er(args:1, argName: 'excludeRefdes', 'Exclude/filter placements by refdes (comma separated list)')
+        builder.rr(args:'+', argName: 'replaceRefdes', 'Replace placements by refdes ("refdes,value,name"[ ...])')
 
         builder.fm(args:'+', argName: 'fiducialMarkers','Fiducial marker list (note,x,y[ ...])')
         builder.fp(argName: 'addPlacementsForFiducialsEnabled', 'Add dummy placements for each fiducial')
@@ -116,6 +117,7 @@ class PNPConvert {
         Optional<Panel> optionalPanel = Optional.empty()
         Optional<List<Fiducial>> optionalFiducials = Optional.empty()
         List<RefdesReplacement> refdesReplacements = []
+        Set<String> refdesExclusions = []
         Machine machine = new CHMT48VB()
 
         Set<String> placementReferenceDesignatorsToDisable = []
@@ -221,6 +223,11 @@ class PNPConvert {
             placementReferenceDesignatorsToDisable = allDRValues.split(',').collect { it.trim().toUpperCase() }.unique()
         }
 
+        if (options.er) {
+            String allERValues = options.parseResult.matchedOption("er").typedValues().flatten().join(",")
+            refdesExclusions = allERValues.split(',').collect { it.trim().toUpperCase() }.unique()
+        }
+
         boolean haveAnyPanelOption = (options.pix || options.piy || options.pnx || options.pny ||
             options.prwt || options.prwb || options.prwl || options.prwr)
         if (haveAnyPanelOption) {
@@ -296,6 +303,7 @@ class PNPConvert {
                 showTransforms: showTransforms,
                 addPlacementsForFiducialsEnabled: addPlacementsForFiducialsEnabled,
                 visionCalibrationFactor: visionCalibrationFactor,
+                refdesExclusions: refdesExclusions,
             )
             converter.convert()
             System.exit(0);

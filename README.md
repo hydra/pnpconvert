@@ -45,7 +45,9 @@ Usage: pnpconvert
   -c                        convert
       -cfg=<config>         configuration file (in "key=value" format)
       -co=<components>      components csv file/url
-      -dr=<disableRefdes>   Disable components by refdes (comma separated list)
+      -dr=<disableRefdes>   Disable placements by refdes (comma separated list)
+      -er=<excludeRefdes>   Exclude/filter placements by refdes (comma
+                              separated list)
   -f=<feeders>              feeders csv file/url
       -fm=<fiducialMarkers>...
                             Fiducial marker list (note,x,y[ ...])
@@ -78,7 +80,7 @@ Usage: pnpconvert
                             part substitutions csv file/url
   -r=<rotation>             rotation degrees (positive is clockwise)
       -rr=<replaceRefdes>...
-                            Replace components by refdes ("refdes,value,name"[
+                            Replace placements by refdes ("refdes,value,name"[
                               ...])
   -s=<side>                 pcb side (top|bottom|all), default is all
       -st                   Show transforms in SVG

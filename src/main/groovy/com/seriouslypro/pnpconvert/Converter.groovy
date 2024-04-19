@@ -33,6 +33,7 @@ class Converter {
     Optional<Panel> optionalPanel
     Optional<List<Fiducial>> optionalFiducials
     List<RefdesReplacement> refdesReplacements
+    Set<String> refdesExclusions
     Set<String> placementReferenceDesignatorsToDisable
 
     MaterialsSelector materialSelector = new MaterialsSelector()
@@ -72,8 +73,9 @@ class Converter {
 
         PCBSideComponentPlacementFilter sideInclusionFilter = new PCBSideComponentPlacementFilter(sideInclusion: sideInclusion)
         JobComponentPlacementFilter jobInclusionFilter = new JobComponentPlacementFilter(optionalJob: optionalJob)
+        RefdesExclusionFilter refdesExclusionFilter = new RefdesExclusionFilter(refdesExclusions: refdesExclusions)
 
-        csvProcessor = new CSVProcessor(filters: [sideInclusionFilter, jobInclusionFilter], transformer: transformer, writer: dipTraceComponentPlacementWriter)
+        csvProcessor = new CSVProcessor(filters: [sideInclusionFilter, jobInclusionFilter, refdesExclusionFilter], transformer: transformer, writer: dipTraceComponentPlacementWriter)
 
         List<ComponentPlacement> placements = csvProcessor.process(inputFileName)
 

@@ -260,6 +260,9 @@ class ConverterSpec extends Specification implements TestResources {
         File feedersFile = createTemporaryFileFromResource(temporaryFolder, testResource("/feeders-${feeders}.csv"))
         converter.feedersFileName = feedersFile.absolutePath
 
+        converter.refdesReplacements = []
+        converter.refdesExclusions = []
+
         converter.optionalPanel = Optional.empty()
         converter.board = new Board()
         converter.optionalFiducials = Optional.empty()
